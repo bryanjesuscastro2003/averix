@@ -19,7 +19,7 @@ export const verifyPassword = async (password: string, hashedPassword: string): 
     return match;
 };
 
-export const handler = async (event: APIGatewayProxyEvent | any, context: Context | any): Promise<APIGatewayProxyResult | any> => {
+export const handler = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
     try {
         const client = new DynamoDBClient({
             region: process.env.AWS_REGION!,
@@ -29,17 +29,17 @@ export const handler = async (event: APIGatewayProxyEvent | any, context: Contex
             }
         });
         const docClient = DynamoDBDocumentClient.from(client, {});
-        const body = event.body;
-        const { username, password } = body;
-        console.log("Username: ", username);
+        console.log("Event: ", event.body);
+        const body: { username: string, password: string } = event.body!;
+        console.log("Username: ", body.username);
         const command = new ScanCommand({
             TableName: "Dronautica_authentication",
             FilterExpression: "username = :username",
             ExpressionAttributeValues: {
-                ":username": { S: username }
+                ":username": { S: body.username }
             }
         })
-        const response = await docClient.send(command);
+        const response: any = await docClient.send(command);
         console.log("Response: ", response.Items.length);
         if (!response.Items.length) {
             return {
@@ -60,7 +60,7 @@ export const handler = async (event: APIGatewayProxyEvent | any, context: Contex
         }
 
         console.log("User: ", user);
-        const match = await verifyPassword(password, user.password);
+        const match = await verifyPassword(body.password, user.password);
         if (!match) {
             return {
                 statusCode: 401,
@@ -69,7 +69,7 @@ export const handler = async (event: APIGatewayProxyEvent | any, context: Contex
                 })
             }
         }
-        const token = jwt.sign({ username, role: user.role }, process.env.JWT_SECRET_KEY!, { expiresIn: 500, algorithm: 'HS256' });
+        const token = jwt.sign({ username: body.username, role: user.role }, process.env.JWT_SECRET_KEY!, { expiresIn: 500, algorithm: 'HS256' });
         return {
             statusCode: 200,
             body: JSON.stringify({

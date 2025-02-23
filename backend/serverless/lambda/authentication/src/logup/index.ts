@@ -20,11 +20,11 @@ const hashedPassword = async (password: string): Promise<string> => {
 }
 
 export const generateToken = (payload: object, expiresIn: string = '1h'): string => {
-    return jwt.sign(payload, secretKey, { expiresIn: 50, algorithm: 'HS256' });
+    return jwt.sign(payload, secretKey, { expiresIn: 500, algorithm: 'HS256' });
 };
 
 
-export const handler = async (event: APIGatewayProxyEvent | any, context: Context | any): Promise<APIGatewayProxyResult | any> => {
+export const handler = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
     try {
         const client = new DynamoDBClient({
             region: process.env.AWS_REGION!,
@@ -34,7 +34,7 @@ export const handler = async (event: APIGatewayProxyEvent | any, context: Contex
             }
         });
         const docClient = DynamoDBDocumentClient.from(client, {});
-        const body = event.body;
+        const body: { username: string, password: string, email: string } = event.body!;
         const { username, password, email } = body;
         let command = new ScanCommand({
             TableName: "Dronautica_authentication",
@@ -43,7 +43,7 @@ export const handler = async (event: APIGatewayProxyEvent | any, context: Contex
                 ":username": { S: username }
             }
         })
-        let response = await docClient.send(command);
+        let response: any = await docClient.send(command);
         if (response.Items.length) {
             return {
                 statusCode: 404,

@@ -11,7 +11,7 @@ import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
 
 
-export const handler = async (event: APIGatewayProxyEvent | any, context: Context | any): Promise<APIGatewayProxyResult | any> => {
+export const handler = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
     try {
         const client = new DynamoDBClient({
             region: process.env.AWS_REGION!,
@@ -21,7 +21,7 @@ export const handler = async (event: APIGatewayProxyEvent | any, context: Contex
             }
         });
         const docClient = DynamoDBDocumentClient.from(client, {});
-        const authHeader = event.headers.authorization;
+        const authHeader = event.headers.authorization!;
         let token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as IUser;
         console.log("Decoded: ", decoded);
@@ -32,7 +32,7 @@ export const handler = async (event: APIGatewayProxyEvent | any, context: Contex
                 ":username": { S: decoded.username }
             }
         })
-        const response = await docClient.send(command);
+        const response: any = await docClient.send(command);
         if (!response.Items.length) {
             throw new Error("User not found");
         }
