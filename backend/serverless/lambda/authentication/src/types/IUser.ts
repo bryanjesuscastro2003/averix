@@ -7,4 +7,4 @@ export interface IUser {
     isActive: boolean;
     iat?: number;
     exp?: number;
-}
+}  // user interface
