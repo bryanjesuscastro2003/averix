@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 import redis 
-
+#
 redis_client = redis.Redis(
     host="dronautica-notifications-trnocq.serverless.use1.cache.amazonaws.com",
     port=6379,
