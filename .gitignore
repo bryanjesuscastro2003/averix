@@ -1,5 +1,5 @@
 backend/serverless/lambda/authentication/node_modules
 backend/serverless/lambda/authentication/.env
-backend/serverless/lambda/notifications/venv/*
+backend/serverless/lambda/notifications/venv
 backend/serverless/lambda/notifications/.env
 backend/serverless/lambda/notifications/myenv
