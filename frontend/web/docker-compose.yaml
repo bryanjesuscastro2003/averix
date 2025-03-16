@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  ubuntu:
+    image: ubuntu:latest
+    volumes:
+      - .:/app
+    command: tail -f /dev/null
+    ports:
+      - "5173:5173"
