@@ -1,15 +1,48 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthEndpoints } from "../../endpoints/auth";
+import { ICommonResponse } from "../../types/Common";
+import { IAuthResponse } from "../../types/AuthResponse";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>("jesusbryam624@gmail.com");
+  const [password, setPassword] = useState<string>("Bryan2003@");
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Username:", username);
-    console.log("Password:", password);
-    // Add your login logic here
+    console.log("Login data:", { username, password });
+    try {
+      const response = await fetch(AuthEndpoints.signInEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      const data: ICommonResponse = await response.json();
+      const bodyData: IAuthResponse = JSON.parse(data.body);
+      if (bodyData.ok) {
+        const accessToken = bodyData.data.AccessToken;
+        const refreshToken = bodyData.data.RefreshToken;
+        const idToken = bodyData.data.IdToken;
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("idToken", idToken);
+        localStorage.setItem("username", username);
+        window.location.href = "/dashboard";
+      }
+    } catch (error) {}
   };
+
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
@@ -23,10 +56,10 @@ const LoginPage: React.FC = () => {
               htmlFor="username"
               className="block text-sm font-medium text-white"
             >
-              Username
+              Email
             </label>
             <input
-              type="text"
+              type="email"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -63,9 +96,9 @@ const LoginPage: React.FC = () => {
         </form>
         <p className="mt-6 text-center text-sm text-white">
           Don't have an account?{" "}
-          <a href="#" className="text-purple-200 hover:text-purple-100">
+          <Link to="/logup" className="text-purple-500 font-semibold">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>
