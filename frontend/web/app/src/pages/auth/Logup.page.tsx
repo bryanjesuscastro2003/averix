@@ -4,6 +4,7 @@ import { AuthEndpoints } from "../../endpoints/auth";
 import { IAuthResponse } from "../../types/AuthResponse";
 import { ICommonResponse } from "../../types/Common";
 import { useAuth } from "../../context/AuthContext";
+import Louder from "../../components/layout/chris/louder";
 
 const LogupPage: React.FC = () => {
   const [password, setPassword] = useState<string>("Bryan2003@");
@@ -13,12 +14,13 @@ const LogupPage: React.FC = () => {
   const [confirmationCode, setConfirmationCode] = useState<string>("");
   const [isSignUpSubmitted, setIsSignUpSubmitted] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleLogup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate sending a confirmation code (e.g., via API call)
+    setIsLoading(true);
     console.log("Sign up data:", { username: email, password, name, nickname });
 
     try {
@@ -37,14 +39,14 @@ const LogupPage: React.FC = () => {
       } else setErrorMessage(bodyData.error || "An error occurred");
     } catch (e) {
       console.log(e);
+    } finally {
+      setIsLoading(false);
     }
-
-    //setIsSignUpSubmitted(true); // Show the confirmation code input
   };
 
   const handleConfirmation = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle confirmation logic here (e.g., verify the code with the backend)
+    setIsLoading(true);
     console.log("Confirmation code:", confirmationCode);
     try {
       const response = await fetch(AuthEndpoints.signUpConfirmationEndpoint, {
@@ -58,15 +60,15 @@ const LogupPage: React.FC = () => {
       const bodyData: IAuthResponse = JSON.parse(data.body);
       if (bodyData.ok) {
         setErrorMessage("");
-        // Redirect to the login page
         window.location.href = "/login";
       } else setErrorMessage(bodyData.error || "An error occurred");
     } catch (error) {
       setErrorMessage("Unexpected error occurred, please try again later ...");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
@@ -81,13 +83,11 @@ const LogupPage: React.FC = () => {
         </h1>
 
         {!isSignUpSubmitted ? (
-          // Sign Up Form
           <form onSubmit={handleLogup} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white"
-              >
+                className="block text-sm font-medium text-white">
                 Email
               </label>
               <input
@@ -103,8 +103,7 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-white"
-              >
+                className="block text-sm font-medium text-white">
                 Password
               </label>
               <input
@@ -120,8 +119,7 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-white"
-              >
+                className="block text-sm font-medium text-white">
                 Full Name
               </label>
               <input
@@ -137,8 +135,7 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="nickname"
-                className="block text-sm font-medium text-white"
-              >
+                className="block text-sm font-medium text-white">
                 Nickname
               </label>
               <input
@@ -155,19 +152,19 @@ const LogupPage: React.FC = () => {
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-              >
+                disabled={isLoading}>
                 Sign Up
               </button>
+
+              {isLoading && <Louder />}
             </div>
           </form>
         ) : (
-          // Confirmation Code Input
           <form onSubmit={handleConfirmation} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white"
-              >
+                className="block text-sm font-medium text-white">
                 Username
               </label>
               <input
@@ -181,8 +178,7 @@ const LogupPage: React.FC = () => {
               />
               <label
                 htmlFor="confirmationCode"
-                className="block text-sm font-medium text-white"
-              >
+                className="block text-sm font-medium text-white">
                 Confirmation Code
               </label>
               <input
@@ -199,9 +195,10 @@ const LogupPage: React.FC = () => {
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-              >
+                disabled={isLoading}>
                 Confirm
               </button>
+              {isLoading && <Louder />}
             </div>
           </form>
         )}
@@ -210,8 +207,7 @@ const LogupPage: React.FC = () => {
           {isSignUpSubmitted ? (
             <button
               onClick={() => setIsSignUpSubmitted(false)}
-              className="text-esmerald-500 font-semibold"
-            >
+              className="text-esmerald-500 font-semibold">
               Go back to sign up
             </button>
           ) : (
@@ -222,8 +218,7 @@ const LogupPage: React.FC = () => {
                 </Link>
                 <button
                   onClick={() => setIsSignUpSubmitted(true)}
-                  className="text-esmerald-500 font-semibold"
-                >
+                  className="text-esmerald-500 font-semibold">
                   Confirmation code
                 </button>
               </div>
