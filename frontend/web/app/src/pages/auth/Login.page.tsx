@@ -64,8 +64,7 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-white"
-            >
+              className="block text-sm font-medium text-white">
               Email
             </label>
             <input
@@ -81,8 +80,7 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-white"
-            >
+              className="block text-sm font-medium text-white">
               Password
             </label>
             <input
@@ -98,10 +96,15 @@ const LoginPage: React.FC = () => {
           <div>
             <button
               type="submit"
+<<<<<<< HEAD
               className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-500"
               disabled={isLoading}
             >
               {isLoading ? "Loading..." : "Login bb"}
+=======
+              className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+              Login bb
+>>>>>>> 36df64b6ca8388ecee943447dff1f0cc8138ec8f
             </button>
           </div>
         </form>

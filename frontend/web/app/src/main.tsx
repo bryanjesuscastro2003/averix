@@ -16,6 +16,9 @@ import LogupPage from "./pages/auth/Logup.page";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Header from "./components/layout/Header";
 import ProfilePage from "./pages/dashboard/Profile.page";
+//agrego chris sus importaciones
+import { InstanceModelForm } from "./components/chris/forms/instanceModel";
+import { InstancesPage } from "./components/chris/tables/instancesLogs/InstancesPage";
 
 // ProtectedRoute component to restrict access to authenticated users
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -33,6 +36,8 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logup" element={<LogupPage />} />
+          <Route path="/instanceForm" element={<InstanceModelForm />} />
+          <Route path="/instancesLogs" element={<InstancesPage />} />
           <Route
             path="/dashboard"
             element={
