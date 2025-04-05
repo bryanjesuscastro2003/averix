@@ -14,9 +14,20 @@ interface AuthContextType {
     username: string;
   }) => void;
   logout: () => void;
+  fetchProfile: (
+    accessToken: string,
+    refreshToken: string,
+    username: string
+  ) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>({
+  isAuthenticated: false,
+  userData: null,
+  login: () => {},
+  logout: () => {},
+  fetchProfile: async () => {},
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -29,7 +40,12 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    localStorage.getItem("accessToken") !== null &&
+      localStorage.getItem("refreshToken") !== null &&
+      localStorage.getItem("idToken") !== null &&
+      localStorage.getItem("username") !== null
+  );
   const [userData, setUserData] = useState<IUser | null>(null);
 
   // Fetch profile endpoint
@@ -53,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const data: IResponse<IProfileData> = await response.json();
       if (data.ok) {
         setUserData(data.data.user_data);
+        setIsAuthenticated(true);
       } else {
         logout();
       }
@@ -100,7 +117,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, userData }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, userData, fetchProfile }}
+    >
       {children}
     </AuthContext.Provider>
   );

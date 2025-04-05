@@ -50,6 +50,7 @@ const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
+      // in the path could be like "/dashboard/profile" or so  navigate to the path specified in the route
       navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);

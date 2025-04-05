@@ -11,14 +11,14 @@ const LogupPage: React.FC = () => {
   const [email, setEmail] = useState<string>("jesusbryan155@gmail.com");
   const [name, setName] = useState<string>("Bryan");
   const [nickname, setNickname] = useState<string>("Bryx");
-  const [role, setRole] = useState<string>("admin"); // ADMIN, CLIENT
+  const [role, setRole] = useState<string | number>("client"); // ADMIN, CLIENT
 
   ////
+  const { isAuthenticated, userData } = useAuth();
   const [confirmationCode, setConfirmationCode] = useState<string>("");
   const [isSignUpSubmitted, setIsSignUpSubmitted] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: any) => {
@@ -30,22 +30,33 @@ const LogupPage: React.FC = () => {
   const handleLogup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("Sign up data:", { username: email, password, name, nickname });
-
     try {
+      if (isAuthenticated) {
+        if (userData?.["custom:role"] === "client") setRole("client");
+      } else {
+        setRole("client");
+      }
+      if (role === "admin") setRole(1);
+      else setRole(2);
       const response = await fetch(AuthEndpoints.signUpEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: email, password, name, nickname }),
+        body: JSON.stringify({
+          username: email,
+          password,
+          name,
+          nickname,
+          role,
+        }),
       });
-      const data: ICommonResponse = await response.json();
-      const bodyData: IAuthResponse = JSON.parse(data.body);
-      if (bodyData.ok) {
+      const data: any = await response.json();
+      console.log("Response data:", data);
+      if (data.ok) {
         setIsSignUpSubmitted(true);
         setErrorMessage("");
-      } else setErrorMessage(bodyData.error || "An error occurred");
+      } else setErrorMessage(data.error || "An error occurred");
     } catch (e) {
       console.log(e);
     } finally {
@@ -80,7 +91,9 @@ const LogupPage: React.FC = () => {
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      if (userData?.["custom:role"] === "client") {
+        //navigate("/dashboard");
+      }
     }
   }, [isAuthenticated, navigate]);
 
@@ -161,11 +174,8 @@ const LogupPage: React.FC = () => {
                 required
               />
             </div>
-            <div>
-              {
-                //aqui comenzo chris//
-              }
 
+            {isAuthenticated && (
               <div className="flex items-center justify-center bg-gray-100">
                 <div className="bg-white p-6 rounded-xl shadow-md">
                   <label
@@ -188,18 +198,15 @@ const LogupPage: React.FC = () => {
                   </select>
                 </div>
               </div>
-              {
-                // aqui termino XD//
-              }
-              <button
-                type="submit"
-                className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                disabled={isLoading}
-              >
-                Sign Up
-              </button>
-              {isLoading && <Louder />}
-            </div>
+            )}
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              disabled={isLoading}
+            >
+              Sign Up
+            </button>
+            {isLoading && <Louder />}
           </form>
         ) : (
           <form onSubmit={handleConfirmation} className="space-y-6">

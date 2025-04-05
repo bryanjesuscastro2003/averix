@@ -7,6 +7,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { useState, useEffect } from "react";
 import LoginPage from "./pages/auth/Login.page";
 import DashboardPage from "./pages/dashboard/Dashboard.page";
 import NotFoundPage from "./pages/common/NotFound.page";
@@ -19,12 +20,14 @@ import ProfilePage from "./pages/dashboard/Profile.page";
 //agrego chris sus importaciones
 import { InstanceModelForm } from "./components/chris/forms/instanceModel";
 import { InstancesPage } from "./components/chris/tables/instancesLogs/InstancesPage";
+import { ManagerProvider } from "./context/Manager";
 
 // ProtectedRoute component to restrict access to authenticated users
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, fetchProfile } = useAuth();
+
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
@@ -36,37 +39,20 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logup" element={<LogupPage />} />
-          <Route path="/instanceForm" element={<InstanceModelForm />} />
-          <Route path="/instancesLogs" element={<InstancesPage />} />
           <Route
-            path="/dashboard"
+            path="/dashboard/*"
             element={
               <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <OrderHistoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/track"
-            element={
-              <ProtectedRoute>
-                <TrackDeliveryPage />
+                <Routes>
+                  <Route path="" element={<DashboardPage />} />
+                  <Route path="profile" element={<ProfilePage />} />
+                  <Route path="instanceForm" element={<InstanceModelForm />} />
+                  <Route path="instancesLogs" element={<InstancesPage />} />
+                  <Route path="orders" element={<OrderHistoryPage />} />
+                  <Route path="track" element={<TrackDeliveryPage />} />
+                  <Route path="createUser" element={<LogupPage />} />
+                  <Route path="*" element={<NotFoundPage />} />{" "}
+                </Routes>
               </ProtectedRoute>
             }
           />
