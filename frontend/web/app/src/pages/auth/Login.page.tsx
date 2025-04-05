@@ -4,7 +4,7 @@ import { AuthEndpoints } from "../../endpoints/auth";
 import { ICommonResponse } from "../../types/Common";
 import { IAuthResponse } from "../../types/AuthResponse";
 import { useAuth } from "../../context/AuthContext";
-import Loader from "../../components/layout/GREZ/Louder"; // Importa tu componente Loader
+import Loader from "../../components/GREZ/Louder"; // Importa tu componente Loader
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("jesusbryam624@gmail.com");
@@ -96,15 +96,10 @@ const LoginPage: React.FC = () => {
           <div>
             <button
               type="submit"
-<<<<<<< HEAD
               className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-500"
               disabled={isLoading}
             >
               {isLoading ? "Loading..." : "Login bb"}
-=======
-              className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-              Login bb
->>>>>>> 36df64b6ca8388ecee943447dff1f0cc8138ec8f
             </button>
           </div>
         </form>
