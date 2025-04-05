@@ -4,16 +4,20 @@ import { AuthEndpoints } from "../../endpoints/auth";
 import { ICommonResponse } from "../../types/Common";
 import { IAuthResponse } from "../../types/AuthResponse";
 import { useAuth } from "../../context/AuthContext";
+import Loader from "../../components/layout/GREZ/Louder"; // Importa tu componente Loader
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("jesusbryam624@gmail.com");
   const [password, setPassword] = useState<string>("Bryan2003@");
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para mostrar el loader
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Login data:", { username, password });
+    setIsLoading(true); // Activa el loader
+
     try {
       const response = await fetch(AuthEndpoints.signInEndpoint, {
         method: "POST",
@@ -23,7 +27,9 @@ const LoginPage: React.FC = () => {
         body: JSON.stringify({ username, password }),
       });
       const data: ICommonResponse = await response.json();
-      const bodyData: IAuthResponse = JSON.parse(data.body);
+
+      console.log(data);
+      const bodyData: IAuthResponse = data.body;
       if (bodyData.ok) {
         const accessToken = bodyData.data.AccessToken;
         const refreshToken = bodyData.data.RefreshToken;
@@ -34,7 +40,11 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("username", username);
         window.location.href = "/dashboard";
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false); // Desactiva el loader cuando termina
+    }
   };
 
   // Redirect if already authenticated
@@ -88,12 +98,20 @@ const LoginPage: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+              className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-500"
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? "Loading..." : "Login bb"}
             </button>
           </div>
         </form>
+
+        {isLoading && (
+          <div className="mt-4 flex justify-center">
+            <Loader /> {/* Loader debajo del botón */}
+          </div>
+        )}
+
         <p className="mt-6 text-center text-sm text-white">
           Don't have an account?{" "}
           <Link to="/logup" className="text-purple-500 font-semibold">
