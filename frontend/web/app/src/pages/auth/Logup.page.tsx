@@ -4,19 +4,29 @@ import { AuthEndpoints } from "../../endpoints/auth";
 import { IAuthResponse } from "../../types/AuthResponse";
 import { ICommonResponse } from "../../types/Common";
 import { useAuth } from "../../context/AuthContext";
-import Louder from "../../components/layout/chris/louder";
+import Louder from "../../components/chris/louder";
 
 const LogupPage: React.FC = () => {
+  //uso de datos para el logup
   const [password, setPassword] = useState<string>("Bryan2003@");
   const [email, setEmail] = useState<string>("jesusbryan155@gmail.com");
   const [name, setName] = useState<string>("Bryan");
   const [nickname, setNickname] = useState<string>("Bryx");
+  const [role, setRole] = useState<string>("ADMIN"); // ADMIN, CLIENT
+
+  ////
   const [confirmationCode, setConfirmationCode] = useState<string>("");
   const [isSignUpSubmitted, setIsSignUpSubmitted] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  const handleChange = (e: any) => {
+    setRole(e.target.value);
+    console.log("Rol seleccionado:", e.target.value);
+    // Aquí podrías redirigir, mostrar algo, etc.
+  };
 
   const handleLogup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,13 +159,39 @@ const LogupPage: React.FC = () => {
               />
             </div>
             <div>
+              {
+                //aqui comenzo chris//
+              }
+
+              <div className="flex items-center justify-center bg-gray-100">
+                <div className="bg-white p-6 rounded-xl shadow-md">
+                  <label
+                    htmlFor="role"
+                    className="block mb-2 text-lg font-semibold text-gray-700">
+                    Selecciona tu rol:
+                  </label>
+                  <select
+                    id="role"
+                    value={role}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled>
+                      -- Selecciona un rol --
+                    </option>
+                    <option value="admin">Admin</option>
+                    <option value="client">Client</option>
+                  </select>
+                </div>
+              </div>
+              {
+                // aqui termino XD//
+              }
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                 disabled={isLoading}>
                 Sign Up
               </button>
-
               {isLoading && <Louder />}
             </div>
           </form>
@@ -191,6 +227,7 @@ const LogupPage: React.FC = () => {
                 required
               />
             </div>
+
             <div>
               <button
                 type="submit"
