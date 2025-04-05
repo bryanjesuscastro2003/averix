@@ -1,8 +1,7 @@
+// Imports
 import React, { useState } from "react";
-import { json, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthEndpoints } from "../../endpoints/auth";
-import { IAuthResponse } from "../../types/AuthResponse";
-import { ICommonResponse } from "../../types/Common";
 import { useAuth } from "../../context/AuthContext";
 import Louder from "../../components/chris/louder";
 
@@ -12,7 +11,7 @@ const LogupPage: React.FC = () => {
   const [email, setEmail] = useState<string>("jesusbryan155@gmail.com");
   const [name, setName] = useState<string>("Bryan");
   const [nickname, setNickname] = useState<string>("Bryx");
-  const [role, setRole] = useState<string>("ADMIN"); // ADMIN, CLIENT
+  const [role, setRole] = useState<string>("admin"); // ADMIN, CLIENT
 
   ////
   const [confirmationCode, setConfirmationCode] = useState<string>("");
@@ -97,7 +96,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Email
               </label>
               <input
@@ -113,7 +113,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Password
               </label>
               <input
@@ -129,7 +130,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Full Name
               </label>
               <input
@@ -145,7 +147,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="nickname"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Nickname
               </label>
               <input
@@ -167,14 +170,16 @@ const LogupPage: React.FC = () => {
                 <div className="bg-white p-6 rounded-xl shadow-md">
                   <label
                     htmlFor="role"
-                    className="block mb-2 text-lg font-semibold text-gray-700">
+                    className="block mb-2 text-lg font-semibold text-gray-700"
+                  >
                     Selecciona tu rol:
                   </label>
                   <select
                     id="role"
                     value={role}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="" disabled>
                       -- Selecciona un rol --
                     </option>
@@ -189,7 +194,8 @@ const LogupPage: React.FC = () => {
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                disabled={isLoading}>
+                disabled={isLoading}
+              >
                 Sign Up
               </button>
               {isLoading && <Louder />}
@@ -200,7 +206,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Username
               </label>
               <input
@@ -214,7 +221,8 @@ const LogupPage: React.FC = () => {
               />
               <label
                 htmlFor="confirmationCode"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Confirmation Code
               </label>
               <input
@@ -232,7 +240,8 @@ const LogupPage: React.FC = () => {
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                disabled={isLoading}>
+                disabled={isLoading}
+              >
                 Confirm
               </button>
               {isLoading && <Louder />}
@@ -244,7 +253,8 @@ const LogupPage: React.FC = () => {
           {isSignUpSubmitted ? (
             <button
               onClick={() => setIsSignUpSubmitted(false)}
-              className="text-esmerald-500 font-semibold">
+              className="text-esmerald-500 font-semibold"
+            >
               Go back to sign up
             </button>
           ) : (
@@ -255,7 +265,8 @@ const LogupPage: React.FC = () => {
                 </Link>
                 <button
                   onClick={() => setIsSignUpSubmitted(true)}
-                  className="text-esmerald-500 font-semibold">
+                  className="text-esmerald-500 font-semibold"
+                >
                   Confirmation code
                 </button>
               </div>
