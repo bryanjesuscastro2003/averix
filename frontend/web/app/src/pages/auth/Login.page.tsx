@@ -58,75 +58,85 @@ const LoginPage: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
-      <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-2xl p-8 max-w-md w-full">
-        <h1 className="text-3xl font-bold text-white text-center mb-6">
-          Welcome Back
+    <div className="min-h-screen bg-[#f6f7f8] flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full border border-[#e0e0e0]">
+        <div className="flex justify-center mb-6">
+          <div className="bg-[#072146] text-white font-bold text-2xl px-4 py-2 rounded-sm">
+            AVI<span className="text-[#00a0d2]">REN</span>
+          </div>
+        </div>
+
+        <h1 className="text-2xl font-bold text-[#072146] text-center mb-6">
+          Bienvenido
         </h1>
+
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label
-              htmlFor="username"
-              className="block text-sm font-medium text-white"
-            >
-              Email
+              htmlFor="email"
+              className="block text-sm font-medium text-[#072146]">
+              Correo electrónico
             </label>
             <input
               type="email"
-              id="username"
+              id="email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 bg-white bg-opacity-20 border border-transparent rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              placeholder="Enter your username"
+              className="mt-1 block w-full px-4 py-3 bg-white border border-[#e0e0e0] rounded-sm text-[#072146] placeholder-[#9e9e9e] focus:outline-none focus:ring-2 focus:ring-[#00a0d2] focus:border-transparent"
+              placeholder="Ingrese su correo electrónico"
               required
             />
           </div>
+
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-white"
-            >
-              Password
+              className="block text-sm font-medium text-[#072146]">
+              Contraseña
             </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 bg-white bg-opacity-20 border border-transparent rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              placeholder="Enter your password"
+              className="mt-1 block w-full px-4 py-3 bg-white border border-[#e0e0e0] rounded-sm text-[#072146] placeholder-[#9e9e9e] focus:outline-none focus:ring-2 focus:ring-[#00a0d2] focus:border-transparent"
+              placeholder="Ingrese su contraseña"
               required
             />
           </div>
+
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-500"
-              disabled={isLoading}
-            >
-              {isLoading ? "Loading..." : "Login bb"}
+              className="w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] focus:outline-none focus:ring-2 focus:ring-[#00a0d2] focus:ring-offset-2 disabled:bg-[#cccccc] transition-colors"
+              disabled={isLoading}>
+              {isLoading ? "Cargando..." : "Iniciar sesión"}
             </button>
-            <p className="mt-2 text-sm text-red-500">{message}</p>
+            <p className="mt-2 text-sm text-[#d0021b]">{message}</p>
           </div>
         </form>
 
         {isLoading && (
           <div className="mt-4 flex justify-center">
-            <Loader /> {/* Loader debajo del botón */}
+            <Loader /> {/* Spinner de carga */}
           </div>
         )}
 
-        <p className="mt-6 text-center text-sm text-white">
-          Don't have an account?{" "}
-          <Link to="/logup" className="text-purple-500 font-semibold">
-            Sign up
+        <p className="mt-6 text-center text-sm text-[#072146]">
+          ¿No tienes una cuenta?{" "}
+          <Link
+            to="/logup"
+            className="text-[#00a0d2] font-medium hover:underline">
+            Regístrate
           </Link>
         </p>
 
-        <p className="mt-6 text-center text-sm text-white">
-          You forgot your password?{" "}
-          <Link to="/forgot-password" className="text-purple-500 font-semibold">
-            Reset Password
+        <p className="mt-3 text-center text-sm text-[#072146]">
+          ¿Olvidaste tu contraseña?{" "}
+          <Link
+            to="/forgot-password"
+            className="text-[#00a0d2] font-medium hover:underline">
+            Recuperar contraseña
           </Link>
         </p>
       </div>

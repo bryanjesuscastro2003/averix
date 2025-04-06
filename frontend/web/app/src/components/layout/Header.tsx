@@ -20,46 +20,49 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="bg-blue-500 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/dashboard" className="text-xl font-bold">
-          AVIREN
+    <header className="bg-[#072146] text-white">
+      <div className="container mx-auto flex justify-between items-center px-6 py-4">
+        <Link to="/dashboard" className="flex items-center hover:no-underline">
+          <div className="flex items-center">
+            <div className="bg-white text-[#072146] font-bold text-2xl px-3 py-1 mr-3 rounded-sm">
+              AVI
+            </div>
+            <span className="text-white font-bold text-2xl tracking-tight">
+              REN
+            </span>
+          </div>
         </Link>
+
         <nav>
           {isAuthenticated ? (
-            <div className="space-x-4">
+            <div className="flex items-center space-x-6">
               <Link
                 to="/dashboard/profile"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-              >
-                Profile
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
+                Mi perfil
               </Link>
               <Link
                 to="/dashboard/createUser"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-              >
-                Users
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
+                Usuarios
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-              >
-                Logout
+                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors">
+                Cerrar sesión
               </button>
             </div>
           ) : (
-            <div className="space-x-4">
+            <div className="flex items-center space-x-6">
               <Link
                 to="/login"
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-              >
-                Login
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
+                Iniciar sesión
               </Link>
               <Link
                 to="/logup"
-                className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded"
-              >
-                Sign Up
+                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors">
+                Registrarse
               </Link>
             </div>
           )}
