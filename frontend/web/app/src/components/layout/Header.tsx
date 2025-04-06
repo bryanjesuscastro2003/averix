@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, fetchProfile } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -11,20 +11,34 @@ const Header: React.FC = () => {
     navigate("/login"); // Redirect to login page after logout
   };
 
+  useEffect(() => {
+    fetchProfile(
+      localStorage.getItem("accessToken")!,
+      localStorage.getItem("refreshToken")!,
+      localStorage.getItem("username")!
+    );
+  }, []);
+
   return (
     <header className="bg-blue-500 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">
-          My App
+        <Link to="/dashboard" className="text-xl font-bold">
+          AVIREN
         </Link>
         <nav>
           {isAuthenticated ? (
             <div className="space-x-4">
               <Link
-                to="/profile"
+                to="/dashboard/profile"
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               >
                 Profile
+              </Link>
+              <Link
+                to="/dashboard/createUser"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Users
               </Link>
               <button
                 onClick={handleLogout}

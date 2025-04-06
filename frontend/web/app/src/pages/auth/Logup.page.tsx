@@ -1,10 +1,10 @@
+// Imports
 import React, { useState } from "react";
-import { json, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthEndpoints } from "../../endpoints/auth";
-import { IAuthResponse } from "../../types/AuthResponse";
-import { ICommonResponse } from "../../types/Common";
 import { useAuth } from "../../context/AuthContext";
 import Louder from "../../components/chris/louder";
+import { IResponse } from "../../types/responses/IResponse";
 
 const LogupPage: React.FC = () => {
   //uso de datos para el logup
@@ -12,14 +12,15 @@ const LogupPage: React.FC = () => {
   const [email, setEmail] = useState<string>("jesusbryan155@gmail.com");
   const [name, setName] = useState<string>("Bryan");
   const [nickname, setNickname] = useState<string>("Bryx");
-  const [role, setRole] = useState<string>("ADMIN"); // ADMIN, CLIENT
+  const [role, setRole] = useState<string | number>("client"); // ADMIN, CLIENT
 
   ////
+  const { isAuthenticated, userData } = useAuth();
   const [confirmationCode, setConfirmationCode] = useState<string>("");
   const [isSignUpSubmitted, setIsSignUpSubmitted] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { login, isAuthenticated } = useAuth();
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const handleChange = (e: any) => {
@@ -31,22 +32,33 @@ const LogupPage: React.FC = () => {
   const handleLogup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("Sign up data:", { username: email, password, name, nickname });
-
     try {
+      if (isAuthenticated) {
+        if (userData?.["custom:role"] === "client") setRole("client");
+      } else {
+        setRole("client");
+      }
+      if (role === "admin") setRole(1);
+      else setRole(2);
       const response = await fetch(AuthEndpoints.signUpEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: email, password, name, nickname }),
+        body: JSON.stringify({
+          username: email,
+          password,
+          name,
+          nickname,
+          role,
+        }),
       });
-      const data: ICommonResponse = await response.json();
-      const bodyData: IAuthResponse = JSON.parse(data.body);
-      if (bodyData.ok) {
+      const data: IResponse<null> = await response.json();
+      setMessage(data.message);
+      if (data.ok) {
         setIsSignUpSubmitted(true);
         setErrorMessage("");
-      } else setErrorMessage(bodyData.error || "An error occurred");
+      } else setErrorMessage(data.error || "An error occurred");
     } catch (e) {
       console.log(e);
     } finally {
@@ -66,14 +78,13 @@ const LogupPage: React.FC = () => {
         },
         body: JSON.stringify({ username: email, confirmationCode }),
       });
-      const data: ICommonResponse = await response.json();
-      const bodyData: IAuthResponse = JSON.parse(data.body);
-      if (bodyData.ok) {
-        setErrorMessage("");
+      const data: IResponse<null> = await response.json();
+      if (data.ok) {
+        setMessage("");
         window.location.href = "/login";
-      } else setErrorMessage(bodyData.error || "An error occurred");
+      } else setMessage(data.message || "An error occurred");
     } catch (error) {
-      setErrorMessage("Unexpected error occurred, please try again later ...");
+      setMessage("Unexpected error occurred, please try again later ...");
     } finally {
       setIsLoading(false);
     }
@@ -81,7 +92,10 @@ const LogupPage: React.FC = () => {
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      console.log("User is authenticated", userData);
+      if (userData?.["custom:role"] === "user") {
+        navigate("/dashboard");
+      }
     }
   }, [isAuthenticated, navigate]);
 
@@ -89,7 +103,13 @@ const LogupPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 flex items-center justify-center p-4">
       <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-2xl p-8 max-w-md w-full">
         <h1 className="text-3xl font-bold text-white text-center mb-6">
-          {isSignUpSubmitted ? "Confirm Your Account" : "Create Your Account"}
+          {isAuthenticated
+            ? isSignUpSubmitted
+              ? "Confirm Such Account"
+              : "Create an account"
+            : isSignUpSubmitted
+            ? "Confirm Your Account"
+            : "Create Your Account"}
         </h1>
 
         {!isSignUpSubmitted ? (
@@ -97,7 +117,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Email
               </label>
               <input
@@ -113,7 +134,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Password
               </label>
               <input
@@ -129,7 +151,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Full Name
               </label>
               <input
@@ -145,7 +168,8 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="nickname"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Nickname
               </label>
               <input
@@ -158,23 +182,22 @@ const LogupPage: React.FC = () => {
                 required
               />
             </div>
-            <div>
-              {
-                //aqui comenzo chris//
-              }
 
+            {isAuthenticated && (
               <div className="flex items-center justify-center bg-gray-100">
                 <div className="bg-white p-6 rounded-xl shadow-md">
                   <label
                     htmlFor="role"
-                    className="block mb-2 text-lg font-semibold text-gray-700">
+                    className="block mb-2 text-lg font-semibold text-gray-700"
+                  >
                     Selecciona tu rol:
                   </label>
                   <select
                     id="role"
                     value={role}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="" disabled>
                       -- Selecciona un rol --
                     </option>
@@ -183,24 +206,23 @@ const LogupPage: React.FC = () => {
                   </select>
                 </div>
               </div>
-              {
-                // aqui termino XD//
-              }
-              <button
-                type="submit"
-                className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                disabled={isLoading}>
-                Sign Up
-              </button>
-              {isLoading && <Louder />}
-            </div>
+            )}
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              disabled={isLoading}
+            >
+              Sign Up
+            </button>
+            {isLoading && <Louder />}
           </form>
         ) : (
           <form onSubmit={handleConfirmation} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Username
               </label>
               <input
@@ -214,7 +236,8 @@ const LogupPage: React.FC = () => {
               />
               <label
                 htmlFor="confirmationCode"
-                className="block text-sm font-medium text-white">
+                className="block text-sm font-medium text-white"
+              >
                 Confirmation Code
               </label>
               <input
@@ -232,7 +255,8 @@ const LogupPage: React.FC = () => {
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                disabled={isLoading}>
+                disabled={isLoading}
+              >
                 Confirm
               </button>
               {isLoading && <Louder />}
@@ -244,28 +268,30 @@ const LogupPage: React.FC = () => {
           {isSignUpSubmitted ? (
             <button
               onClick={() => setIsSignUpSubmitted(false)}
-              className="text-esmerald-500 font-semibold">
+              className="text-esmerald-500 font-semibold"
+            >
               Go back to sign up
             </button>
           ) : (
             <>
               <div className="grid grid-cols-1 gap-2">
-                <Link to="/login" className="text-teal-500 font-semibold">
-                  Already have an account? Log in
-                </Link>
+                {!isAuthenticated && (
+                  <Link to="/login" className="text-teal-500 font-semibold">
+                    Already have an account? Log in
+                  </Link>
+                )}
                 <button
                   onClick={() => setIsSignUpSubmitted(true)}
-                  className="text-esmerald-500 font-semibold">
+                  className="text-esmerald-500 font-semibold"
+                >
                   Confirmation code
                 </button>
               </div>
             </>
           )}
         </p>
-        {errorMessage && (
-          <p className="mt-4 text-red-500 text-center text-sm">
-            {errorMessage}
-          </p>
+        {message && (
+          <p className="mt-4 text-red-500 text-center text-sm">{message}</p>
         )}
       </div>
     </div>

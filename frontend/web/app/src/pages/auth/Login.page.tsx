@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthEndpoints } from "../../endpoints/auth";
-import { ICommonResponse } from "../../types/Common";
-import { IAuthResponse } from "../../types/AuthResponse";
+import { IResponse } from "../../types/responses/IResponse";
+import { ILoginData } from "../../types/responses/auth/ILoginData";
 import { useAuth } from "../../context/AuthContext";
-import Loader from "../../components/GREZ/Louder"; // Importa tu componente Loader
+import { Loader } from "../../components/grez/Louder";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("jesusbryam624@gmail.com");
   const [password, setPassword] = useState<string>("Bryan2003@");
   const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para mostrar el loader
+  const [message, setMessage] = useState<string>("");
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -26,19 +27,21 @@ const LoginPage: React.FC = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-      const data: ICommonResponse = await response.json();
+      const data: IResponse<ILoginData> = await response.json();
 
-      console.log(data);
-      const bodyData: IAuthResponse = data.body;
-      if (bodyData.ok) {
-        const accessToken = bodyData.data.AccessToken;
-        const refreshToken = bodyData.data.RefreshToken;
-        const idToken = bodyData.data.IdToken;
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("idToken", idToken);
-        localStorage.setItem("username", username);
-        window.location.href = "/dashboard";
+      setMessage(data.message);
+      console.log("Login response:", data);
+
+      if (data.ok) {
+        const accessToken = data.data.AccessToken;
+        const refreshToken = data.data.RefreshToken;
+        const idToken = data.data.IdToken;
+        login({
+          accessToken,
+          refreshToken,
+          idToken,
+          username,
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -50,7 +53,7 @@ const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      window.location.href = "/dashboard"; // Redirige a la página de inicio
     }
   }, [isAuthenticated, navigate]);
 
@@ -64,7 +67,8 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-white">
+              className="block text-sm font-medium text-white"
+            >
               Email
             </label>
             <input
@@ -80,7 +84,8 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-white">
+              className="block text-sm font-medium text-white"
+            >
               Password
             </label>
             <input
@@ -101,6 +106,7 @@ const LoginPage: React.FC = () => {
             >
               {isLoading ? "Loading..." : "Login bb"}
             </button>
+            <p className="mt-2 text-sm text-red-500">{message}</p>
           </div>
         </form>
 
@@ -114,6 +120,13 @@ const LoginPage: React.FC = () => {
           Don't have an account?{" "}
           <Link to="/logup" className="text-purple-500 font-semibold">
             Sign up
+          </Link>
+        </p>
+
+        <p className="mt-6 text-center text-sm text-white">
+          You forgot your password?{" "}
+          <Link to="/forgot-password" className="text-purple-500 font-semibold">
+            Reset Password
           </Link>
         </p>
       </div>
