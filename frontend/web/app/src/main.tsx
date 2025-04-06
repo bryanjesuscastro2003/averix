@@ -20,7 +20,8 @@ import ProfilePage from "./pages/dashboard/Profile.page";
 //agrego chris sus importaciones
 import { InstanceModelForm } from "./components/chris/forms/instanceModel";
 import { InstancesPage } from "./components/chris/tables/instancesLogs/InstancesPage";
-import { ManagerProvider } from "./context/Manager";
+import { ForgotPassword } from "./pages/auth/ForgetPassword.page";
+import { ResetPassword } from "./pages/auth/ResetPassword.page";
 
 // ProtectedRoute component to restrict access to authenticated users
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -39,6 +40,8 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logup" element={<LogupPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route
             path="/dashboard/*"
             element={

@@ -10,6 +10,7 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("jesusbryam624@gmail.com");
   const [password, setPassword] = useState<string>("Bryan2003@");
   const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para mostrar el loader
+  const [message, setMessage] = useState<string>("");
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -28,6 +29,9 @@ const LoginPage: React.FC = () => {
       });
       const data: IResponse<ILoginData> = await response.json();
 
+      setMessage(data.message);
+      console.log("Login response:", data);
+
       if (data.ok) {
         const accessToken = data.data.AccessToken;
         const refreshToken = data.data.RefreshToken;
@@ -38,7 +42,6 @@ const LoginPage: React.FC = () => {
           idToken,
           username,
         });
-        window.location.href = "/dashboard";
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -50,8 +53,7 @@ const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
-      // in the path could be like "/dashboard/profile" or so  navigate to the path specified in the route
-      navigate("/dashboard");
+      window.location.href = "/dashboard"; // Redirige a la página de inicio
     }
   }, [isAuthenticated, navigate]);
 
@@ -104,6 +106,7 @@ const LoginPage: React.FC = () => {
             >
               {isLoading ? "Loading..." : "Login bb"}
             </button>
+            <p className="mt-2 text-sm text-red-500">{message}</p>
           </div>
         </form>
 
@@ -117,6 +120,13 @@ const LoginPage: React.FC = () => {
           Don't have an account?{" "}
           <Link to="/logup" className="text-purple-500 font-semibold">
             Sign up
+          </Link>
+        </p>
+
+        <p className="mt-6 text-center text-sm text-white">
+          You forgot your password?{" "}
+          <Link to="/forgot-password" className="text-purple-500 font-semibold">
+            Reset Password
           </Link>
         </p>
       </div>

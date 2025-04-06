@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthEndpoints } from "../../endpoints/auth";
 import { useAuth } from "../../context/AuthContext";
 import Louder from "../../components/chris/louder";
+import { IResponse } from "../../types/responses/IResponse";
 
 const LogupPage: React.FC = () => {
   //uso de datos para el logup
@@ -19,6 +20,7 @@ const LogupPage: React.FC = () => {
   const [isSignUpSubmitted, setIsSignUpSubmitted] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const handleChange = (e: any) => {
@@ -51,8 +53,8 @@ const LogupPage: React.FC = () => {
           role,
         }),
       });
-      const data: any = await response.json();
-      console.log("Response data:", data);
+      const data: IResponse<null> = await response.json();
+      setMessage(data.message);
       if (data.ok) {
         setIsSignUpSubmitted(true);
         setErrorMessage("");
@@ -76,14 +78,13 @@ const LogupPage: React.FC = () => {
         },
         body: JSON.stringify({ username: email, confirmationCode }),
       });
-      const data: ICommonResponse = await response.json();
-      const bodyData: IAuthResponse = JSON.parse(data.body);
-      if (bodyData.ok) {
-        setErrorMessage("");
+      const data: IResponse<null> = await response.json();
+      if (data.ok) {
+        setMessage("");
         window.location.href = "/login";
-      } else setErrorMessage(bodyData.error || "An error occurred");
+      } else setMessage(data.message || "An error occurred");
     } catch (error) {
-      setErrorMessage("Unexpected error occurred, please try again later ...");
+      setMessage("Unexpected error occurred, please try again later ...");
     } finally {
       setIsLoading(false);
     }
@@ -91,8 +92,9 @@ const LogupPage: React.FC = () => {
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      if (userData?.["custom:role"] === "client") {
-        //navigate("/dashboard");
+      console.log("User is authenticated", userData);
+      if (userData?.["custom:role"] === "user") {
+        navigate("/dashboard");
       }
     }
   }, [isAuthenticated, navigate]);
@@ -101,7 +103,13 @@ const LogupPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 flex items-center justify-center p-4">
       <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-2xl p-8 max-w-md w-full">
         <h1 className="text-3xl font-bold text-white text-center mb-6">
-          {isSignUpSubmitted ? "Confirm Your Account" : "Create Your Account"}
+          {isAuthenticated
+            ? isSignUpSubmitted
+              ? "Confirm Such Account"
+              : "Create an account"
+            : isSignUpSubmitted
+            ? "Confirm Your Account"
+            : "Create Your Account"}
         </h1>
 
         {!isSignUpSubmitted ? (
@@ -267,9 +275,11 @@ const LogupPage: React.FC = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 gap-2">
-                <Link to="/login" className="text-teal-500 font-semibold">
-                  Already have an account? Log in
-                </Link>
+                {!isAuthenticated && (
+                  <Link to="/login" className="text-teal-500 font-semibold">
+                    Already have an account? Log in
+                  </Link>
+                )}
                 <button
                   onClick={() => setIsSignUpSubmitted(true)}
                   className="text-esmerald-500 font-semibold"
@@ -280,10 +290,8 @@ const LogupPage: React.FC = () => {
             </>
           )}
         </p>
-        {errorMessage && (
-          <p className="mt-4 text-red-500 text-center text-sm">
-            {errorMessage}
-          </p>
+        {message && (
+          <p className="mt-4 text-red-500 text-center text-sm">{message}</p>
         )}
       </div>
     </div>
