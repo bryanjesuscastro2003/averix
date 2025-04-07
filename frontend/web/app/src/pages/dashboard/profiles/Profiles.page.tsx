@@ -127,7 +127,7 @@ export const ProfilesPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">User Management</h1>
+      <h1 className="text-2xl font-bold mb-6">Gestión de Usuarios</h1>
 
       {/* Filter controls */}
       <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -135,13 +135,13 @@ export const ProfilesPage = () => {
           <label
             htmlFor="usernameFilter"
             className="block text-sm font-medium text-gray-700 mb-1">
-            Filter by Email
+            Filtrar por Correo
           </label>
           <input
             type="text"
             id="usernameFilter"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search email..."
+            placeholder="Buscar correo..."
             value={usernameFilter}
             onChange={(e) => setUsernameFilter(e.target.value)}
           />
@@ -151,7 +151,7 @@ export const ProfilesPage = () => {
           <label
             htmlFor="statusFilter"
             className="block text-sm font-medium text-gray-700 mb-1">
-            Filter by Status
+            Filtrar por Estado
           </label>
           <select
             id="statusFilter"
@@ -169,7 +169,7 @@ export const ProfilesPage = () => {
 
       {/* Results count */}
       <div className="mb-2 text-sm text-gray-600">
-        Showing {filteredUsers.length} of {users.length} users
+        Mostrando {filteredUsers.length} de {users.length} usuarios
       </div>
 
       {/* Table */}
@@ -178,28 +178,28 @@ export const ProfilesPage = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ByUsername
+                Usuario
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                Estado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
+                Correo
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
+                Creado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Modified
+                Modificado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Confirmed
+                Confirmado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Deliveries
+                Entregas
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                Acciones
               </th>
             </tr>
           </thead>
@@ -226,7 +226,7 @@ export const ProfilesPage = () => {
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
                       }`}>
-                      {user.enabled === true ? "Active" : "Inactive"}
+                      {user.enabled === true ? "Activo" : "Inactivo"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -247,15 +247,15 @@ export const ProfilesPage = () => {
                             : "bg-red-100 text-red-800"
                         }`}>
                       {user.attributes.email_verified === "true"
-                        ? "Confirmed"
-                        : "Unconfirmed"}
+                        ? "Confirmado"
+                        : "No confirmado"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
                       onClick={() => handleDeliveries(user.username)}
                       className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200">
-                      View Deliveries
+                      Ver Entregas
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -269,7 +269,7 @@ export const ProfilesPage = () => {
                               ? "bg-red-100 text-red-800 hover:bg-red-200"
                               : "bg-green-100 text-green-800 hover:bg-green-200"
                           }`}>
-                        {user.enabled ? "Disable" : "Enable"}
+                        {user.enabled ? "Desactivar" : "Activar"}
                       </button>
                     </div>
                   </td>
@@ -280,7 +280,7 @@ export const ProfilesPage = () => {
                 <td
                   colSpan={8}
                   className="px-6 py-4 text-center text-sm text-gray-500">
-                  No users found matching your filters.
+                  No se encontraron usuarios con los filtros aplicados.
                 </td>
               </tr>
             )}
@@ -294,7 +294,7 @@ export const ProfilesPage = () => {
         <Link
           to="/dashboard/createProfile"
           className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
-          Create New Profile
+          Crear Nuevo Perfil
         </Link>
       </div>
     </div>
