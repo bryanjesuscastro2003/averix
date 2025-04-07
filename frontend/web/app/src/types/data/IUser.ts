@@ -1,3 +1,12 @@
+export interface IProfile {
+    username: string,
+    enabled: boolean,
+    status: string,
+    created: string,
+    modified: string,
+    attributes: IUser
+}
+
 export interface IUser {
     email: string,
     email_verified: string,

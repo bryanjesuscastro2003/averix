@@ -19,9 +19,11 @@ import Header from "./components/layout/Header";
 import ProfilePage from "./pages/dashboard/Profile.page";
 //agrego chris sus importaciones
 import { InstanceModelForm } from "./components/chris/forms/instanceModel";
-import { InstancesPage } from "./components/chris/tables/instancesLogs/InstancesPage";
+import { InstancesPage } from "./pages/dashboard/instances/Instances.page";
 import { ForgotPassword } from "./pages/auth/ForgetPassword.page";
 import { ResetPassword } from "./pages/auth/ResetPassword.page";
+import { ProfilesPage } from "./pages/dashboard/profiles/Profiles.page";
+import DeliveriesPage from "./pages/dashboard/deliveries/Deliveries.page";
 
 // ProtectedRoute component to restrict access to authenticated users
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -49,11 +51,14 @@ createRoot(document.getElementById("root")!).render(
                 <Routes>
                   <Route path="" element={<DashboardPage />} />
                   <Route path="profile" element={<ProfilePage />} />
+                  <Route path="profiles" element={<ProfilesPage />} />
+                  <Route path="deliveries" element={<DeliveriesPage />} />
+                  <Route path="instances" element={<InstancesPage />} />
                   <Route path="instanceForm" element={<InstanceModelForm />} />
                   <Route path="instancesLogs" element={<InstancesPage />} />
                   <Route path="orders" element={<OrderHistoryPage />} />
                   <Route path="track" element={<TrackDeliveryPage />} />
-                  <Route path="createUser" element={<LogupPage />} />
+                  <Route path="createProfile" element={<LogupPage />} />
                   <Route path="*" element={<NotFoundPage />} />{" "}
                 </Routes>
               </ProtectedRoute>
