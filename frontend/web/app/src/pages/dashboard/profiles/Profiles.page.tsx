@@ -200,14 +200,7 @@ export const ProfilesPage = () => {
                 Entregas
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-<<<<<<< HEAD
                 Acciones
-=======
-                Role
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
->>>>>>> frontendBryan
               </th>
             </tr>
           </thead>
@@ -273,8 +266,7 @@ export const ProfilesPage = () => {
                         user.attributes["custom:role"] === "admin"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
+                      }`}>
                       {user.attributes["custom:role"]}
                     </span>
                   </td>
