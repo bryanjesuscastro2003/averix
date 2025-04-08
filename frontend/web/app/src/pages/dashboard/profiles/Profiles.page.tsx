@@ -47,6 +47,7 @@ export const ProfilesPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("idToken"),
         },
         body: JSON.stringify({
           username,
@@ -96,6 +97,7 @@ export const ProfilesPage = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("idToken"),
         },
       });
       const data: IResponse<{
@@ -107,7 +109,6 @@ export const ProfilesPage = () => {
       }> = await response.json();
       if (data.ok) {
         setUsers(data.data.users);
-        setMessage(data.message);
       } else {
         setMessage(data.message);
         console.error("Error fetching profiles:", data.message);
@@ -202,13 +203,16 @@ export const ProfilesPage = () => {
                 Deliveries
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Role
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoading && <Louder />}
-
+            {message && <div className="p-4 text-red-500">{message}</div>}
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <tr
@@ -264,6 +268,18 @@ export const ProfilesPage = () => {
                     >
                       View Deliveries
                     </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                      ${
+                        user.attributes["custom:role"] === "admin"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {user.attributes["custom:role"]}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex space-x-2">
