@@ -48,7 +48,14 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
         <div className="p-4">
           {userLocation ? (
             <div className="mb-4">
-              <Mapa center={userLocation} zoom={15} />
+              <Mapa
+                center={userLocation}
+                zoom={15}
+                onLocationChange={(lat: number, lng: number) =>
+                  // console.log(lat, lng)
+                  setUserLocation([lat, lng])
+                }
+              />
             </div>
           ) : (
             <div className="text-center py-8">
@@ -79,6 +86,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
                 : "bg-gray-400 cursor-not-allowed"
             }`}>
             Confirmar Entrega
+            {userLocation}
           </button>
         </div>
       </div>
