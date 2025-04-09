@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { IUser } from "../types/data/IUser";
-import { AuthEndpoints } from "../endpoints/auth";
-import { IResponse } from "../types/responses/IResponse";
-import { IProfileData } from "../types/responses/auth/IProfileData";
+import { IUser } from "../../types/data/IUser";
+import { AuthEndpoints } from "../../endpoints/auth";
+import { IResponse } from "../../types/responses/IResponse";
+import { IProfileData } from "../../types/responses/auth/IProfileData";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -118,8 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, userData, fetchProfile }}
-    >
+      value={{ isAuthenticated, login, logout, userData, fetchProfile }}>
       {children}
     </AuthContext.Provider>
   );

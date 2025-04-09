@@ -2,7 +2,7 @@ import { useState } from "react";
 import { format, parseISO, set } from "date-fns";
 import { Pagination } from "../../../components/bryan/Pagination";
 import Navigate, { Link } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../components/context/AuthContext";
 import { useEffect } from "react";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IProfile } from "../../../types/data/IUser";

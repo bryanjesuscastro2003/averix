@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const Header: React.FC = () => {
   const { isAuthenticated, logout, fetchProfile } = useAuth();
@@ -38,32 +38,27 @@ const Header: React.FC = () => {
             <div className="flex items-center space-x-6">
               <Link
                 to="/dashboard/profile"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
                 Mi perfil
               </Link>
               <Link
                 to="/dashboard/profiles"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
                 Usuarios
               </Link>
               <Link
                 to="/dashboard/deliveries"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
-                Viajes
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
+                Entregas
               </Link>
               <Link
                 to="/dashboard/instances"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
                 Instancias
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors"
-              >
+                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors">
                 Cerrar sesión
               </button>
             </div>
@@ -71,14 +66,12 @@ const Header: React.FC = () => {
             <div className="flex items-center space-x-6">
               <Link
                 to="/login"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
+                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline">
                 Iniciar sesión
               </Link>
               <Link
                 to="/logup"
-                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors"
-              >
+                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors">
                 Registrarse
               </Link>
             </div>
