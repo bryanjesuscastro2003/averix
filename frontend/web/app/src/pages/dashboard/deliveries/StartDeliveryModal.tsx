@@ -86,7 +86,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
                 : "bg-gray-400 cursor-not-allowed"
             }`}>
             Confirmar Entrega
-            {userLocation}
+            {/*userLocation*/}
           </button>
         </div>
       </div>
