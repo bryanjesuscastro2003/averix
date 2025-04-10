@@ -16,9 +16,7 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login data:", { username, password });
-    setIsLoading(true); // Activa el loader
-
+    setIsLoading(true);
     try {
       const response = await fetch(AuthEndpoints.signInEndpoint, {
         method: "POST",
@@ -27,10 +25,8 @@ const LoginPage: React.FC = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-      const data: IResponse<ILoginData> = await response.json();
 
-      setMessage(data.message);
-      console.log("Login response:", data);
+      const data: IResponse<ILoginData> = await response.json();
 
       if (data.ok) {
         const accessToken = data.data.AccessToken;
@@ -42,6 +38,8 @@ const LoginPage: React.FC = () => {
           idToken,
           username,
         });
+      } else {
+        setMessage(data.message);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -53,7 +51,7 @@ const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
-      window.location.href = "/dashboard"; // Redirige a la página de inicio
+      window.location.href = "/dashboard";
     }
   }, [isAuthenticated, navigate]);
 
@@ -74,7 +72,8 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-[#072146]">
+              className="block text-sm font-medium text-[#072146]"
+            >
               Correo electrónico
             </label>
             <input
@@ -91,7 +90,8 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-[#072146]">
+              className="block text-sm font-medium text-[#072146]"
+            >
               Contraseña
             </label>
             <input
@@ -109,7 +109,8 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               className="w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] focus:outline-none focus:ring-2 focus:ring-[#00a0d2] focus:ring-offset-2 disabled:bg-[#cccccc] transition-colors"
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               {isLoading ? "Cargando..." : "Iniciar sesión"}
             </button>
             <p className="mt-2 text-sm text-[#d0021b]">{message}</p>
@@ -126,7 +127,8 @@ const LoginPage: React.FC = () => {
           ¿No tienes una cuenta?{" "}
           <Link
             to="/logup"
-            className="text-[#00a0d2] font-medium hover:underline">
+            className="text-[#00a0d2] font-medium hover:underline"
+          >
             Regístrate
           </Link>
         </p>
@@ -135,7 +137,8 @@ const LoginPage: React.FC = () => {
           ¿Olvidaste tu contraseña?{" "}
           <Link
             to="/forgot-password"
-            className="text-[#00a0d2] font-medium hover:underline">
+            className="text-[#00a0d2] font-medium hover:underline"
+          >
             Recuperar contraseña
           </Link>
         </p>

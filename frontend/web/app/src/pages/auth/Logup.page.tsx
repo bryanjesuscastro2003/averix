@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import Louder from "../../components/chris/louder";
 import { IResponse } from "../../types/responses/IResponse";
 import { DashboardEndpoints } from "../../endpoints/dashboard";
+import { set } from "date-fns";
 
 const LogupPage: React.FC = () => {
   //uso de datos para el logup
@@ -19,7 +20,6 @@ const LogupPage: React.FC = () => {
   const { isAuthenticated, userData } = useAuth();
   const [confirmationCode, setConfirmationCode] = useState<string>("");
   const [isSignUpSubmitted, setIsSignUpSubmitted] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
@@ -65,10 +65,10 @@ const LogupPage: React.FC = () => {
       setMessage(data.message);
       if (data.ok) {
         setIsSignUpSubmitted(true);
-        setErrorMessage("");
-      } else setErrorMessage(data.error || "An error occurred");
+        setMessage("");
+      } else setMessage(data.message || "An error occurred");
     } catch (e) {
-      console.log(e);
+      setMessage("Unexpected error occurred, please try again later ...");
     } finally {
       setIsLoading(false);
     }
