@@ -21,12 +21,14 @@ const Dashboard: React.FC = () => {
         <div className="space-y-4">
           <Link
             to="/orders"
-            className="block w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors">
+            className="block w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
+          >
             Historial de Pedidos
           </Link>
           <Link
             to="/track"
-            className="block w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors">
+            className="block w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
+          >
             Seguimiento de Envío
           </Link>
         </div>
