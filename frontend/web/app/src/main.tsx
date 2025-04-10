@@ -30,7 +30,7 @@ import { CreateInstancePage } from "./pages/dashboard/instances/CreateInstance.p
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { isAuthenticated, fetchProfile } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };

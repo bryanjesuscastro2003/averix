@@ -32,11 +32,13 @@ const LoginPage: React.FC = () => {
         const accessToken = data.data.AccessToken;
         const refreshToken = data.data.RefreshToken;
         const idToken = data.data.IdToken;
+        const role = data.data.role;
         login({
           accessToken,
           refreshToken,
           idToken,
           username,
+          role,
         });
       } else {
         setMessage(data.message);

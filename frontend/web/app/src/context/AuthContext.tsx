@@ -12,6 +12,7 @@ interface AuthContextType {
     refreshToken: string;
     idToken: string;
     username: string;
+    role: string;
   }) => void;
   logout: () => void;
   fetchProfile: (
@@ -100,11 +101,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     refreshToken: string;
     idToken: string;
     username: string;
+    role: string;
   }) => {
     localStorage.setItem("accessToken", tokens.accessToken);
     localStorage.setItem("refreshToken", tokens.refreshToken);
     localStorage.setItem("idToken", tokens.idToken);
     localStorage.setItem("username", tokens.username);
+    localStorage.setItem("role", tokens.role);
     setIsAuthenticated(true);
   };
 
@@ -113,6 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("idToken");
     localStorage.removeItem("username");
+    localStorage.removeItem("role");
     setIsAuthenticated(false);
   };
 
