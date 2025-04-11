@@ -89,7 +89,9 @@ const LogupPage: React.FC = () => {
       const data: IResponse<null> = await response.json();
       if (data.ok) {
         setMessage("");
-        window.location.href = "/auth/login";
+        !isAuthenticated
+          ? (window.location.href = "/auth/login")
+          : navigate("/dashboard/admin/profiles");
       } else setMessage(data.message || "An error occurred");
     } catch (error) {
       setMessage("Unexpected error occurred, please try again later ...");
@@ -97,15 +99,6 @@ const LogupPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      console.log("User is authenticated", userData);
-      if (userData?.["custom:role"] === "user") {
-        navigate("/dashboard");
-      }
-    }
-  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-[#f6f7f8] flex items-center justify-center p-4">

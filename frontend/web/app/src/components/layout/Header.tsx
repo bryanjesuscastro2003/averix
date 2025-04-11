@@ -8,7 +8,7 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login"); // Redirect to login page after logout
+    navigate("/auth/login"); // Redirect to login page after logout
   };
 
   useEffect(() => {
