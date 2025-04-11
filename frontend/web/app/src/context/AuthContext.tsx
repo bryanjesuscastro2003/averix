@@ -45,9 +45,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.getItem("accessToken") !== null &&
       localStorage.getItem("refreshToken") !== null &&
       localStorage.getItem("idToken") !== null &&
-      localStorage.getItem("username") !== null
+      localStorage.getItem("username") !== null &&
+      localStorage.getItem("role") !== null
   );
-  const [userData, setUserData] = useState<IUser | null>(null);
+  const [userData, setUserData] = useState<IUser | null>(
+    localStorage.getItem("accessToken") !== null
+      ? {
+          name: "",
+          email: "",
+          email_verified: "",
+          nickname: "",
+          sub: "",
+          "custom:role": localStorage.getItem("role") || "",
+        }
+      : null
+  );
 
   // Fetch profile endpoint
   const fetchProfile = async (
@@ -69,8 +81,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       const data: IResponse<IProfileData> = await response.json();
       if (data.ok) {
-        setUserData(data.data.user_data);
-        setIsAuthenticated(true);
+        if (
+          data.data.user_data["custom:role"] !== localStorage.getItem("role")
+        ) {
+          logout();
+        } else {
+          setUserData(data.data.user_data);
+          setIsAuthenticated(true);
+        }
       } else {
         logout();
       }

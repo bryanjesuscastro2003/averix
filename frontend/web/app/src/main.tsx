@@ -26,13 +26,36 @@ import { ProfilesPage } from "./pages/dashboard/profiles/Profiles.page";
 import DeliveriesPage from "./pages/dashboard/deliveries/Deliveries.page";
 import { CreateInstancePage } from "./pages/dashboard/instances/CreateInstance.page";
 
-// ProtectedRoute component to restrict access to authenticated users
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { isAuthenticated } = useAuth();
 
+  return isAuthenticated ? (
+    <Navigate to="/dashboard" replace />
+  ) : (
+    <>{children}</>
+  );
+};
+
+// ProtectedRoute component to restrict access to authenticated users
+const AuthenticatedProtectedRouteRoute: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+};
+
+const AdminProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { userData } = useAuth();
+  return userData?.["custom:role"] === "admin" ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/dashboard" replace />
+  );
 };
 
 createRoot(document.getElementById("root")!).render(
@@ -41,31 +64,62 @@ createRoot(document.getElementById("root")!).render(
       <Router>
         <Header /> {/* Include the Header component */}
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/logup" element={<LogupPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/auth/*"
+            element={
+              <AuthProtectedRouteRoute>
+                <Routes>
+                  <Route path="login" element={<LoginPage />} />
+                  <Route path="logup" element={<LogupPage />} />
+                  <Route path="forgot-password" element={<ForgotPassword />} />
+                  <Route path="reset-password" element={<ResetPassword />} />
+                </Routes>
+              </AuthProtectedRouteRoute>
+            }
+          ></Route>
           <Route
             path="/dashboard/*"
             element={
-              <ProtectedRoute>
+              <AuthenticatedProtectedRouteRoute>
                 <Routes>
                   <Route path="" element={<DashboardPage />} />
                   <Route path="profile" element={<ProfilePage />} />
-                  <Route path="profiles" element={<ProfilesPage />} />
                   <Route path="deliveries" element={<DeliveriesPage />} />
-                  <Route path="instances" element={<InstancesPage />} />
                   <Route
-                    path="createInstance"
-                    element={<CreateInstancePage />}
-                  />
-                  <Route path="instancesLogs" element={<InstancesPage />} />
-                  <Route path="orders" element={<OrderHistoryPage />} />
-                  <Route path="track" element={<TrackDeliveryPage />} />
-                  <Route path="createProfile" element={<LogupPage />} />
-                  <Route path="*" element={<NotFoundPage />} />{" "}
+                    path="admin/*"
+                    element={
+                      <AdminProtectedRoute>
+                        <Routes>
+                          <Route
+                            path="profiles/*"
+                            element={
+                              <Routes>
+                                <Route path="" element={<ProfilesPage />} />
+                                <Route
+                                  path="createProfile"
+                                  element={<LogupPage />}
+                                />
+                              </Routes>
+                            }
+                          />
+                          <Route
+                            path="instances/*"
+                            element={
+                              <Routes>
+                                <Route path="" element={<InstancesPage />} />
+                                <Route
+                                  path="createInstance"
+                                  element={<CreateInstancePage />}
+                                />
+                              </Routes>
+                            }
+                          />
+                        </Routes>
+                      </AdminProtectedRoute>
+                    }
+                  ></Route>
                 </Routes>
-              </ProtectedRoute>
+              </AuthenticatedProtectedRouteRoute>
             }
           />
           <Route path="*" element={<NotFoundPage />} />{" "}

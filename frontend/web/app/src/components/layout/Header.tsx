@@ -51,13 +51,13 @@ const Header: React.FC = () => {
               {isAuthenticated && userData?.["custom:role"] === "admin" && (
                 <>
                   <Link
-                    to="/dashboard/instances"
+                    to="/dashboard/admin/instances"
                     className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
                   >
                     Instancias
                   </Link>
                   <Link
-                    to="/dashboard/profiles"
+                    to="/dashboard/admin/profiles"
                     className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
                   >
                     Usuarios
@@ -75,13 +75,13 @@ const Header: React.FC = () => {
           ) : (
             <div className="flex items-center space-x-6">
               <Link
-                to="/login"
+                to="/auth/login"
                 className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
               >
                 Iniciar sesión
               </Link>
               <Link
-                to="/logup"
+                to="/auth/logup"
                 className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors"
               >
                 Registrarse

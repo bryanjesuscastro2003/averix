@@ -40,6 +40,7 @@ const LoginPage: React.FC = () => {
           username,
           role,
         });
+        window.location.href = "/dashboard";
       } else {
         setMessage(data.message);
       }
@@ -49,13 +50,6 @@ const LoginPage: React.FC = () => {
       setIsLoading(false); // Desactiva el loader cuando termina
     }
   };
-
-  // Redirect if already authenticated
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      window.location.href = "/dashboard";
-    }
-  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-[#f6f7f8] flex items-center justify-center p-4">
@@ -128,7 +122,7 @@ const LoginPage: React.FC = () => {
         <p className="mt-6 text-center text-sm text-[#072146]">
           ¿No tienes una cuenta?{" "}
           <Link
-            to="/logup"
+            to="/auth/logup"
             className="text-[#00a0d2] font-medium hover:underline"
           >
             Regístrate
@@ -138,7 +132,7 @@ const LoginPage: React.FC = () => {
         <p className="mt-3 text-center text-sm text-[#072146]">
           ¿Olvidaste tu contraseña?{" "}
           <Link
-            to="/forgot-password"
+            to="/auth/forgot-password"
             className="text-[#00a0d2] font-medium hover:underline"
           >
             Recuperar contraseña

@@ -89,7 +89,7 @@ const LogupPage: React.FC = () => {
       const data: IResponse<null> = await response.json();
       if (data.ok) {
         setMessage("");
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
       } else setMessage(data.message || "An error occurred");
     } catch (error) {
       setMessage("Unexpected error occurred, please try again later ...");
@@ -285,7 +285,7 @@ const LogupPage: React.FC = () => {
             <div className="grid grid-cols-1 gap-2">
               {!isAuthenticated && (
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="text-[#00a0d2] font-medium hover:underline"
                 >
                   ¿Ya tienes cuenta? Inicia sesión

@@ -91,7 +91,7 @@ export const CreateInstancePage = () => {
           description: "",
         });
 
-        navigate("/dashboard/instances");
+        navigate("/dashboard/admin/instances");
       }
 
       setMessage(data.message);
