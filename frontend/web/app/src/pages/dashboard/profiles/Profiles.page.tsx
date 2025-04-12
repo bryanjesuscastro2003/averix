@@ -169,7 +169,30 @@ export const ProfilesPage = () => {
             ))}
           </select>
         </div>
+        <div>
+          <label
+            htmlFor="statusFilter"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Filtro por confirmación
+          </label>
+          <select
+            id="statusFilter"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            {statusOptions.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      
+      
 
       {/* Results count */}
       <div className="mb-2 text-sm text-gray-600">
