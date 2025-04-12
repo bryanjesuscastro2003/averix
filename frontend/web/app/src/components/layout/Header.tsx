@@ -57,12 +57,18 @@ const Header = () => {
                   {isAdmin && (
                     <>
                       <li className="nav-item">
-                        <Link to="/dashboard/instances" className="nav-link">
+                        <Link
+                          to="/dashboard/admin/instances"
+                          className="nav-link"
+                        >
                           Instancias
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="/dashboard/profiles" className="nav-link">
+                        <Link
+                          to="/dashboard/admin/profiles"
+                          className="nav-link"
+                        >
                           Usuarios
                         </Link>
                       </li>
