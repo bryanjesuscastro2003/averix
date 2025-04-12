@@ -21,11 +21,44 @@ const defaultIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
+const createCustomIcon = (iconUrl: string) => {
+  return new L.Icon({
+    iconUrl,
+    iconSize: [32, 40],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+  });
+};
+
+const avirenIcon = createCustomIcon(
+  "https://png.pngtree.com/png-vector/20230915/ourmid/pngtree-computation-of-big-data-center-information-processing-database-png-image_10082281.png"
+);
+
+const houseIcon = createCustomIcon(
+  "https://cdn-icons-png.flaticon.com/512/25/25694.png"
+);
+
+const houseServiceIcon = createCustomIcon(
+  "https://upload.wikimedia.org/wikipedia/commons/b/b6/Home_icon_red-1.png"
+);
+
+const droneIcon = createCustomIcon(
+  "https://assets.streamlinehq.com/image/private/w_240,h_240,ar_1/f_auto/v1/icons/robot/drone-q58dx91u8xcta11y58usm.png/drone-5qwuwfpyckq26m2pcygdyj.png?_a=DAJFJtWIZAAC"
+);
+
+interface TrackingPoints {
+  locationA: { lat: number; lng: number; name: string };
+  locationB: { lat: number; lng: number; name: string };
+  locationZ: { lat: number; lng: number; name: string };
+  locationT: { lat: number; lng: number; name: string };
+}
+
 interface MapProps {
   center: [number, number];
   zoom: number;
   onLocationChange?: (lat: number, lng: number) => void;
   draggable?: boolean;
+  points?: TrackingPoints;
 }
 
 // Componente para detectar clics en el mapa
@@ -35,16 +68,6 @@ const LocationMarker: React.FC<{
   draggable: boolean;
 }> = ({ initialPosition, onPositionChange, draggable }) => {
   const [position, setPosition] = useState(initialPosition);
-
-  const map = useMapEvents({
-    click(e) {
-      if (draggable) {
-        const newPos: [number, number] = [e.latlng.lat, e.latlng.lng];
-        setPosition(newPos);
-        onPositionChange(newPos[0], newPos[1]);
-      }
-    },
-  });
 
   return position ? (
     <Marker
@@ -58,7 +81,8 @@ const LocationMarker: React.FC<{
           setPosition([newPos.lat, newPos.lng]);
           onPositionChange(newPos.lat, newPos.lng);
         },
-      }}>
+      }}
+    >
       <Popup>Ubicación seleccionada</Popup>
     </Marker>
   ) : null;
@@ -69,6 +93,7 @@ const Mapa: React.FC<MapProps> = ({
   zoom,
   onLocationChange,
   draggable = true,
+  points,
 }) => {
   // Solución para el renderizado del mapa en Next.js/React
   const [mapReady, setMapReady] = useState(false);
@@ -87,18 +112,84 @@ const Mapa: React.FC<MapProps> = ({
       <MapContainer
         center={center}
         zoom={zoom}
-        style={{ height: "100%", width: "100%" }}>
+        style={{ height: "100%", width: "100%" }}
+      >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <LocationMarker
-          initialPosition={center}
-          onPositionChange={(lat, lng) => {
-            if (onLocationChange) onLocationChange(lat, lng);
-          }}
-          draggable={draggable}
-        />
+        {/* Marcadores de puntos */}
+        {points?.locationA && (
+          <Marker
+            position={[points.locationA.lat, points.locationA.lng]}
+            icon={houseIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationA.name}</div>
+              <div>Location A</div>
+              <div className="text-sm text-gray-600">
+                Lat: {points.locationA.lat.toFixed(6)}, Lng:{" "}
+                {points.locationA.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
+        {points?.locationB && (
+          <Marker
+            position={[points.locationB.lat, points.locationB.lng]}
+            icon={houseServiceIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationB.name}</div>
+              <div>Location B</div>
+              <div className="text-sm text-gray-600">
+                Lat: {points.locationB.lat.toFixed(6)}, Lng:{" "}
+                {points.locationB.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
+        {points?.locationZ && (
+          <Marker
+            position={[points.locationZ.lat, points.locationZ.lng]}
+            icon={avirenIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationZ.name}</div>
+              <div>Location Z</div>
+              <div className="text-sm text-gray-600">
+                Lat: {points.locationZ.lat.toFixed(6)}, Lng:{" "}
+                {points.locationZ.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
+        {points?.locationT && (
+          <Marker
+            position={[points.locationT.lat, points.locationT.lng]}
+            icon={droneIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationT.name}</div>
+              <div className="text-blue-600">Drone Location</div>
+              <div className="text-sm text-gray-600">
+                Lat: {points.locationT.lat.toFixed(6)}, Lng:{" "}
+                {points.locationT.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
+
+        {/* Marcador de ubicación */}
+        {points === undefined && (
+          <LocationMarker
+            initialPosition={center}
+            onPositionChange={(lat, lng) => {
+              if (onLocationChange) onLocationChange(lat, lng);
+            }}
+            draggable={draggable}
+          />
+        )}
       </MapContainer>
     </div>
   );

@@ -1,8 +1,17 @@
 import React, { useState } from "react";
 import Mapa from "./Mapa";
 
+interface TrackingPoints {
+  locationA: { lat: number; lng: number; name: string };
+  locationB: { lat: number; lng: number; name: string };
+  locationZ: { lat: number; lng: number; name: string };
+  locationT: { lat: number; lng: number; name: string };
+}
+
 interface StartDeliveryModalProps {
   isOpen: boolean;
+  points?: TrackingPoints;
+  draggable?: boolean;
   onClose: () => void;
   onStart: () => void;
 }
@@ -11,9 +20,11 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   isOpen,
   onClose,
   onStart,
+  points,
+  draggable = true,
 }) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    null
+    !draggable ? [points!.locationA.lat, points!.locationA.lng] : null
   );
 
   const getUserLocation = () => {
@@ -49,19 +60,26 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
           {userLocation ? (
             <div className="mb-4">
               <Mapa
-                center={userLocation}
+                center={
+                  points === undefined
+                    ? userLocation
+                    : [points.locationA.lat, points.locationA.lng]
+                }
                 zoom={15}
                 onLocationChange={(lat: number, lng: number) =>
                   // console.log(lat, lng)
                   setUserLocation([lat, lng])
                 }
+                draggable={draggable}
+                points={points}
               />
             </div>
           ) : (
             <div className="text-center py-8">
               <button
                 onClick={getUserLocation}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
                 Obtener mi ubicación
               </button>
             </div>
@@ -71,23 +89,30 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
         <div className="p-4 border-t flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md">
-            Cancelar
+            className="px-4 py-2 border border-gray-300 rounded-md"
+          >
+            {draggable ? "Cancelar" : "Cerrar"}
           </button>
-          <button
-            onClick={() => {
-              onStart();
-              onClose();
-            }}
-            disabled={!userLocation}
-            className={`px-4 py-2 rounded-md text-white ${
-              userLocation
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}>
-            Confirmar Entrega
-            {/*userLocation*/}
-          </button>
+
+          {draggable && (
+            <>
+              <button
+                onClick={() => {
+                  onStart();
+                  onClose();
+                }}
+                disabled={!userLocation}
+                className={`px-4 py-2 rounded-md text-white ${
+                  userLocation
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
+              >
+                Confirmar Ubicacion
+                {/*userLocation*/}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

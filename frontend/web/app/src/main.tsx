@@ -24,6 +24,7 @@ import { DeliveryTrackingPage } from "./pages/dashboard/deliveries/tracking/Deli
 import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/TrackingLogsPage";
 import { CertificatesPage } from "./pages/dashboard/instances/CertificatesPage";
 import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
+import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/details/DeliveryDetailsPage";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -83,7 +84,18 @@ createRoot(document.getElementById("root")!).render(
                 <Routes>
                   <Route path="" element={<DashboardPage />} />
                   <Route path="profile" element={<ProfilePage />} />
-                  <Route path="deliveries" element={<DeliveriesPage />} />
+                  <Route
+                    path="deliveries/*"
+                    element={
+                      <Routes>
+                        <Route path="" element={<DeliveriesPage />} />
+                        <Route
+                          path="details/:deliveryId"
+                          element={<DeliveryDetailsPage />}
+                        />
+                      </Routes>
+                    }
+                  />
 
                   <Route path="tracking" element={<DeliveryTrackingPage />} />
                   <Route path="trackinglogs" element={<TrackingLogsPage />} />
