@@ -102,14 +102,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const accessToken: string | null = localStorage.getItem("accessToken");
     if (accessToken) {
       setIsAuthenticated(true);
-      if (userData === null) {
+      if (userData !== null) {
         // Fetch user profile
         fetchProfile(
           localStorage.getItem("accessToken")!,
           localStorage.getItem("refreshToken")!,
           localStorage.getItem("username")!
         );
-        console.log("Fetch data");
       }
     }
   }, []);

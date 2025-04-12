@@ -1,66 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DeliveryTable } from "./DeliveryTable";
 import { StartDeliveryModal } from "./StartDeliveryModal";
 import { Delivery } from "./types";
+import Louder from "../../../components/chris/louder";
+import { DashboardEndpoints } from "../../../endpoints/dashboard";
+import { IResponse } from "../../../types/responses/IResponse";
+import { fi } from "date-fns/locale";
 
 const DeliveriesPage: React.FC = () => {
-  const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([
-    {
-      id: "del-001",
-      timestamp: "2025-04-07T11:52:10Z",
-      primaryUser: "user1@example.com",
-      secondaryUser: "user2@example.com",
-      locationA: "Almacén Central",
-      locationB: "Punto Intermedio",
-      locationZ: "Cliente Final",
-      instanceId: "inst-001",
-      startedRequestAt: "2025-04-07T10:00:00Z",
-      acceptedRequestAt: "2025-04-07T10:05:00Z",
-      dstate: "in-progress",
-      action: "Ver detalles",
-      createdAt: "2025-04-07T09:30:00Z",
-      updatedAt: "2025-04-07T11:52:10Z",
-    },
-    {
-      id: "del-002",
-      timestamp: "2025-04-07T11:55:10Z",
-      primaryUser: "user3@example.com",
-      secondaryUser: "user4@example.com",
-      locationA: "Almacén Norte",
-      locationB: "Punto Distribución",
-      locationZ: "Cliente Empresarial",
-      instanceId: "inst-002",
-      startedRequestAt: "2025-04-07T09:00:00Z",
-      acceptedRequestAt: "2025-04-07T09:10:00Z",
-      dstate: "completed",
-      action: "Ver detalles",
-      createdAt: "2025-04-07T08:30:00Z",
-      updatedAt: "2025-04-07T11:55:10Z",
-    },
-    {
-      id: "del-003",
-      timestamp: "2025-04-07T11:50:10Z",
-      primaryUser: "user5@example.com",
-      secondaryUser: "user6@example.com",
-      locationA: "Almacén Sur",
-      locationB: "Centro Logístico",
-      locationZ: "Cliente Residencial",
-      instanceId: "inst-003",
-      startedRequestAt: "2025-04-07T11:30:00Z",
-      acceptedRequestAt: "",
-      dstate: "pending",
-      action: "Ver detalles",
-      createdAt: "2025-04-07T11:20:00Z",
-      updatedAt: "2025-04-07T11:50:10Z",
-    },
-  ]);
-
-  const [filter, setFilter] = useState<string>("all");
+  const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([]);
+  const [filter, setFilter] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
   const filteredDeliveries = allDeliveries.filter((delivery) => {
-    const stateMatch = filter === "all" || delivery.dstate === filter;
+    const stateMatch = filter === "" || delivery.dstate === filter;
     const searchMatch =
       delivery.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       delivery.primaryUser.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,24 +56,38 @@ const DeliveriesPage: React.FC = () => {
   };
 
   const handleStartNewDelivery = () => {
-    const newDelivery: Delivery = {
-      id: `del-${Math.floor(Math.random() * 10000)}`,
-      timestamp: new Date().toISOString(),
-      primaryUser: "usuario_actual@example.com",
-      secondaryUser: "",
-      locationA: "Mi Ubicación Actual",
-      locationB: "Punto Intermedio",
-      locationZ: "Destino Automático",
-      instanceId: `inst-${Math.floor(Math.random() * 1000)}`,
-      startedRequestAt: new Date().toISOString(),
-      acceptedRequestAt: "",
-      dstate: "pending",
-      action: "Ver detalles",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    setAllDeliveries([...allDeliveries, newDelivery]);
+    // TODO : Implement the logic to start a new delivery
   };
+
+  const fetchDeliveries = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(DashboardEndpoints.getDeliveriesEndpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+        },
+        mode: "cors",
+      });
+      const data: IResponse<{ count: number; items: Delivery[] }> =
+        await response.json();
+      if (!data.ok) {
+        setMessage(data.message);
+      } else {
+        setAllDeliveries(data.data.items);
+      }
+      console.log("Fetched deliveries:", data);
+    } catch (error) {
+      console.error("Error fetching deliveries:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDeliveries();
+  }, []);
 
   return (
     <div className="container mx-auto p-4">
@@ -129,19 +99,25 @@ const DeliveriesPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <label
             htmlFor="state-filter"
-            className="text-sm font-medium text-gray-700">
+            className="text-sm font-medium text-gray-700"
+          >
             Filtrar por estado:
           </label>
           <select
             id="state-filter"
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}>
-            <option value="all">Todos</option>
-            <option value="pending">Pendientes</option>
-            <option value="in-progress">En progreso</option>
-            <option value="completed">Completados</option>
-            <option value="cancelled">Cancelados</option>
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="">All</option>
+            {allDeliveries
+              .map((delivery) => delivery.dstate)
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .map((state) => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
           </select>
         </div>
 
@@ -169,17 +145,24 @@ const DeliveriesPage: React.FC = () => {
         onStartDelivery={handleStartDelivery}
         onCancelDelivery={handleCancelDelivery}
       />
+      {isLoading && (
+        <div className="flex justify-center">
+          <Louder />
+        </div>
+      )}
 
       <div className="mt-8 flex justify-center">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg">
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor">
+            stroke="currentColor"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
