@@ -33,7 +33,8 @@ const Header = () => {
           <Link
             to="/dashboard"
             className="logo-link"
-            onClick={() => setMobileMenuOpen(false)}>
+            onClick={() => setMobileMenuOpen(false)}
+          >
             <div className="logo-box">AVI</div>
             <span className="logo-text">REN</span>
           </Link>
@@ -76,12 +77,12 @@ const Header = () => {
               <>
                 <ul className="nav-links">
                   <li className="nav-item">
-                    <Link to="/login" className="nav-link">
+                    <Link to="/auth/login" className="nav-link">
                       Iniciar sesión
                     </Link>
                   </li>
                 </ul>
-                <Link to="/logup" className="nav-button">
+                <Link to="/auth/logup" className="nav-button">
                   Registrarse
                 </Link>
               </>
@@ -93,7 +94,8 @@ const Header = () => {
             className="mobile-menu-button"
             onClick={toggleMobileMenu}
             aria-expanded={mobileMenuOpen}
-            aria-label="Menú de navegación">
+            aria-label="Menú de navegación"
+          >
             {mobileMenuOpen ? (
               <span>✕</span> /* Icono de cerrar */
             ) : (
@@ -110,7 +112,8 @@ const Header = () => {
                 <Link
                   to="/dashboard/profile"
                   className="mobile-nav-link"
-                  onClick={() => setMobileMenuOpen(false)}>
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   Mi perfil
                 </Link>
               </li>
@@ -118,7 +121,8 @@ const Header = () => {
                 <Link
                   to="/dashboard/deliveries"
                   className="mobile-nav-link"
-                  onClick={() => setMobileMenuOpen(false)}>
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   Viajes
                 </Link>
               </li>
@@ -128,7 +132,8 @@ const Header = () => {
                     <Link
                       to="/dashboard/instances"
                       className="mobile-nav-link"
-                      onClick={() => setMobileMenuOpen(false)}>
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       Instancias
                     </Link>
                   </li>
@@ -136,7 +141,8 @@ const Header = () => {
                     <Link
                       to="/dashboard/profiles"
                       className="mobile-nav-link"
-                      onClick={() => setMobileMenuOpen(false)}>
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       Usuarios
                     </Link>
                   </li>
@@ -152,17 +158,19 @@ const Header = () => {
             <ul className="mobile-nav-links">
               <li className="mobile-nav-item">
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="mobile-nav-link"
-                  onClick={() => setMobileMenuOpen(false)}>
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   Iniciar sesión
                 </Link>
               </li>
               <li className="mobile-nav-item">
                 <Link
-                  to="/logup"
+                  to="/auth/logup"
                   className="mobile-nav-button"
-                  onClick={() => setMobileMenuOpen(false)}>
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   Registrarse
                 </Link>
               </li>
