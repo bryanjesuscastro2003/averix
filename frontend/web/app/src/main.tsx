@@ -29,6 +29,8 @@ import { DeliveryTrackingPage } from "./pages/dashboard/deliveries/tracking/Deli
 import { DeliveryTrackingLogsTable } from "./components/grez/delivery/DeliveryTrackingLogsTable";
 import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/TrackingLogsPage";
 import { CertificatesPage } from "./pages/dashboard/instances/CertificatesPage";
+import { FloatingNotification } from "./components/grez/notifications/FloatingNotification";
+import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -91,7 +93,10 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="deliveries" element={<DeliveriesPage />} />
                   <Route path="tracking" element={<DeliveryTrackingPage />} />
                   <Route path="trackinglogs" element={<TrackingLogsPage />} />
-                  <Route path="certificatesActions" element={<CertificatesPage />} />
+                  <Route
+                    path="certificatesActions"
+                    element={<CertificatesPage />}
+                  />
                   <Route
                     path="admin/*"
                     element={
@@ -138,6 +143,18 @@ createRoot(document.getElementById("root")!).render(
           {/* Catch-all route for 404 */}
         </Routes>
       </Router>
+     
+      <InteractiveNotification 
+  type="info"
+  message="¿Necesitas ayuda? Haz clic aquí"
+  onClose={() => console.log('Notificación cerrada')}
+  chatContent={
+    <div>
+      <p>Mensaje de bienvenida personalizado</p>
+      <p>Puedes poner cualquier contenido React aquí</p>
+    </div>
+  }
+/>
     </AuthProvider>
   </StrictMode>
 );
