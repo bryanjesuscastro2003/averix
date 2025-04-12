@@ -1,92 +1,172 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import "./Header.css";
 
-const Header: React.FC = () => {
-  const { isAuthenticated, logout, fetchProfile, userData } = useAuth();
+const Header = () => {
+  const { isAuthenticated, logout, userData } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (userData?.["custom:role"] === "admin") {
+      setIsAdmin(true);
+    }
+  }, [userData]);
 
   const handleLogout = () => {
     logout();
-    navigate("/auth/login"); // Redirect to login page after logout
+    navigate("/login");
+    setMobileMenuOpen(false);
   };
 
-  useEffect(() => {
-    fetchProfile(
-      localStorage.getItem("accessToken")!,
-      localStorage.getItem("refreshToken")!,
-      localStorage.getItem("username")!
-    );
-  }, []);
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
 
   return (
-    <header className="bg-[#072146] text-white">
-      <div className="container mx-auto flex justify-between items-center px-6 py-4">
-        <Link to="/dashboard" className="flex items-center hover:no-underline">
-          <div className="flex items-center">
-            <div className="bg-white text-[#072146] font-bold text-2xl px-3 py-1 mr-3 rounded-sm">
-              AVI
-            </div>
-            <span className="text-white font-bold text-2xl tracking-tight">
-              REN
-            </span>
-          </div>
-        </Link>
+    <header className="header">
+      <div className="header-container">
+        <div className="header-content">
+          {/* Logo */}
+          <Link
+            to="/dashboard"
+            className="logo-link"
+            onClick={() => setMobileMenuOpen(false)}>
+            <div className="logo-box">AVI</div>
+            <span className="logo-text">REN</span>
+          </Link>
 
-        <nav>
+          {/* Menú de navegación para desktop */}
+          <nav className="desktop-nav">
+            {isAuthenticated ? (
+              <>
+                <ul className="nav-links">
+                  <li className="nav-item">
+                    <Link to="/dashboard/profile" className="nav-link">
+                      Mi perfil
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/dashboard/deliveries" className="nav-link">
+                      Viajes
+                    </Link>
+                  </li>
+                  {isAdmin && (
+                    <>
+                      <li className="nav-item">
+                        <Link to="/dashboard/instances" className="nav-link">
+                          Instancias
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="/dashboard/profiles" className="nav-link">
+                          Usuarios
+                        </Link>
+                      </li>
+                    </>
+                  )}
+                </ul>
+                <button onClick={handleLogout} className="nav-button">
+                  Cerrar sesión
+                </button>
+              </>
+            ) : (
+              <>
+                <ul className="nav-links">
+                  <li className="nav-item">
+                    <Link to="/login" className="nav-link">
+                      Iniciar sesión
+                    </Link>
+                  </li>
+                </ul>
+                <Link to="/logup" className="nav-button">
+                  Registrarse
+                </Link>
+              </>
+            )}
+          </nav>
+
+          {/* Botón del menú móvil */}
+          <button
+            className="mobile-menu-button"
+            onClick={toggleMobileMenu}
+            aria-expanded={mobileMenuOpen}
+            aria-label="Menú de navegación">
+            {mobileMenuOpen ? (
+              <span>✕</span> /* Icono de cerrar */
+            ) : (
+              <span>☰</span> /* Icono de hamburguesa */
+            )}
+          </button>
+        </div>
+
+        {/* Menú de navegación para móvil */}
+        <nav className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}>
           {isAuthenticated ? (
-            <div className="flex items-center space-x-6">
-              <Link
-                to="/dashboard/profile"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
-                Mi perfil
-              </Link>
-              <Link
-                to="/dashboard/deliveries"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
-                Viajes
-              </Link>
-              {isAuthenticated && userData?.["custom:role"] === "admin" && (
+            <ul className="mobile-nav-links">
+              <li className="mobile-nav-item">
+                <Link
+                  to="/dashboard/profile"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}>
+                  Mi perfil
+                </Link>
+              </li>
+              <li className="mobile-nav-item">
+                <Link
+                  to="/dashboard/deliveries"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}>
+                  Viajes
+                </Link>
+              </li>
+              {isAdmin && (
                 <>
-                  <Link
-                    to="/dashboard/admin/instances"
-                    className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-                  >
-                    Instancias
-                  </Link>
-                  <Link
-                    to="/dashboard/admin/profiles"
-                    className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-                  >
-                    Usuarios
-                  </Link>
+                  <li className="mobile-nav-item">
+                    <Link
+                      to="/dashboard/instances"
+                      className="mobile-nav-link"
+                      onClick={() => setMobileMenuOpen(false)}>
+                      Instancias
+                    </Link>
+                  </li>
+                  <li className="mobile-nav-item">
+                    <Link
+                      to="/dashboard/profiles"
+                      className="mobile-nav-link"
+                      onClick={() => setMobileMenuOpen(false)}>
+                      Usuarios
+                    </Link>
+                  </li>
                 </>
               )}
-
-              <button
-                onClick={handleLogout}
-                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors"
-              >
-                Cerrar sesión
-              </button>
-            </div>
+              <li className="mobile-nav-item">
+                <button onClick={handleLogout} className="mobile-nav-button">
+                  Cerrar sesión
+                </button>
+              </li>
+            </ul>
           ) : (
-            <div className="flex items-center space-x-6">
-              <Link
-                to="/auth/login"
-                className="text-white hover:text-[#00a0d2] px-3 py-2 text-base font-medium transition-colors hover:no-underline"
-              >
-                Iniciar sesión
-              </Link>
-              <Link
-                to="/auth/logup"
-                className="bg-[#00a0d2] hover:bg-[#0088b8] text-white px-5 py-2 rounded-sm text-base font-medium transition-colors"
-              >
-                Registrarse
-              </Link>
-            </div>
+            <ul className="mobile-nav-links">
+              <li className="mobile-nav-item">
+                <Link
+                  to="/login"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}>
+                  Iniciar sesión
+                </Link>
+              </li>
+              <li className="mobile-nav-item">
+                <Link
+                  to="/logup"
+                  className="mobile-nav-button"
+                  onClick={() => setMobileMenuOpen(false)}>
+                  Registrarse
+                </Link>
+              </li>
+            </ul>
           )}
         </nav>
       </div>
