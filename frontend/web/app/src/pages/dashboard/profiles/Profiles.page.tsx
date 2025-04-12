@@ -2,7 +2,7 @@ import { useState } from "react";
 import { format, parseISO, set } from "date-fns";
 import { Pagination } from "../../../components/bryan/Pagination";
 import Navigate, { Link } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../components/context/AuthContext";
 import { useEffect } from "react";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IProfile } from "../../../types/data/IUser";
@@ -128,22 +128,21 @@ export const ProfilesPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">User Management</h1>
+      <h1 className="text-2xl font-bold mb-6">Gestión de Usuarios</h1>
 
       {/* Filter controls */}
       <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label
             htmlFor="usernameFilter"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Filter by Email
+            className="block text-sm font-medium text-gray-700 mb-1">
+            Filtrar por Correo
           </label>
           <input
             type="text"
             id="usernameFilter"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search email..."
+            placeholder="Buscar correo..."
             value={usernameFilter}
             onChange={(e) => setUsernameFilter(e.target.value)}
           />
@@ -152,16 +151,14 @@ export const ProfilesPage = () => {
         <div>
           <label
             htmlFor="statusFilter"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Filter by Status
+            className="block text-sm font-medium text-gray-700 mb-1">
+            Filtrar por Estado
           </label>
           <select
             id="statusFilter"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
+            onChange={(e) => setStatusFilter(e.target.value)}>
             {statusOptions.map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -196,7 +193,7 @@ export const ProfilesPage = () => {
 
       {/* Results count */}
       <div className="mb-2 text-sm text-gray-600">
-        Showing {filteredUsers.length} of {users.length} users
+        Mostrando {filteredUsers.length} de {users.length} usuarios
       </div>
 
       {/* Table */}
@@ -205,31 +202,28 @@ export const ProfilesPage = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ByUsername
+                Usuario
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                Estado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
+                Correo
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
+                Creado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Modified
+                Modificado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Confirmed
+                Confirmado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Deliveries
+                Entregas
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Role
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                Acciones
               </th>
             </tr>
           </thead>
@@ -244,8 +238,7 @@ export const ProfilesPage = () => {
                     user.attributes.email === userData?.email
                       ? "bg-gray-100 hover:bg-gray-200"
                       : "hover:bg-gray-50"
-                  }
-                >
+                  }>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <div className="truncate max-w-xs">{user.username}</div>
                   </td>
@@ -256,9 +249,8 @@ export const ProfilesPage = () => {
                         user.enabled === true
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {user.enabled === true ? "Active" : "Inactive"}
+                      }`}>
+                      {user.enabled === true ? "Activo" : "Inactivo"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -277,19 +269,17 @@ export const ProfilesPage = () => {
                           user.attributes.email_verified === "true"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
-                        }`}
-                    >
+                        }`}>
                       {user.attributes.email_verified === "true"
-                        ? "Confirmed"
-                        : "Unconfirmed"}
+                        ? "Confirmado"
+                        : "No confirmado"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
                       onClick={() => handleDeliveries(user.username)}
-                      className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200"
-                    >
-                      View Deliveries
+                      className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200">
+                      Ver Entregas
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -299,8 +289,7 @@ export const ProfilesPage = () => {
                         user.attributes["custom:role"] === "admin"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
+                      }`}>
                       {user.attributes["custom:role"]}
                     </span>
                   </td>
@@ -314,9 +303,8 @@ export const ProfilesPage = () => {
                             user.enabled
                               ? "bg-red-100 text-red-800 hover:bg-red-200"
                               : "bg-green-100 text-green-800 hover:bg-green-200"
-                          }`}
-                      >
-                        {user.enabled ? "Disable" : "Enable"}
+                          }`}>
+                        {user.enabled ? "Desactivar" : "Activar"}
                       </button>
                     </div>
                   </td>
@@ -326,9 +314,8 @@ export const ProfilesPage = () => {
               <tr>
                 <td
                   colSpan={8}
-                  className="px-6 py-4 text-center text-sm text-gray-500"
-                >
-                  No users found matching your filters.
+                  className="px-6 py-4 text-center text-sm text-gray-500">
+                  No se encontraron usuarios con los filtros aplicados.
                 </td>
               </tr>
             )}
@@ -340,10 +327,16 @@ export const ProfilesPage = () => {
       {/* Create New Profile Button */}
       <div className="flex justify-end">
         <Link
+<<<<<<< HEAD
           to="createProfile"
           className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
         >
           Create New Profile
+=======
+          to="/dashboard/createProfile"
+          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+          Crear Nuevo Perfil
+>>>>>>> 6bbadece7c8f88e432f70ab64bb2885b777bbaed
         </Link>
       </div>
     </div>

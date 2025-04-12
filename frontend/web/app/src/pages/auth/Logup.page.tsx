@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthEndpoints } from "../../endpoints/auth";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../components/context/AuthContext";
 import Louder from "../../components/chris/louder";
 import { IResponse } from "../../types/responses/IResponse";
 import { DashboardEndpoints } from "../../endpoints/dashboard";
@@ -118,8 +118,12 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
+<<<<<<< HEAD
+                className="block text-sm font-medium text-[#072146]">
+=======
                 className="block text-sm font-medium text-[#072146]"
               >
+>>>>>>> frontendBryan
                 Correo electrónico
               </label>
               <input
@@ -136,8 +140,12 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
+<<<<<<< HEAD
+                className="block text-sm font-medium text-[#072146]">
+=======
                 className="block text-sm font-medium text-[#072146]"
               >
+>>>>>>> frontendBryan
                 Contraseña
               </label>
               <input
@@ -154,8 +162,12 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="name"
+<<<<<<< HEAD
+                className="block text-sm font-medium text-[#072146]">
+=======
                 className="block text-sm font-medium text-[#072146]"
               >
+>>>>>>> frontendBryan
                 Nombre completo
               </label>
               <input
@@ -172,8 +184,12 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="nickname"
+<<<<<<< HEAD
+                className="block text-sm font-medium text-[#072146]">
+=======
                 className="block text-sm font-medium text-[#072146]"
               >
+>>>>>>> frontendBryan
                 Apodo
               </label>
               <input
@@ -191,21 +207,33 @@ const LogupPage: React.FC = () => {
               <div className="bg-[#f6f7f8] p-4 rounded-lg border border-[#e0e0e0]">
                 <label
                   htmlFor="role"
+<<<<<<< HEAD
+                  className="block text-sm font-medium text-[#072146] mb-2">
+=======
                   className="block text-sm font-medium text-[#072146] mb-2"
                 >
+>>>>>>> frontendBryan
                   Seleccione su rol
                 </label>
                 <select
                   id="role"
                   value={role}
                   onChange={handleChange}
+<<<<<<< HEAD
+                  className="w-full px-4 py-3 bg-white border border-[#e0e0e0] rounded-sm text-[#072146] focus:outline-none focus:ring-2 focus:ring-[#00a0d2]">
+=======
                   className="w-full px-4 py-3 bg-white border border-[#e0e0e0] rounded-sm text-[#072146] focus:outline-none focus:ring-2 focus:ring-[#00a0d2]"
                 >
+>>>>>>> frontendBryan
                   <option value="" disabled>
                     -- Seleccione un rol --
                   </option>
                   <option value="admin">Administrador</option>
+<<<<<<< HEAD
+                  <option value="client">Cliente</option>
+=======
                   <option value="user">Cliente</option>
+>>>>>>> frontendBryan
                 </select>
               </div>
             )}
@@ -213,8 +241,12 @@ const LogupPage: React.FC = () => {
             <button
               type="submit"
               className="w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] focus:outline-none focus:ring-2 focus:ring-[#00a0d2] focus:ring-offset-2 disabled:bg-[#cccccc] transition-colors"
+<<<<<<< HEAD
+              disabled={isLoading}>
+=======
               disabled={isLoading}
             >
+>>>>>>> frontendBryan
               Registrarse
             </button>
             {isLoading && <Louder />}
@@ -224,8 +256,12 @@ const LogupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
+<<<<<<< HEAD
+                className="block text-sm font-medium text-[#072146]">
+=======
                 className="block text-sm font-medium text-[#072146]"
               >
+>>>>>>> frontendBryan
                 Correo electrónico
               </label>
               <input
@@ -240,8 +276,12 @@ const LogupPage: React.FC = () => {
 
               <label
                 htmlFor="confirmationCode"
+<<<<<<< HEAD
+                className="block text-sm font-medium text-[#072146] mt-4">
+=======
                 className="block text-sm font-medium text-[#072146] mt-4"
               >
+>>>>>>> frontendBryan
                 Código de confirmación
               </label>
               <input
@@ -258,8 +298,12 @@ const LogupPage: React.FC = () => {
             <button
               type="submit"
               className="w-full py-3 px-4 bg-[#00a0d2] text-white font-medium rounded-sm hover:bg-[#0088b8] focus:outline-none focus:ring-2 focus:ring-[#00a0d2] focus:ring-offset-2 disabled:bg-[#cccccc] transition-colors"
+<<<<<<< HEAD
+              disabled={isLoading}>
+=======
               disabled={isLoading}
             >
+>>>>>>> frontendBryan
               Confirmar
             </button>
             {isLoading && <Louder />}
@@ -270,24 +314,40 @@ const LogupPage: React.FC = () => {
           {isSignUpSubmitted ? (
             <button
               onClick={() => setIsSignUpSubmitted(false)}
+<<<<<<< HEAD
+              className="text-[#00a0d2] font-medium hover:underline">
+=======
               className="text-[#00a0d2] font-medium hover:underline"
             >
+>>>>>>> frontendBryan
               Volver a registro
             </button>
           ) : (
             <div className="grid grid-cols-1 gap-2">
               {!isAuthenticated && (
                 <Link
+<<<<<<< HEAD
                   to="/auth/login"
+=======
+                  to="/login"
+<<<<<<< HEAD
+                  className="text-[#00a0d2] font-medium hover:underline">
+=======
+>>>>>>> 6bbadece7c8f88e432f70ab64bb2885b777bbaed
                   className="text-[#00a0d2] font-medium hover:underline"
                 >
+>>>>>>> frontendBryan
                   ¿Ya tienes cuenta? Inicia sesión
                 </Link>
               )}
               <button
                 onClick={() => setIsSignUpSubmitted(true)}
+<<<<<<< HEAD
+                className="text-[#00a0d2] font-medium hover:underline">
+=======
                 className="text-[#00a0d2] font-medium hover:underline"
               >
+>>>>>>> frontendBryan
                 ¿Tienes un código de confirmación?
               </button>
             </div>
