@@ -1,3 +1,154 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ESTILOS GENERALES */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+  }
+  
+  .app-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  
+  /* ENCABEZADO AVIREN */
+  .aviren-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  
+  .aviren-header {
+    background: #004481;
+    color: white;
+    padding: 20px;
+  }
+  
+  .aviren-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  
+  .aviren-header p {
+    margin: 5px 0 0;
+    opacity: 0.9;
+    font-size: 14px;
+  }
+  
+  /* TABLA PRINCIPAL */
+  .table-wrapper {
+    overflow-x: auto;
+    padding: 15px;
+  }
+  
+  .instance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  .instance-table th {
+    background-color: #f8fafc;
+    text-align: left;
+    padding: 12px 15px;
+    color: #4a5568;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  
+  .instance-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: top;
+  }
+  
+  .instance-table tr:hover {
+    background-color: #f8fafc;
+  }
+  
+  /* CELDAS ESPECIALES */
+  .id-cell {
+    font-family: 'Courier New', monospace;
+    color: #4a5568;
+    font-size: 13px;
+  }
+  
+  .name-cell {
+    font-weight: 500;
+    color: #2d3748;
+  }
+  
+  .description-cell {
+    color: #718096;
+    font-size: 13px;
+  }
+  
+  .location-cell {
+    font-size: 12px;
+  }
+  
+  .location-item {
+    margin-bottom: 3px;
+  }
+  
+  .location-key {
+    font-weight: 600;
+    color: #4a5568;
+    margin-right: 5px;
+  }
+  
+  .location-value {
+    color: #718096;
+  }
+  
+  /* BADGES */
+  .status-badge, .association-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .status-badge.activo {
+    background-color: #f0fff4;
+    color: #38a169;
+  }
+  
+  .status-badge.inactivo {
+    background-color: #fff5f5;
+    color: #e53e3e;
+  }
+  
+  .association-badge.yes {
+    background-color: #ebf8ff;
+    color: #3182ce;
+  }
+  
+  .association-badge.no {
+    background-color: #fffaf0;
+    color: #dd6b20;
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .app-container {
+      padding: 0 10px;
+      margin: 20px auto;
+    }
+    
+    .instance-table th, 
+    .instance-table td {
+      padding: 8px 10px;
+    }
+  }

@@ -25,6 +25,10 @@ import { ResetPassword } from "./pages/auth/ResetPassword.page";
 import { ProfilesPage } from "./pages/dashboard/profiles/Profiles.page";
 import DeliveriesPage from "./pages/dashboard/deliveries/Deliveries.page";
 import { CreateInstancePage } from "./pages/dashboard/instances/CreateInstance.page";
+import { DeliveryTrackingPage } from "./pages/dashboard/deliveries/tracking/DeliveryTrackingPage";
+import { DeliveryTrackingLogsTable } from "./components/grez/delivery/DeliveryTrackingLogsTable";
+import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/TrackingLogsPage";
+import { CertificatesPage } from "./pages/dashboard/instances/CertificatesPage";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -85,6 +89,9 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="" element={<DashboardPage />} />
                   <Route path="profile" element={<ProfilePage />} />
                   <Route path="deliveries" element={<DeliveriesPage />} />
+                  <Route path="tracking" element={<DeliveryTrackingPage />} />
+                  <Route path="trackinglogs" element={<TrackingLogsPage />} />
+                  <Route path="certificatesActions" element={<CertificatesPage />} />
                   <Route
                     path="admin/*"
                     element={
@@ -109,6 +116,11 @@ createRoot(document.getElementById("root")!).render(
                                 <Route path="" element={<InstancesPage />} />
                                 <Route
                                   path="createInstance"
+                                  element={<CreateInstancePage />}
+                                />
+
+                                <Route
+                                  path=""
                                   element={<CreateInstancePage />}
                                 />
                               </Routes>
