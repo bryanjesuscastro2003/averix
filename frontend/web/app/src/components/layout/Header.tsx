@@ -130,7 +130,7 @@ const Header = () => {
                 <>
                   <li className="mobile-nav-item">
                     <Link
-                      to="/dashboard/instances"
+                      to="/dashboard/admin/instances"
                       className="mobile-nav-link"
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -139,7 +139,7 @@ const Header = () => {
                   </li>
                   <li className="mobile-nav-item">
                     <Link
-                      to="/dashboard/profiles"
+                      to="/dashboard/admin/profiles"
                       className="mobile-nav-link"
                       onClick={() => setMobileMenuOpen(false)}
                     >
