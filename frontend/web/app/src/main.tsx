@@ -7,18 +7,13 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useState, useEffect } from "react";
 import LoginPage from "./pages/auth/Login.page";
 import DashboardPage from "./pages/dashboard/Dashboard.page";
 import NotFoundPage from "./pages/common/NotFound.page";
-import TrackDeliveryPage from "./pages/dashboard/TrackDelivery.page";
-import OrderHistoryPage from "./pages/dashboard/OrderHistory";
 import LogupPage from "./pages/auth/Logup.page";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Header from "./components/layout/Header";
 import ProfilePage from "./pages/dashboard/Profile.page";
-//agrego chris sus importaciones
-import { InstanceModelForm } from "./components/chris/forms/instanceModel";
 import { InstancesPage } from "./pages/dashboard/instances/Instances.page";
 import { ForgotPassword } from "./pages/auth/ForgetPassword.page";
 import { ResetPassword } from "./pages/auth/ResetPassword.page";
@@ -26,10 +21,8 @@ import { ProfilesPage } from "./pages/dashboard/profiles/Profiles.page";
 import DeliveriesPage from "./pages/dashboard/deliveries/Deliveries.page";
 import { CreateInstancePage } from "./pages/dashboard/instances/CreateInstance.page";
 import { DeliveryTrackingPage } from "./pages/dashboard/deliveries/tracking/DeliveryTrackingPage";
-import { DeliveryTrackingLogsTable } from "./components/grez/delivery/DeliveryTrackingLogsTable";
 import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/TrackingLogsPage";
 import { CertificatesPage } from "./pages/dashboard/instances/CertificatesPage";
-import { FloatingNotification } from "./components/grez/notifications/FloatingNotification";
 import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -91,6 +84,7 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="" element={<DashboardPage />} />
                   <Route path="profile" element={<ProfilePage />} />
                   <Route path="deliveries" element={<DeliveriesPage />} />
+
                   <Route path="tracking" element={<DeliveryTrackingPage />} />
                   <Route path="trackinglogs" element={<TrackingLogsPage />} />
                   <Route
@@ -143,18 +137,18 @@ createRoot(document.getElementById("root")!).render(
           {/* Catch-all route for 404 */}
         </Routes>
       </Router>
-     
-      <InteractiveNotification 
-  type="info"
-  message="¿Necesitas ayuda? Haz clic aquí"
-  onClose={() => console.log('Notificación cerrada')}
-  chatContent={
-    <div>
-      <p>Mensaje de bienvenida personalizado</p>
-      <p>Puedes poner cualquier contenido React aquí</p>
-    </div>
-  }
-/>
+
+      <InteractiveNotification
+        type="info"
+        message="¿Necesitas ayuda? Haz clic aquí"
+        onClose={() => console.log("Notificación cerrada")}
+        chatContent={
+          <div>
+            <p>Mensaje de bienvenida personalizado</p>
+            <p>Puedes poner cualquier contenido React aquí</p>
+          </div>
+        }
+      />
     </AuthProvider>
   </StrictMode>
 );
