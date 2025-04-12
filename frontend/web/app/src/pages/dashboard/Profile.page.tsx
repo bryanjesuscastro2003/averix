@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useAuth } from "../../components/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { AuthEndpoints } from "../../endpoints/auth";
 
 const ProfilePage: React.FC = () => {

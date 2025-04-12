@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthEndpoints } from "../../endpoints/auth";
 import { IResponse } from "../../types/responses/IResponse";
 import { ILoginData } from "../../types/responses/auth/ILoginData";
-import { useAuth } from "../../components/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Loader } from "../../components/grez/Louder";
 
 const LoginPage: React.FC = () => {

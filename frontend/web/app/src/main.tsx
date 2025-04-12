@@ -14,7 +14,7 @@ import NotFoundPage from "./pages/common/NotFound.page";
 import TrackDeliveryPage from "./pages/dashboard/TrackDelivery.page";
 import OrderHistoryPage from "./pages/dashboard/OrderHistory";
 import LogupPage from "./pages/auth/Logup.page";
-import { AuthProvider, useAuth } from "./components/context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import Header from "./components/layout/Header";
 import ProfilePage from "./pages/dashboard/Profile.page";
 //agrego chris sus importaciones
