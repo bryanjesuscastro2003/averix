@@ -92,7 +92,7 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-2">
                 <button
                   className="px-3 py-1 bg-gray-200 text-gray-800 text-xs rounded hover:bg-gray-300 transition"
-                  onClick={() => navigate("details/" + delivery.id)}
+                  onClick={() => navigate("details/" + delivery.instanceId)}
                 >
                   Detalles
                 </button>

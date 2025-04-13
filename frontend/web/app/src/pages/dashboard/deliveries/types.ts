@@ -10,7 +10,6 @@ export interface Delivery {
   startedRequestAt: string;
   acceptedRequestAt: string;
   dstate: string;
-  action: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -47,10 +47,10 @@ const droneIcon = createCustomIcon(
 );
 
 interface TrackingPoints {
-  locationA: { lat: number; lng: number; name: string };
-  locationB: { lat: number; lng: number; name: string };
-  locationZ: { lat: number; lng: number; name: string };
-  locationT: { lat: number; lng: number; name: string };
+  locationA: { lat: number; lng: number; name: string } | null;
+  locationB: { lat: number; lng: number; name: string } | null;
+  locationZ: { lat: number; lng: number; name: string } | null;
+  locationT: { lat: number; lng: number; name: string } | null;
 }
 
 interface MapProps {

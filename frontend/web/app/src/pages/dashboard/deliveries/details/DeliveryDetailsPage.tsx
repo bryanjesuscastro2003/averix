@@ -1,45 +1,110 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DeliveryDetailsRequestCard } from "./DeliveryDetailsRequestCard";
+import { useParams } from "react-router-dom";
+import { DashboardEndpoints } from "../../../../endpoints/dashboard";
+import { IResponse } from "../../../../types/responses/IResponse";
+import { Delivery } from "../types";
+import { set } from "date-fns";
+import { DeliveryAdvanceDetailsPage } from "./advance/DeliveryAdvanceDetailsPage";
+import { Loader } from "../../../../components/grez/Louder";
+
+type DeliveryData = {
+  delivery: {
+    locationB: string;
+    trackingId: string;
+    locationA: string;
+    acceptedRequestAt: string;
+    timestamp: string;
+    createdAt: string;
+    locationZ: string;
+    primaryUser: string;
+    secondaryUser: string;
+    startedRequestAt: string;
+    updatedAt: string;
+    instanceId: string;
+    dstate: string;
+    id: string;
+  };
+  tracking: {
+    timestamp: string;
+    createdAt: string;
+    mfZA_endedAt: string | null;
+    mfBZ_endedAt: string | null;
+    mfAB_endedAt: string | null;
+    mfZA_startedAt: string;
+    mfBA_startedAt: string | null;
+    mfstate: string;
+    updatedAt: string;
+    mfBZ_startedAt: string | null;
+    mfBA_endedAt: string | null;
+    trackingLogsId: string;
+    dstate: string;
+    id: string;
+    mfAB_startedAt: string | null;
+  };
+  trackingLogs: {
+    createdAt: string;
+    id: string;
+    currentLocation: string | null;
+    updatedAt: string;
+    oldLocation: string | null;
+    timestamp: string;
+  };
+};
 
 export const DeliveryDetailsPage = () => {
-  const requestData = {
-    locationB: '{"lat": 45.333222, "lng": 76.999909}',
-    acceptedRequestAt: "2025-04-07T22:20:24.770430",
-    timestamp: "2025-04-07T20:51:55.938688",
-    primaryUser: "jesusbryam624@gmail.com",
-    secondaryUser: "jesusbryan155@gmail.com",
-    startedRequestAt: "2025-04-07T20:51:55.938714",
-    dstate: "CONFIRMED",
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [message, setMessage] = React.useState<string>("");
+  const [deliveryData, setDeliveryData] = React.useState<DeliveryData | null>(
+    null
+  );
+  const [trackingLogsId, setTrackingLogsId] = React.useState<String>("");
+
+  // path variable
+  const { instanceId } = useParams();
+
+  const fetchDeliveryData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        DashboardEndpoints.getDeliveryDetailsEndpoint +
+          "?instanceId=" +
+          instanceId,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("idToken"),
+          },
+          mode: "cors",
+        }
+      );
+      const data: IResponse<DeliveryData> = await response.json();
+      if (!response.ok) {
+        setMessage(data.message);
+        return;
+      }
+      setDeliveryData(data.data);
+      setTrackingLogsId(data.data.trackingLogs.id);
+      setMessage("");
+    } catch (error) {
+      setMessage("Error fetching delivery data");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const trackingPoints = {
-    locationA: {
-      lat: 18.47697270356747,
-      lng: -97.3986123559981,
-      name: "Mi casa",
-    },
-    locationB: {
-      lat: 18.473350088972822,
-      lng: -97.39535078974275,
-      name: "Tacos BB",
-    },
-    locationZ: {
-      lat: 18.475324219897843,
-      lng: -97.40245327941716,
-      name: "Drone center",
-    },
-    locationT: {
-      lat: 18.47239354313521,
-      lng: -97.39775404908877,
-      name: "Drone Position",
-    },
-  };
+  useEffect(() => {
+    fetchDeliveryData();
+  }, []);
+
   return (
     <div className="p-4">
-      <DeliveryDetailsRequestCard
-        data={requestData}
-        trackingPoints={trackingPoints}
-      />
+      {isLoading || deliveryData === null ? (
+        <Loader />
+      ) : (
+        <DeliveryAdvanceDetailsPage data={deliveryData!} />
+      )}
     </div>
   );
 };

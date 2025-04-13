@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import Mapa from "./Mapa";
 
 interface TrackingPoints {
-  locationA: { lat: number; lng: number; name: string };
-  locationB: { lat: number; lng: number; name: string };
-  locationZ: { lat: number; lng: number; name: string };
-  locationT: { lat: number; lng: number; name: string };
+  locationA: { lat: number; lng: number; name: string } | null;
+  locationB: { lat: number; lng: number; name: string } | null;
+  locationZ: { lat: number; lng: number; name: string } | null;
+  locationT: { lat: number; lng: number; name: string } | null;
 }
 
 interface StartDeliveryModalProps {
   isOpen: boolean;
   points?: TrackingPoints;
   draggable?: boolean;
+  headingTo?: string;
   onClose: () => void;
   onStart: () => void;
 }
@@ -22,9 +23,14 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   onStart,
   points,
   draggable = true,
+  headingTo = "",
 }) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    !draggable ? [points!.locationA.lat, points!.locationA.lng] : null
+    !draggable
+      ? points?.locationA !== null
+        ? [points!.locationA.lat, points!.locationA.lng]
+        : [19.4326, -99.1332]
+      : [19.4326, -99.1332]
   );
 
   const getUserLocation = () => {
@@ -53,7 +59,10 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
         <div className="p-4 border-b">
-          <h2 className="text-xl font-bold">Confirmar Ubicación</h2>
+          <h2 className="text-xl font-bold">
+            {draggable ? "Confirmar Ubicación" : "Rastreo de Entrega"}
+          </h2>
+          <h3 className="text-sm text-blue-500 font-bold">{headingTo}</h3>
         </div>
 
         <div className="p-4">
@@ -63,7 +72,9 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
                 center={
                   points === undefined
                     ? userLocation
-                    : [points.locationA.lat, points.locationA.lng]
+                    : points.locationA !== null
+                    ? [points.locationA.lat, points.locationA.lng]
+                    : [19.4326, -99.1332]
                 }
                 zoom={15}
                 onLocationChange={(lat: number, lng: number) =>

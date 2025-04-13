@@ -90,7 +90,7 @@ createRoot(document.getElementById("root")!).render(
                       <Routes>
                         <Route path="" element={<DeliveriesPage />} />
                         <Route
-                          path="details/:deliveryId"
+                          path="details/:instanceId"
                           element={<DeliveryDetailsPage />}
                         />
                       </Routes>
