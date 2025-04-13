@@ -220,51 +220,6 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
               </div>
             </div>
           </div>
-
-          {/* Tracking Logs Card */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
-                Tracking Logs
-              </h2>
-
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Logs ID</h3>
-                  <p className="text-gray-900 font-mono">
-                    {data.trackingLogs.id}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Last Updated
-                  </h3>
-                  <p className="text-gray-900">
-                    {formatDate(data.trackingLogs.updatedAt)}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Current Location
-                  </h3>
-                  <p className="text-gray-900">
-                    {data.trackingLogs.currentLocation || "Not available"}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Previous Location
-                  </h3>
-                  <p className="text-gray-900">
-                    {data.trackingLogs.oldLocation || "Not available"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

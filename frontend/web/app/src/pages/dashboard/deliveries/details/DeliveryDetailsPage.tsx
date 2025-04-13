@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
-import { DeliveryDetailsRequestCard } from "./DeliveryDetailsRequestCard";
 import { useParams } from "react-router-dom";
 import { DashboardEndpoints } from "../../../../endpoints/dashboard";
 import { IResponse } from "../../../../types/responses/IResponse";
-import { Delivery } from "../types";
-import { set } from "date-fns";
 import { DeliveryAdvanceDetailsPage } from "./advance/DeliveryAdvanceDetailsPage";
 import { Loader } from "../../../../components/grez/Louder";
 
