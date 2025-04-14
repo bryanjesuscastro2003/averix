@@ -12,6 +12,8 @@ export interface Delivery {
     dstate: string;
     createdAt: string;
     updatedAt: string;
+    trackingId: string;
+    trackingLogsId: string;
 }
 
 export interface DeliveryData {

@@ -2,52 +2,9 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { DashboardEndpoints } from "../../../../endpoints/dashboard";
 import { IResponse } from "../../../../types/responses/IResponse";
-import { DeliveryAdvanceDetailsPage } from "./advance/DeliveryAdvanceDetailsPage";
 import { Loader } from "../../../../components/grez/Louder";
-
-type DeliveryData = {
-  delivery: {
-    locationB: string;
-    trackingId: string;
-    locationA: string;
-    acceptedRequestAt: string;
-    timestamp: string;
-    createdAt: string;
-    locationZ: string;
-    primaryUser: string;
-    secondaryUser: string;
-    startedRequestAt: string;
-    updatedAt: string;
-    instanceId: string;
-    dstate: string;
-    id: string;
-  };
-  tracking: {
-    timestamp: string;
-    createdAt: string;
-    mfZA_endedAt: string | null;
-    mfBZ_endedAt: string | null;
-    mfAB_endedAt: string | null;
-    mfZA_startedAt: string;
-    mfBA_startedAt: string | null;
-    mfstate: string;
-    updatedAt: string;
-    mfBZ_startedAt: string | null;
-    mfBA_endedAt: string | null;
-    trackingLogsId: string;
-    dstate: string;
-    id: string;
-    mfAB_startedAt: string | null;
-  };
-  trackingLogs: {
-    createdAt: string;
-    id: string;
-    currentLocation: string | null;
-    updatedAt: string;
-    oldLocation: string | null;
-    timestamp: string;
-  };
-};
+import { DeliveryData } from "../../../../types/data/IDelivery";
+import { DeliveryAdvanceDetailsRequestCard } from "../../../../components/bryan/delivery/DeliveryAdvanceDetailsRequestCard";
 
 export const DeliveryDetailsPage = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -100,7 +57,7 @@ export const DeliveryDetailsPage = () => {
       {isLoading || deliveryData === null ? (
         <Loader />
       ) : (
-        <DeliveryAdvanceDetailsPage data={deliveryData!} />
+        <DeliveryAdvanceDetailsRequestCard data={deliveryData!} />
       )}
     </div>
   );

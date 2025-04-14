@@ -13,7 +13,7 @@ import NotFoundPage from "./pages/common/NotFound.page";
 import LogupPage from "./pages/auth/Logup.page";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Header from "./components/layout/Header";
-import ProfilePage from "./pages/dashboard/Profile.page";
+import ProfilePage from "./pages/dashboard/profiles/Profile.page";
 import { InstancesPage } from "./pages/dashboard/instances/Instances.page";
 import { ForgotPassword } from "./pages/auth/ForgetPassword.page";
 import { ResetPassword } from "./pages/auth/ResetPassword.page";

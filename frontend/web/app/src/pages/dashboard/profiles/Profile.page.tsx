@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { AuthEndpoints } from "../../endpoints/auth";
+import { useAuth } from "../../../context/AuthContext";
+import { AuthEndpoints } from "../../../endpoints/auth";
 
 const ProfilePage: React.FC = () => {
   const { userData } = useAuth();

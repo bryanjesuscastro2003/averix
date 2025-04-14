@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { StartDeliveryModal } from "../../../../../components/chris/delivery/StartDeliveryModal";
-import { DeliveryData, Location } from "../../../../../types/data/IDelivery";
+import { StartDeliveryModal } from "../../chris/delivery/StartDeliveryModal";
+import { DeliveryData, Location } from "../../../types/data/IDelivery";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   data: DeliveryData;
