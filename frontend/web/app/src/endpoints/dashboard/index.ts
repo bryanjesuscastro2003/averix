@@ -5,5 +5,7 @@ export const DashboardEndpoints = {
     getInstancesEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/instances",
     createInstanceEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/instances",
     getDeliveriesEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips",
-    getDeliveryDetailsEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/item"
+    getDeliveryDetailsEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/item",
+    createDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips",
+    confirmDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/confirm"
 }

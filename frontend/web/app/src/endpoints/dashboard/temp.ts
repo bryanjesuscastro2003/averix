@@ -1,3 +1,0 @@
-interface Item {
-    name: string;
-}

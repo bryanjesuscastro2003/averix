@@ -6,24 +6,40 @@ import Louder from "../../../components/chris/louder";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
 import { fi } from "date-fns/locale";
+import { set } from "date-fns";
+import { useAuth } from "../../../context/AuthContext";
 
 const DeliveriesPage: React.FC = () => {
   const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([]);
   const [filter, setFilter] = useState<string>("");
+  const [filterDestination, setFilterDestination] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const { userData } = useAuth();
 
   const filteredDeliveries = allDeliveries.filter((delivery) => {
     const stateMatch = filter === "" || delivery.dstate === filter;
+    const destinationMatch =
+      filterDestination === "" || // Add empty check like you did with filter
+      (filterDestination === "e" && delivery.primaryUser === userData?.email) ||
+      (filterDestination === "r" && delivery.secondaryUser === userData?.email);
+
     const searchMatch =
+      searchTerm === "" || // Add empty check
       delivery.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      delivery.primaryUser.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      delivery.secondaryUser.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      delivery.locationA.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      delivery.locationZ.toLowerCase().includes(searchTerm.toLowerCase());
-    return stateMatch && searchMatch;
+      (delivery.primaryUser || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (delivery.secondaryUser || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    // Combine all conditions
+    return stateMatch && destinationMatch && searchMatch;
   });
 
   const handleStartDelivery = (id: string) => {
@@ -55,8 +71,47 @@ const DeliveriesPage: React.FC = () => {
     );
   };
 
+  const fetchStartDelivery = async (lat: number, lng: number) => {
+    try {
+      setIsModalLoading(true);
+      const response = await fetch(
+        DashboardEndpoints.createDeliveryTripEndpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+          },
+          body: JSON.stringify({
+            locationA: {
+              lat,
+              lng,
+            },
+          }),
+          mode: "cors",
+        }
+      );
+      const data: IResponse<any> = await response.json();
+      if (!data.ok) {
+        setError(data.message);
+      } else {
+        setMessage("Viaje iniciado con éxito");
+        fetchDeliveries();
+      }
+    } catch (error) {
+      setError("Error al iniciar el viaje");
+    } finally {
+      setIsModalLoading(false);
+    }
+  };
+
   const handleStartNewDelivery = (userLocation: [number, number] | null) => {
     console.log("User location:", userLocation);
+    if (!userLocation) {
+      setError("Ubicación no válida");
+      return;
+    }
+    fetchStartDelivery(userLocation[0], userLocation[1]);
   };
 
   const fetchDeliveries = async () => {
@@ -121,6 +176,25 @@ const DeliveriesPage: React.FC = () => {
           </select>
         </div>
 
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor="state-filter"
+            className="text-sm font-medium text-gray-700"
+          >
+            Filtrar por destino:
+          </label>
+          <select
+            id="state-filter"
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            value={filterDestination}
+            onChange={(e) => setFilterDestination(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="e">Emitente</option>
+            <option value="r">Receptor</option>
+          </select>
+        </div>
+
         <div className="flex-1">
           <label htmlFor="search" className="sr-only">
             Buscar
@@ -176,8 +250,15 @@ const DeliveriesPage: React.FC = () => {
 
       <StartDeliveryModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setMessage("");
+          setError("");
+        }}
         onStart={handleStartNewDelivery}
+        message={message}
+        error={error}
+        isModalLoading={isModalLoading}
       />
     </div>
   );

@@ -17,6 +17,9 @@ interface StartDeliveryModalProps {
   headingTo?: string;
   onClose: () => void;
   onStart: (userLocation: [number, number] | null) => void;
+  message?: string;
+  error?: string;
+  isModalLoading?: boolean;
 }
 
 export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
@@ -26,6 +29,9 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   points,
   draggable = true,
   headingTo = "",
+  message,
+  error,
+  isModalLoading,
 }) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     !draggable
@@ -118,7 +124,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
           <button
             onClick={() => {
               onClose();
-              setUserLocation(null);
+              //setUserLocation(null);
             }}
             className="px-4 py-2 border border-gray-300 rounded-md"
           >
@@ -130,8 +136,8 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
               <button
                 onClick={() => {
                   onStart(userLocation);
-                  onClose();
-                  setUserLocation(null);
+                  //onClose();
+                  //setUserLocation(null);
                 }}
                 disabled={!userLocation}
                 className={`px-4 py-2 rounded-md text-white ${
@@ -146,6 +152,21 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             </>
           )}
         </div>
+        {message && (
+          <div className="p-4 text-sm text-gray-600 text-center font-bold text-blue-500">
+            <p>{message}</p>
+          </div>
+        )}
+        {error && (
+          <div className="p-4 text-sm text-gray-600 text-center font-bold text-red-500">
+            <p>{error}</p>
+          </div>
+        )}
+        {isModalLoading && (
+          <div className="mt-2 pb-4">
+            <Louder />
+          </div>
+        )}
       </div>
     </div>
   );
