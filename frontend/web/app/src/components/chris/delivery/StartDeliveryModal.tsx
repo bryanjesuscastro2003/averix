@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Mapa from "./Mapa";
-import Louder from "../../../components/chris/louder";
+import Louder from "../louder";
 import { se } from "date-fns/locale";
 
 interface TrackingPoints {

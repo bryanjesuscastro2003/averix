@@ -1,6 +1,6 @@
 import React from "react";
-import { Delivery } from "./types";
-import { Pagination } from "../../../components/bryan/Pagination";
+import { Delivery } from "../../../types/data/IDelivery";
+import { Pagination } from "../../bryan/Pagination";
 import { useNavigate } from "react-router-dom";
 
 interface DeliveryTableProps {

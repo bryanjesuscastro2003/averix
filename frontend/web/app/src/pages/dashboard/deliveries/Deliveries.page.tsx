@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { DeliveryTable } from "./DeliveryTable";
-import { StartDeliveryModal } from "./StartDeliveryModal";
-import { Delivery } from "./types";
+import { DeliveryTable } from "../../../components/chris/delivery/DeliveryTable";
+import { StartDeliveryModal } from "../../../components/chris/delivery/StartDeliveryModal";
+import { Delivery } from "../../../types/data/IDelivery";
 import Louder from "../../../components/chris/louder";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
