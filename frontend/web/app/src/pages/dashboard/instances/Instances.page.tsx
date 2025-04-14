@@ -271,8 +271,8 @@ export const InstancesPage = () => {
               )}
             </tbody>
           </table>
-          <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
         </div>
+        <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
       </div>
       <div className="flex justify-end py-4">
         <Link

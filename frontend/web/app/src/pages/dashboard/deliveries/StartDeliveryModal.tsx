@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Mapa from "./Mapa";
+import Louder from "../../../components/chris/louder";
+import { se } from "date-fns/locale";
 
 interface TrackingPoints {
   locationA: { lat: number; lng: number; name: string } | null;
@@ -14,7 +16,7 @@ interface StartDeliveryModalProps {
   draggable?: boolean;
   headingTo?: string;
   onClose: () => void;
-  onStart: () => void;
+  onStart: (userLocation: [number, number] | null) => void;
 }
 
 export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
@@ -30,10 +32,12 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
       ? points?.locationA !== null
         ? [points!.locationA.lat, points!.locationA.lng]
         : [19.4326, -99.1332]
-      : [19.4326, -99.1332]
+      : null
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const getUserLocation = () => {
+    setIsLoading(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -41,15 +45,18 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             position.coords.latitude,
             position.coords.longitude,
           ]);
+          setIsLoading(false);
         },
         () => {
           // Fallback a una ubicación por defecto si hay error
           setUserLocation([19.4326, -99.1332]); // Ciudad de México
+          setIsLoading(false);
         }
       );
     } else {
       alert("Geolocalización no soportada en este navegador");
       setUserLocation([19.4326, -99.1332]); // Fallback
+      setIsLoading(false);
     }
   };
 
@@ -89,17 +96,30 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             <div className="text-center py-8">
               <button
                 onClick={getUserLocation}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                disabled={isLoading}
+                className={`px-4 py-2 rounded-md text-white ${
+                  isLoading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
               >
                 Obtener mi ubicación
               </button>
+              {isLoading && (
+                <div className="mt-2">
+                  <Louder />
+                </div>
+              )}
             </div>
           )}
         </div>
 
         <div className="p-4 border-t flex justify-end gap-3">
           <button
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              setUserLocation(null);
+            }}
             className="px-4 py-2 border border-gray-300 rounded-md"
           >
             {draggable ? "Cancelar" : "Cerrar"}
@@ -109,8 +129,9 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             <>
               <button
                 onClick={() => {
-                  onStart();
+                  onStart(userLocation);
                   onClose();
+                  setUserLocation(null);
                 }}
                 disabled={!userLocation}
                 className={`px-4 py-2 rounded-md text-white ${

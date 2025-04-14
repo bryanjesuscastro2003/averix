@@ -191,9 +191,6 @@ export const ProfilesPage = () => {
         </div>
       </div>
 
-      
-      
-
       {/* Results count */}
       <div className="mb-2 text-sm text-gray-600">
         Showing {filteredUsers.length} of {users.length} users
@@ -334,8 +331,8 @@ export const ProfilesPage = () => {
             )}
           </tbody>
         </table>
-        <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
       </div>
+      <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
 
       {/* Create New Profile Button */}
       <div className="flex justify-end">

@@ -5,14 +5,14 @@ const Dashboard: React.FC = () => {
   const images = [
     "https://wallpapercave.com/wp/wp1896575.jpg",
     "https://wallpapercave.com/wp/wp1896537.jpg",
-    "https://pedroponcemarketing.com/wp-content/uploads/2023/09/imagend40b57e8337cda1f2a1706ebbf9ca1c8.jpg"
+    "https://pedroponcemarketing.com/wp-content/uploads/2023/09/imagend40b57e8337cda1f2a1706ebbf9ca1c8.jpg",
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => 
+      setCurrentImageIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
     }, 5000);
@@ -24,9 +24,9 @@ const Dashboard: React.FC = () => {
     <div className="relative h-screen w-full overflow-hidden">
       {/* Slider a pantalla completa */}
       <div className="absolute inset-0 transition-opacity duration-1000">
-        <img 
-          src={images[currentImageIndex]} 
-          alt="Background" 
+        <img
+          src={images[currentImageIndex]}
+          alt="Background"
           className="w-full h-full object-cover"
         />
       </div>
@@ -49,16 +49,16 @@ const Dashboard: React.FC = () => {
 
           <div className="space-y-4">
             <Link
-              to="/orders"
+              to="/dashboard/deliveries"
               className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
             >
-              Historial de Pedidos
+              Historial de Viajes
             </Link>
             <Link
               to="/track"
               className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
             >
-              Seguimiento de Envío
+              Sobre Nosotros
             </Link>
           </div>
 
@@ -76,7 +76,11 @@ const Dashboard: React.FC = () => {
           <button
             key={index}
             onClick={() => setCurrentImageIndex(index)}
-            className={`w-3 h-3 rounded-full ${currentImageIndex === index ? 'bg-white' : 'bg-white bg-opacity-50'}`}
+            className={`w-3 h-3 rounded-full ${
+              currentImageIndex === index
+                ? "bg-white"
+                : "bg-white bg-opacity-50"
+            }`}
             aria-label={`Ir a imagen ${index + 1}`}
           />
         ))}

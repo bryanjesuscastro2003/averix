@@ -55,8 +55,8 @@ const DeliveriesPage: React.FC = () => {
     );
   };
 
-  const handleStartNewDelivery = () => {
-    // TODO : Implement the logic to start a new delivery
+  const handleStartNewDelivery = (userLocation: [number, number] | null) => {
+    console.log("User location:", userLocation);
   };
 
   const fetchDeliveries = async () => {
