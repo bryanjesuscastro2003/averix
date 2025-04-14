@@ -19,6 +19,11 @@ const DeliveriesPage: React.FC = () => {
   const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [confirmationCode, setConfirmationCode] = useState<string>("");
+  const [isConfirmationCodeLoaded, setIsConfirmationCodeLoaded] =
+    useState<boolean>(false);
+  const [isConfirmationCodeValid, setIsConfirmationCodeValid] =
+    useState<boolean>(false);
   const { userData } = useAuth();
 
   const filteredDeliveries = allDeliveries.filter((delivery) => {
@@ -74,20 +79,33 @@ const DeliveriesPage: React.FC = () => {
   const fetchStartDelivery = async (lat: number, lng: number) => {
     try {
       setIsModalLoading(true);
+
+      const bodyData = !isConfirmationCodeLoaded
+        ? {
+            locationA: {
+              lat,
+              lng,
+            },
+          }
+        : {
+            deliveryId: confirmationCode,
+            locationB: {
+              lat,
+              lng,
+            },
+          };
+
       const response = await fetch(
-        DashboardEndpoints.createDeliveryTripEndpoint,
+        !isConfirmationCodeLoaded
+          ? DashboardEndpoints.createDeliveryTripEndpoint
+          : DashboardEndpoints.confirmDeliveryTripEndpoint,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
-          body: JSON.stringify({
-            locationA: {
-              lat,
-              lng,
-            },
-          }),
+          body: JSON.stringify(bodyData),
           mode: "cors",
         }
       );
@@ -96,6 +114,7 @@ const DeliveriesPage: React.FC = () => {
         setError(data.message);
       } else {
         setMessage("Viaje iniciado con éxito");
+        setIsConfirmationCodeValid(false);
         fetchDeliveries();
       }
     } catch (error) {
@@ -137,6 +156,43 @@ const DeliveriesPage: React.FC = () => {
       console.error("Error fetching deliveries:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const confirmationCodeAction = async () => {
+    try {
+      setIsModalLoading(true);
+      setIsModalOpen(true);
+      setIsConfirmationCodeValid(false);
+      const response = await fetch(
+        DashboardEndpoints.verifyDeliveryTripEndpoint +
+          "?deliveryId=" +
+          confirmationCode,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+          },
+          mode: "cors",
+        }
+      );
+      const data: IResponse<any> = await response.json();
+      if (!data.ok) {
+        setError(data.message);
+        setIsConfirmationCodeLoaded(false);
+      } else {
+        setMessage(
+          "Código de confirmación correcto, porfavor confirma el viaje"
+        );
+        setIsConfirmationCodeLoaded(true);
+        setIsConfirmationCodeValid(true);
+      }
+    } catch (error) {
+      console.error("Error confirming delivery:", error);
+    } finally {
+      setIsModalLoading(false);
+      //setIsModalOpen(false);
     }
   };
 
@@ -210,6 +266,33 @@ const DeliveriesPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Form to enter a confirmation code text, input, button*/}
+      <div className="mb-4 p-4 border rounded-md bg-gray-50">
+        <label
+          htmlFor="confirmation-code"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Código de Confirmación:
+        </label>
+        <input
+          type="text"
+          id="confirmation-code"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          placeholder="Ingrese el código de confirmación"
+          value={confirmationCode}
+          onChange={(e) => setConfirmationCode(e.target.value)}
+        />
+
+        <button
+          type="button"
+          className="mt-2 px-4 py-3 w-full gap-2 sm:w-auto bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          onClick={confirmationCodeAction}
+          disabled={isLoading}
+        >
+          Confirmar
+        </button>
+      </div>
+
       <div className="mb-2 text-sm text-gray-600">
         Mostrando {filteredDeliveries.length} de {allDeliveries.length} entregas
       </div>
@@ -228,23 +311,27 @@ const DeliveriesPage: React.FC = () => {
       <div className="mt-8 flex justify-center">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg"
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center align-center "
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          Iniciar Viaje
+          <div className="flex justify-center items-center w-full">
+            <p className="flex gap-2 text-center items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              Iniciar Viaje
+            </p>
+          </div>
         </button>
       </div>
 
@@ -252,6 +339,9 @@ const DeliveriesPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
+          setIsConfirmationCodeLoaded(false);
+          setIsConfirmationCodeValid(true);
+          setConfirmationCode("");
           setMessage("");
           setError("");
         }}
@@ -259,6 +349,7 @@ const DeliveriesPage: React.FC = () => {
         message={message}
         error={error}
         isModalLoading={isModalLoading}
+        block={isConfirmationCodeValid}
       />
     </div>
   );

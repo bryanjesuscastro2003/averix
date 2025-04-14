@@ -150,7 +150,7 @@ createRoot(document.getElementById("root")!).render(
         </Routes>
       </Router>
 
-      <InteractiveNotification
+      {/*<InteractiveNotification
         type="info"
         message="¿Necesitas ayuda? Haz clic aquí"
         onClose={() => console.log("Notificación cerrada")}
@@ -160,7 +160,7 @@ createRoot(document.getElementById("root")!).render(
             <p>Puedes poner cualquier contenido React aquí</p>
           </div>
         }
-      />
+      />*/}
     </AuthProvider>
   </StrictMode>
 );

@@ -20,6 +20,7 @@ interface StartDeliveryModalProps {
   message?: string;
   error?: string;
   isModalLoading?: boolean;
+  block?: boolean;
 }
 
 export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
@@ -32,6 +33,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   message,
   error,
   isModalLoading,
+  block = true,
 }) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     !draggable
@@ -131,7 +133,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             {draggable ? "Cancelar" : "Cerrar"}
           </button>
 
-          {draggable && (
+          {draggable && block && (
             <>
               <button
                 onClick={() => {

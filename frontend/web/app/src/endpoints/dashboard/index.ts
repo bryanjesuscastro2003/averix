@@ -7,5 +7,6 @@ export const DashboardEndpoints = {
     getDeliveriesEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips",
     getDeliveryDetailsEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/item",
     createDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips",
-    confirmDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/confirm"
+    confirmDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/confirm",
+    verifyDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/verify"
 }
