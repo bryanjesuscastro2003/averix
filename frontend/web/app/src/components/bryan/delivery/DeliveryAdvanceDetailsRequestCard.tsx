@@ -183,7 +183,6 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                           <p className="text-center w-full">Seguimiento</p>
                         </button>
                       )}
-                      )
                     </>
                   ) : (
                     <>

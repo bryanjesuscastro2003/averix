@@ -8,6 +8,7 @@ import { IResponse } from "../../../types/responses/IResponse";
 import { fi } from "date-fns/locale";
 import { set } from "date-fns";
 import { useAuth } from "../../../context/AuthContext";
+import { useParams } from "react-router-dom";
 
 const DeliveriesPage: React.FC = () => {
   const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([]);
@@ -26,6 +27,8 @@ const DeliveriesPage: React.FC = () => {
     useState<boolean>(true);
   const [showCategory, setShowCategory] = useState<boolean>(true);
   const { userData } = useAuth();
+  // path variable
+  const { deliveryId } = useParams();
 
   const filteredDeliveries = allDeliveries.filter((delivery) => {
     const stateMatch = filter === "" || delivery.dstate === filter;
@@ -119,7 +122,7 @@ const DeliveriesPage: React.FC = () => {
       if (!data.ok) {
         setError(data.message);
       } else {
-        setMessage("Viaje iniciado con éxito");
+        setMessage("Viaje confirmado con éxito");
         setIsConfirmationCodeValid(false);
         fetchDeliveries();
       }
@@ -168,16 +171,20 @@ const DeliveriesPage: React.FC = () => {
     }
   };
 
-  const confirmationCodeAction = async () => {
+  const confirmationCodeAction = async (deliveryId?: string) => {
     try {
       setIsModalLoading(true);
       setIsModalOpen(true);
       setIsConfirmationCodeValid(false);
       setShowCategory(false);
+      console.log(
+        "Confirmation code action called with deliveryId:",
+        deliveryId
+      );
       const response = await fetch(
         DashboardEndpoints.verifyDeliveryTripEndpoint +
           "?deliveryId=" +
-          confirmationCode,
+          (deliveryId ? deliveryId : confirmationCode),
         {
           method: "GET",
           headers: {
@@ -207,6 +214,10 @@ const DeliveriesPage: React.FC = () => {
   };
 
   useEffect(() => {
+    if (deliveryId && deliveryId !== "") {
+      setConfirmationCode(deliveryId);
+      confirmationCodeAction(deliveryId);
+    }
     fetchDeliveries();
   }, []);
 
@@ -296,7 +307,7 @@ const DeliveriesPage: React.FC = () => {
         <button
           type="button"
           className="mt-2 px-4 py-3 w-full gap-2 sm:w-auto bg-green-600 text-white rounded-md hover:bg-green-700 transition"
-          onClick={confirmationCodeAction}
+          onClick={() => confirmationCodeAction}
           disabled={isLoading}
         >
           Confirmar

@@ -156,7 +156,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             }}
             className="px-4 py-2 border border-gray-300 rounded-md"
           >
-            {draggable ? "Cancelar" : "Cerrar"}
+            Cerrar
           </button>
 
           {draggable && block && (

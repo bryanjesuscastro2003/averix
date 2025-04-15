@@ -88,7 +88,10 @@ createRoot(document.getElementById("root")!).render(
                     path="deliveries/*"
                     element={
                       <Routes>
-                        <Route path="" element={<DeliveriesPage />} />
+                        <Route
+                          path=":deliveryId?"
+                          element={<DeliveriesPage />}
+                        />
                         <Route
                           path="details/:instanceId"
                           element={<DeliveryDetailsPage />}
