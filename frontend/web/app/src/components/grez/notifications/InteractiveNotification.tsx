@@ -103,7 +103,7 @@ export const InteractiveNotification: React.FC<NotificationProps> = ({
         <div className="fixed bottom-20 left-4 w-80 h-96 bg-white rounded-lg shadow-xl z-50 flex flex-col border border-gray-200">
           {/* Header del chat */}
           <div className="bg-blue-500 text-white p-3 rounded-t-lg flex justify-between items-center">
-            <h3 className="font-medium">Chat de Soporte</h3>
+            <h3 className="font-medium">Bandeja de notificaciones</h3>
             <button
               onClick={() => setIsChatOpen(false)}
               className="text-white hover:text-gray-200"

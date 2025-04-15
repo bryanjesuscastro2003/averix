@@ -23,7 +23,8 @@ const DeliveriesPage: React.FC = () => {
   const [isConfirmationCodeLoaded, setIsConfirmationCodeLoaded] =
     useState<boolean>(false);
   const [isConfirmationCodeValid, setIsConfirmationCodeValid] =
-    useState<boolean>(false);
+    useState<boolean>(true);
+  const [showCategory, setShowCategory] = useState<boolean>(true);
   const { userData } = useAuth();
 
   const filteredDeliveries = allDeliveries.filter((delivery) => {
@@ -76,7 +77,11 @@ const DeliveriesPage: React.FC = () => {
     );
   };
 
-  const fetchStartDelivery = async (lat: number, lng: number) => {
+  const fetchStartDelivery = async (
+    lat: number,
+    lng: number,
+    capacity: string
+  ) => {
     try {
       setIsModalLoading(true);
 
@@ -86,6 +91,7 @@ const DeliveriesPage: React.FC = () => {
               lat,
               lng,
             },
+            capacity,
           }
         : {
             deliveryId: confirmationCode,
@@ -124,13 +130,16 @@ const DeliveriesPage: React.FC = () => {
     }
   };
 
-  const handleStartNewDelivery = (userLocation: [number, number] | null) => {
+  const handleStartNewDelivery = (
+    userLocation: [number, number] | null,
+    capacity: string
+  ) => {
     console.log("User location:", userLocation);
     if (!userLocation) {
       setError("Ubicación no válida");
       return;
     }
-    fetchStartDelivery(userLocation[0], userLocation[1]);
+    fetchStartDelivery(userLocation[0], userLocation[1], capacity);
   };
 
   const fetchDeliveries = async () => {
@@ -164,6 +173,7 @@ const DeliveriesPage: React.FC = () => {
       setIsModalLoading(true);
       setIsModalOpen(true);
       setIsConfirmationCodeValid(false);
+      setShowCategory(false);
       const response = await fetch(
         DashboardEndpoints.verifyDeliveryTripEndpoint +
           "?deliveryId=" +
@@ -285,7 +295,7 @@ const DeliveriesPage: React.FC = () => {
 
         <button
           type="button"
-          className="mt-2 px-4 py-3 w-full gap-2 sm:w-auto bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          className="mt-2 px-4 py-3 w-full gap-2 sm:w-auto bg-green-600 text-white rounded-md hover:bg-green-700 transition"
           onClick={confirmationCodeAction}
           disabled={isLoading}
         >
@@ -344,12 +354,14 @@ const DeliveriesPage: React.FC = () => {
           setConfirmationCode("");
           setMessage("");
           setError("");
+          setShowCategory(true);
         }}
         onStart={handleStartNewDelivery}
         message={message}
         error={error}
         isModalLoading={isModalLoading}
         block={isConfirmationCodeValid}
+        showCategory={showCategory}
       />
     </div>
   );

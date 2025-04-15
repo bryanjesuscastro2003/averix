@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { DashboardEndpoints } from "../../../../endpoints/dashboard";
-import { IResponse } from "../../../../types/responses/IResponse";
-import { Loader } from "../../../../components/grez/Louder";
-import { DeliveryData } from "../../../../types/data/IDelivery";
-import { DeliveryAdvanceDetailsRequestCard } from "../../../../components/bryan/delivery/DeliveryAdvanceDetailsRequestCard";
+import { DashboardEndpoints } from "../../../../../endpoints/dashboard";
+import { IResponse } from "../../../../../types/responses/IResponse";
+import { Loader } from "../../../../../components/grez/Louder";
+import { DeliveryData } from "../../../../../types/data/IDelivery";
+import { DeliveryAdvanceDetailsRequestCard } from "../../../../../components/bryan/delivery/DeliveryAdvanceDetailsRequestCard";
 
 export const DeliveryDetailsPage = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);

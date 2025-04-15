@@ -24,7 +24,7 @@ import { DeliveryTrackingPage } from "./pages/dashboard/deliveries/tracking/Deli
 import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/TrackingLogsPage";
 import { CertificatesPage } from "./pages/dashboard/instances/CertificatesPage";
 import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
-import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/details/DeliveryDetailsPage";
+import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/tracking/details/DeliveryDetailsPage";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -151,16 +151,16 @@ createRoot(document.getElementById("root")!).render(
       </Router>
 
       {/*<InteractiveNotification
-        type="info"
-        message="¿Necesitas ayuda? Haz clic aquí"
-        onClose={() => console.log("Notificación cerrada")}
-        chatContent={
-          <div>
-            <p>Mensaje de bienvenida personalizado</p>
-            <p>Puedes poner cualquier contenido React aquí</p>
-          </div>
-        }
-      />*/}
+          type="info"
+          message="El dron ha llegado a su destino"
+          onClose={() => console.log("Notificación cerrada")}
+          chatContent={
+            <div>
+              <p>Mensaje de bienvenida personalizado</p>
+              <p>Puedes poner cualquier contenido React aquí</p>
+            </div>
+          }
+        />*/}
     </AuthProvider>
   </StrictMode>
 );

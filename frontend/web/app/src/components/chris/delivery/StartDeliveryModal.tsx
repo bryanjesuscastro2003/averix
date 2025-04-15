@@ -16,11 +16,12 @@ interface StartDeliveryModalProps {
   draggable?: boolean;
   headingTo?: string;
   onClose: () => void;
-  onStart: (userLocation: [number, number] | null) => void;
+  onStart: (userLocation: [number, number] | null, capacity: string) => void;
   message?: string;
   error?: string;
   isModalLoading?: boolean;
   block?: boolean;
+  showCategory?: boolean;
 }
 
 export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
@@ -34,6 +35,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   error,
   isModalLoading,
   block = true,
+  showCategory = false,
 }) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     !draggable
@@ -43,6 +45,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
       : null
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [capacity, setCapacity] = useState<string>("small");
 
   const getUserLocation = () => {
     setIsLoading(true);
@@ -71,7 +74,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 mt-20">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
         <div className="p-4 border-b">
           <h2 className="text-xl font-bold">
@@ -122,6 +125,29 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
           )}
         </div>
 
+        {/*Instance category "small, micro, large" small => 0 - 3kg , micro => 3kg - 6kg, large => 6kg - 10kg*/}
+        {showCategory && (
+          <div className="mb-6 p-4">
+            <label
+              htmlFor="category"
+              className="block text-sm font-semibold text-gray-800 mb-2"
+            >
+              Selecciona la categoría
+            </label>
+            <select
+              id="category"
+              name="category"
+              className="block w-full px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition ease-in-out duration-150"
+              value={capacity}
+              onChange={(e) => setCapacity(e.target.value)}
+            >
+              <option value="small">Pequeño (0 - 3kg)</option>
+              <option value="medium">Medio (3kg - 6kg)</option>
+              <option value="large">Grande (6kg - 10kg)</option>
+            </select>
+          </div>
+        )}
+
         <div className="p-4 border-t flex justify-end gap-3">
           <button
             onClick={() => {
@@ -134,10 +160,10 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
           </button>
 
           {draggable && block && (
-            <>
+            <div>
               <button
                 onClick={() => {
-                  onStart(userLocation);
+                  onStart(userLocation, capacity);
                   //onClose();
                   //setUserLocation(null);
                 }}
@@ -151,7 +177,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
                 Confirmar Ubicacion
                 {/*userLocation*/}
               </button>
-            </>
+            </div>
           )}
         </div>
         {message && (

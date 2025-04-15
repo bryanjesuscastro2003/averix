@@ -26,7 +26,7 @@ const Header = () => {
   };
 
   return (
-    <header className="header">
+    <header className="header bg-indigo-600">
       <div className="header-container">
         <div className="header-content">
           {/* Logo */}

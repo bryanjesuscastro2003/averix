@@ -108,7 +108,7 @@ const Mapa: React.FC<MapProps> = ({
     );
 
   return (
-    <div className="h-96 w-full rounded-md overflow-hidden">
+    <div className="h-80 w-full rounded-md overflow-hidden">
       <MapContainer
         center={center}
         zoom={zoom}
