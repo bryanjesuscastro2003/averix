@@ -20,144 +20,112 @@ interface DroneCertificateCardProps {
 }
 
 export const DroneCertificateCard: React.FC<DroneCertificateCardProps> = ({ certificate }) => {
-  // Función para formatear la fecha
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
 
-  // Función para copiar al portapapeles
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    // Aquí podrías añadir un toast notification
   };
 
-  // Función para extraer el nombre corto del certificado
   const getShortCertId = (arn: string) => {
     const parts = arn.split('/');
     return parts[parts.length - 1];
   };
 
   return (
-    <div className="max-w-md rounded-xl overflow-hidden shadow-lg bg-white border border-gray-200">
-      {/* Encabezado */}
-      <div className="px-6 py-4 bg-blue-50 border-b flex items-center">
-        <FiAward className="text-blue-600 text-xl mr-3" />
+    <div className="w-full bg-white rounded-2xl shadow-md border border-gray-200 p-4 transition-transform hover:scale-[1.01]">
+      <div className="flex items-center gap-3 mb-4">
+        <FiAward className="text-blue-500 text-xl" />
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Certificados IoT</h2>
-          <p className="text-sm text-gray-600">Instancia: {certificate.thing}</p>
+          <h2 className="text-lg font-semibold text-gray-800">Certificados IoT</h2>
+          <p className="text-sm text-gray-500">Instancia: {certificate.thing}</p>
         </div>
       </div>
 
-      <div className="px-6 py-4">
-        {/* Información principal */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-3">
-            <div className="flex items-center">
-              <FiShield className="text-green-500 mr-2" />
-              <span className="font-medium">Certificado AWS IoT</span>
-            </div>
-            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-              Activo
-            </span>
-          </div>
-
-          <div className="pl-8 space-y-3">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">ARN</p>
-              <div className="flex items-center group">
-                <p className="text-sm font-mono truncate">{certificate.certificateArn}</p>
-                <button 
-                  onClick={() => copyToClipboard(certificate.certificateArn)}
-                  className="ml-2 text-gray-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <FiCopy size={14} />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-xs text-gray-500 mb-1">ID Certificado</p>
-                <p className="text-sm font-mono truncate">{getShortCertId(certificate.certificateArn)}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Creado</p>
-                <p className="text-sm">{formatDate(certificate.createdAt)}</p>
-              </div>
-            </div>
-          </div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-2 text-sm text-green-600 font-medium">
+          <FiShield className="text-green-500" />
+          Certificado AWS IoT
         </div>
+        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Activo</span>
+      </div>
 
-        {/* Archivos de certificados */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <FiKey className="mr-2" /> Archivos de Seguridad
-          </h3>
-
-          <div className="space-y-2 pl-8">
-            <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
-              <div>
-                <p className="text-sm font-medium">Certificado PEM</p>
-                <p className="text-xs text-gray-500 truncate">{certificate.certificatePem}</p>
-              </div>
-              <button className="text-blue-500 hover:text-blue-700">
-                <FiDownloadCloud size={16} />
-              </button>
-            </div>
-
-            <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
-              <div>
-                <p className="text-sm font-medium">Clave Privada</p>
-                <p className="text-xs text-gray-500 truncate">{certificate.privateKey}</p>
-              </div>
-              <button className="text-blue-500 hover:text-blue-700">
-                <FiDownloadCloud size={16} />
-              </button>
-            </div>
-
-            <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
-              <div>
-                <p className="text-sm font-medium">Clave Pública</p>
-                <p className="text-xs text-gray-500 truncate">{certificate.publicKey}</p>
-              </div>
-              <button className="text-blue-500 hover:text-blue-700">
-                <FiDownloadCloud size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Ubicación en S3 */}
-        <div className="p-3 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">Ubicación en S3</h3>
+      <div className="text-sm text-gray-700 space-y-2 mb-4">
+        <div className="group">
+          <p className="text-xs text-gray-500">ARN</p>
           <div className="flex items-center">
-            <span className="text-xs font-mono bg-gray-100 p-2 rounded truncate flex-1">
-              {certificate.certificateS3Path}
-            </span>
-            <button
-             
-              onClick={() => copyToClipboard(certificate.certificateS3Path)}
-              className="ml-2 text-gray-500 hover:text-blue-500 p-1"
+            <span className="font-mono text-xs truncate">{certificate.certificateArn}</span>
+            <button 
+              onClick={() => copyToClipboard(certificate.certificateArn)}
+              className="ml-2 text-gray-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <FiCopy size={14} />
             </button>
           </div>
         </div>
 
-        {/* Metadata */}
-        <div className="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500">
-          <div className="flex justify-between">
-            <span>ID de Credencial:</span>
-            <span className="font-mono">{certificate.id}</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <p className="text-xs text-gray-500">ID Certificado</p>
+            <p className="font-mono text-xs truncate">{getShortCertId(certificate.certificateArn)}</p>
           </div>
-          <div className="flex justify-between">
-            <span>Última actualización:</span>
-            <span>{formatDate(certificate.updatedAt)}</span>
+          <div>
+            <p className="text-xs text-gray-500">Creado</p>
+            <p>{formatDate(certificate.createdAt)}</p>
           </div>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+          <FiKey /> Archivos de Seguridad
+        </h3>
+        <div className="space-y-2">
+          {[
+            { label: 'Certificado PEM', value: certificate.certificatePem },
+            { label: 'Clave Privada', value: certificate.privateKey },
+            { label: 'Clave Pública', value: certificate.publicKey },
+          ].map(({ label, value }, i) => (
+            <div key={i} className="flex justify-between items-start bg-gray-50 px-3 py-2 rounded">
+              <div>
+                <p className="text-sm font-medium">{label}</p>
+                <p className="text-xs text-gray-500 truncate">{value}</p>
+              </div>
+              <button className="text-blue-500 hover:text-blue-700">
+                <FiDownloadCloud size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-2">Ubicación en S3</h3>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded truncate flex-1">
+            {certificate.certificateS3Path}
+          </span>
+          <button
+            onClick={() => copyToClipboard(certificate.certificateS3Path)}
+            className="text-gray-500 hover:text-blue-500"
+          >
+            <FiCopy size={14} />
+          </button>
+        </div>
+      </div>
+
+      <div className="border-t pt-3 text-xs text-gray-500 space-y-1">
+        <div className="flex justify-between">
+          <span>ID de Credencial:</span>
+          <span className="font-mono">{certificate.id}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Última actualización:</span>
+          <span>{formatDate(certificate.updatedAt)}</span>
         </div>
       </div>
     </div>
   );
 };
-

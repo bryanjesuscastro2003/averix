@@ -25,50 +25,48 @@ interface MasterSlaveCardProps {
 }
 
 export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({ master, slave }) => {
-  // Función para formatear la fecha
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
 
-  // Función para formatear el timestamp
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(parseFloat(timestamp) * 1000);
     return date.toLocaleString();
   };
 
   return (
-    <div className="max-w-md rounded-xl overflow-hidden shadow-lg bg-white border border-gray-200">
+    <div className="w-full rounded-2xl shadow-md bg-white border border-gray-200">
       {/* Encabezado */}
-      <div className="px-6 py-4 bg-indigo-50 border-b">
+      <div className="px-6 py-4 bg-indigo-50 border-b rounded-t-2xl">
         <h2 className="text-xl font-bold text-indigo-800">Relación Master-Slave</h2>
         <p className="text-sm text-indigo-600 mt-1">
           Conectado desde: {formatDate(slave.createdAt)}
         </p>
       </div>
 
-      <div className="px-6 py-4">
+      <div className="px-6 py-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Sección Master */}
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center justify-between mb-2">
+        <div className="p-4 bg-gray-50 rounded-xl">
+          <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold text-gray-800">Master</h3>
             <span className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">
               Líder
             </span>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4 text-sm">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
             <div>
               <p className="text-gray-500">ID</p>
-              <p className="font-mono">{master.id}</p>
+              <p className="font-mono break-all">{master.id}</p>
             </div>
             <div>
               <p className="text-gray-500">Participantes</p>
               <p>{master.participants}</p>
             </div>
-            <div>
+            <div className="sm:col-span-2">
               <p className="text-gray-500">Topic</p>
-              <p className="font-mono truncate">{master.topicMaster}</p>
+              <p className="font-mono break-all">{master.topicMaster}</p>
             </div>
             <div>
               <p className="text-gray-500">Creado</p>
@@ -77,32 +75,27 @@ export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({ master, slave 
           </div>
         </div>
 
-        {/* Conexión visual */}
-        <div className="flex justify-center my-2">
-          <div className="h-8 w-0.5 bg-indigo-300"></div>
-        </div>
-
         {/* Sección Slave */}
-        <div className="mt-2 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center justify-between mb-2">
+        <div className="p-4 bg-gray-50 rounded-xl">
+          <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold text-gray-800">Slave</h3>
             <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
               Seguidor
             </span>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4 text-sm">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
             <div>
               <p className="text-gray-500">ID</p>
-              <p className="font-mono">{slave.id}</p>
+              <p className="font-mono break-all">{slave.id}</p>
             </div>
             <div>
               <p className="text-gray-500">Instancia</p>
-              <p className="font-mono">{slave.instanceId}</p>
+              <p className="font-mono break-all">{slave.instanceId}</p>
             </div>
-            <div>
+            <div className="sm:col-span-2">
               <p className="text-gray-500">Topic</p>
-              <p className="font-mono truncate">{slave.topicSlave}</p>
+              <p className="font-mono break-all">{slave.topicSlave}</p>
             </div>
             <div>
               <p className="text-gray-500">Conectado</p>
@@ -111,10 +104,10 @@ export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({ master, slave 
           </div>
         </div>
 
-        {/* Información de sincronización */}
-        <div className="mt-6 pt-4 border-t border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">Sincronización</h3>
-          <div className="text-xs text-gray-600 space-y-2">
+        {/* Sección de sincronización (abajo en pantallas pequeñas, al lado en grandes) */}
+        <div className="lg:col-span-2 mt-4 pt-4 border-t border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Sincronización</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-gray-600">
             <div className="flex justify-between">
               <span>Timestream Master:</span>
               <span>{formatTimestamp(master.timestream)}</span>
@@ -133,4 +126,3 @@ export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({ master, slave 
     </div>
   );
 };
-
