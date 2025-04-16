@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Pagination } from "../../../components/bryan/Pagination";
 import Louder from "../../../components/chris/louder";
-import Navigate, { Link } from "react-router-dom";
+import Navigate, { Link, useNavigate } from "react-router-dom";
 import { IInstance } from "../../../types/data/IInstance";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
@@ -17,7 +17,7 @@ export const InstancesPage = () => {
   const [filteredDrones, setFilteredDrones] = useState<IInstance[]>([]);
   const [isloading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
-
+  const navigate= useNavigate()
   // Filter states
   const [nameFilter, setNameFilter] = useState("");
   const [isAssociatedFilter, setIsAssociatedFilter] = useState<boolean | null>(
@@ -209,6 +209,11 @@ export const InstancesPage = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Last Updated
                 </th>
+
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  acciones
+                </th>
+
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -257,6 +262,17 @@ export const InstancesPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(drone.updatedAt)}
                     </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <button 
+                      onClick={()=>{
+                      navigate(drone.id)
+                      }}
+                      >
+                        detalles
+                      </button>
+                    </td>
+
                   </tr>
                 ))
               ) : (

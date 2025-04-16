@@ -16,7 +16,7 @@ interface CertificateAction {
 
 export const CertificatesActionsTable = ({ data }: { data: CertificateAction[] }) => {
   return (
-    <div className="aviren-container" style={{ marginTop: '40px' }}>
+    <div className="aviren-container w-full" style={{ marginTop: '40px' }}>
       <div className="aviren-header" style={{ backgroundColor: '#2d3748' }}>
         <h1>AVIREN - Certificados</h1>
         <p>Registro de acciones con certificados</p>

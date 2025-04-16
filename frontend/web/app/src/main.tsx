@@ -25,6 +25,7 @@ import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/Tracking
 import { CertificatesPage } from "./pages/dashboard/instances/CertificatesPage";
 import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
 import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/tracking/details/DeliveryDetailsPage";
+import { InstanceDetailsPage } from "./pages/dashboard/instances/details/Instancedetailspage";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -131,6 +132,11 @@ createRoot(document.getElementById("root")!).render(
                                 <Route
                                   path="createInstance"
                                   element={<CreateInstancePage />}
+                                />
+
+                                <Route
+                                  path=":InstanceId"
+                                  element={<InstanceDetailsPage />}
                                 />
 
                                 <Route
