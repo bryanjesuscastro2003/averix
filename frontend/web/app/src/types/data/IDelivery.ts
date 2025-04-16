@@ -14,6 +14,8 @@ export interface Delivery {
     updatedAt: string;
     trackingId: string;
     trackingLogsId: string;
+    totalDistance: string;
+    totalCost: string;
 }
 
 export interface DeliveryData {

@@ -121,8 +121,10 @@ const DeliveriesPage: React.FC = () => {
       const data: IResponse<any> = await response.json();
       if (!data.ok) {
         setError(data.message);
+        setMessage("");
       } else {
         setMessage("Viaje confirmado con éxito");
+        setError("");
         setIsConfirmationCodeValid(false);
         fetchDeliveries();
       }
@@ -211,6 +213,10 @@ const DeliveriesPage: React.FC = () => {
       setIsModalLoading(false);
       //setIsModalOpen(false);
     }
+  };
+
+  const confirmationCodeForButton = () => {
+    confirmationCodeAction(confirmationCode);
   };
 
   useEffect(() => {
@@ -307,7 +313,7 @@ const DeliveriesPage: React.FC = () => {
         <button
           type="button"
           className="mt-2 px-4 py-3 w-full gap-2 sm:w-auto bg-green-600 text-white rounded-md hover:bg-green-700 transition"
-          onClick={() => confirmationCodeAction}
+          onClick={confirmationCodeForButton}
           disabled={isLoading}
         >
           Confirmar

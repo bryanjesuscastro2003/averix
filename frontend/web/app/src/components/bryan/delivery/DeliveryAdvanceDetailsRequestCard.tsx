@@ -7,6 +7,7 @@ import { DeliveryData, Location } from "../../../types/data/IDelivery";
 import { AcceptDeliveryModal } from "./AcceptDeliveryModal";
 import { ShareKeysModal } from "./ShareKeysModal";
 import { ConfirmationModal } from "../ConfirmationModal";
+import { useAuth } from "../../../context/AuthContext";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   data: DeliveryData;
@@ -22,6 +23,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       data.delivery.id
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const { userData } = useAuth();
 
   const locationA: Location =
     data.delivery.locationA !== null
@@ -95,15 +97,6 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
               </div>
 
               <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Tracking ID
-                  </h3>
-                  <p className="text-gray-900 font-mono">
-                    {data.delivery.trackingId}
-                  </p>
-                </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
@@ -169,12 +162,19 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <div className="grid grid-cols-1 w-full mt-8 flex justify-center gap-4">
                   {data.delivery.dstate !== "PENDING" ? (
                     <>
-                      <button
-                        onClick={() => setIsAcceptModalOpen(true)}
-                        className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center"
-                      >
-                        <p className="text-center w-full">Aceptar</p>
-                      </button>
+                      {data.delivery.primaryUser === userData?.email ? (
+                        <button
+                          onClick={() => setIsAcceptModalOpen(true)}
+                          className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center"
+                        >
+                          <p className="text-center w-full">Aceptar</p>
+                        </button>
+                      ) : (
+                        <p className="text-gray-500 text-sm">
+                          En espera de la aceptacion del viaje
+                        </p>
+                      )}
+
                       {data.delivery.dstate === "RUNNING" && (
                         <button
                           onClick={() => setIsModalOpen(true)}
@@ -224,12 +224,14 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <AcceptDeliveryModal
                   isOpen={isAcceptModalOpen}
                   onClose={() => setIsAcceptModalOpen(false)}
+                  onCancel={() => setIsCancelModalOpen(true)}
                   onConfirm={() => {
                     // Handle the confirmation logic here
                     console.log("Delivery accepted!");
                     setIsAcceptModalOpen(false);
                   }}
-                  price={deliveryPrice}
+                  price={parseFloat(data.delivery.totalCost)}
+                  distance={parseFloat(data.delivery.totalDistance)}
                 />
                 <ShareKeysModal
                   isOpen={isShareModalOpen}

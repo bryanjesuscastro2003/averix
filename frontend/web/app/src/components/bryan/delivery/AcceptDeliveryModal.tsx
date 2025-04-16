@@ -4,14 +4,18 @@ interface AcceptDeliveryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  onCancel: () => void;
   price: number;
+  distance: number;
 }
 
 export const AcceptDeliveryModal: React.FC<AcceptDeliveryModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  onCancel,
   price,
+  distance,
 }) => {
   if (!isOpen) return null;
 
@@ -53,8 +57,12 @@ export const AcceptDeliveryModal: React.FC<AcceptDeliveryModalProps> = ({
               <span className="font-medium">$5.00</span>
             </div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-600">Distance Fee:</span>
-              <span className="font-medium">${(price - 5).toFixed(2)}</span>
+              <span className="text-gray-600">Distancia total *metros: </span>
+              <span className="font-medium">{distance.toFixed(3)}</span>
+            </div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-gray-600">Costo del servicio: </span>
+              <span className="font-medium">${price.toFixed(2)}</span>
             </div>
             <div className="border-t border-gray-200 my-2"></div>
             <div className="flex justify-between items-center">
@@ -80,7 +88,7 @@ export const AcceptDeliveryModal: React.FC<AcceptDeliveryModalProps> = ({
             Confirm Delivery
           </button>
           <button
-            onClick={onConfirm}
+            onClick={onCancel}
             className="w-full sm:w-auto px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm"
           >
             Cancel Delivery
