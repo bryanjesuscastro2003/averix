@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Pagination } from "../../../components/bryan/Pagination";
 import Louder from "../../../components/chris/louder";
-import Navigate, { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IInstance } from "../../../types/data/IInstance";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
@@ -17,7 +17,12 @@ export const InstancesPage = () => {
   const [filteredDrones, setFilteredDrones] = useState<IInstance[]>([]);
   const [isloading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
-  const navigate= useNavigate()
+  const navigate = useNavigate();
+
+  // Estados para la paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // Mostrar 4 elementos por página
+
   // Filter states
   const [nameFilter, setNameFilter] = useState("");
   const [isAssociatedFilter, setIsAssociatedFilter] = useState<boolean | null>(
@@ -27,7 +32,6 @@ export const InstancesPage = () => {
   const [statusFilter, setStatusFilter] = useState<string>("");
 
   useEffect(() => {
-    // Simulate API fetch
     const fetchDrones = async () => {
       try {
         setLoading(true);
@@ -72,7 +76,6 @@ export const InstancesPage = () => {
       );
     }
 
-    // status filter
     if (statusFilter) {
       result = result.filter((drone) =>
         drone.dstate.toLowerCase().includes(statusFilter.toLowerCase())
@@ -84,7 +87,19 @@ export const InstancesPage = () => {
     }
 
     setFilteredDrones(result);
+    setCurrentPage(1); // Resetear a la primera página cuando cambian los filtros
   }, [nameFilter, isAssociatedFilter, capacityFilter, drones, statusFilter]);
+
+  // Calcular drones para la página actual
+  const totalPages = Math.ceil(filteredDrones.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredDrones.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Manejar cambio de página
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
@@ -122,11 +137,11 @@ export const InstancesPage = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
+              Status
             </label>
             <input
               type="text"
-              placeholder="Filter by name"
+              placeholder="Filter by status"
               className="w-full p-2 border border-gray-300 rounded-md"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -146,8 +161,7 @@ export const InstancesPage = () => {
                 setIsAssociatedFilter(
                   e.target.value === "" ? null : e.target.value === "true"
                 )
-              }
-            >
+              }>
               <option value="">All</option>
               <option value="true">Associated</option>
               <option value="false">Not Associated</option>
@@ -161,8 +175,7 @@ export const InstancesPage = () => {
             <select
               className="w-full p-2 border border-gray-300 rounded-md"
               value={capacityFilter}
-              onChange={(e) => setCapacityFilter(e.target.value)}
-            >
+              onChange={(e) => setCapacityFilter(e.target.value)}>
               <option value="">All</option>
               {capacityOptions.map((capacity) => (
                 <option key={capacity} value={capacity}>
@@ -176,7 +189,8 @@ export const InstancesPage = () => {
 
       {/* Results Count */}
       <div className="mb-2 text-sm text-gray-600">
-        Showing {filteredDrones.length} of {drones.length} drones
+        Showing {currentItems.length} of {filteredDrones.length} drones (Page{" "}
+        {currentPage} of {totalPages})
       </div>
 
       {/* Table */}
@@ -209,18 +223,16 @@ export const InstancesPage = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Last Updated
                 </th>
-
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  acciones
+                  Acciones
                 </th>
-
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {isloading && <Louder />}
               {message && <div className="p-4 text-red-500">{message}</div>}
-              {filteredDrones.length > 0 ? (
-                filteredDrones.map((drone) => (
+              {currentItems.length > 0 ? (
+                currentItems.map((drone) => (
                   <tr key={drone.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="font-medium text-gray-900">
@@ -245,8 +257,7 @@ export const InstancesPage = () => {
                           drone.isAssociated
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
-                        }`}
-                      >
+                        }`}>
                         {drone.isAssociated ? "Yes" : "No"}
                       </span>
                     </td>
@@ -262,25 +273,20 @@ export const InstancesPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(drone.updatedAt)}
                     </td>
-
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <button 
-                      onClick={()=>{
-                      navigate(drone.id)
-                      }}
-                      >
-                        detalles
+                      <button
+                        onClick={() => navigate(drone.id)}
+                        className="text-blue-600 hover:text-blue-800">
+                        Detalles
                       </button>
                     </td>
-
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
-                    className="px-6 py-4 text-center text-sm text-gray-500"
-                  >
+                    colSpan={9}
+                    className="px-6 py-4 text-center text-sm text-gray-500">
                     No drones found matching your filters
                   </td>
                 </tr>
@@ -288,13 +294,20 @@ export const InstancesPage = () => {
             </tbody>
           </table>
         </div>
-        <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
+        {/* Paginación */}
+        {filteredDrones.length > itemsPerPage && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
+
       <div className="flex justify-end py-4">
         <Link
           to="createInstance"
-          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
-        >
+          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
           Create New Instance
         </Link>
       </div>

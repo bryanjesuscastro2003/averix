@@ -5,10 +5,9 @@ import { Delivery } from "../../../types/data/IDelivery";
 import Louder from "../../../components/chris/louder";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
-import { fi } from "date-fns/locale";
-import { set } from "date-fns";
 import { useAuth } from "../../../context/AuthContext";
 import { useParams } from "react-router-dom";
+import { Pagination } from "../../../components/bryan/Pagination";
 
 const DeliveriesPage: React.FC = () => {
   const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([]);
@@ -27,18 +26,21 @@ const DeliveriesPage: React.FC = () => {
     useState<boolean>(true);
   const [showCategory, setShowCategory] = useState<boolean>(true);
   const { userData } = useAuth();
-  // path variable
   const { deliveryId } = useParams();
+
+  // Estados para la paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // Mostrar 4 elementos por página
 
   const filteredDeliveries = allDeliveries.filter((delivery) => {
     const stateMatch = filter === "" || delivery.dstate === filter;
     const destinationMatch =
-      filterDestination === "" || // Add empty check like you did with filter
+      filterDestination === "" ||
       (filterDestination === "e" && delivery.primaryUser === userData?.email) ||
       (filterDestination === "r" && delivery.secondaryUser === userData?.email);
 
     const searchMatch =
-      searchTerm === "" || // Add empty check
+      searchTerm === "" ||
       delivery.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (delivery.primaryUser || "")
         .toLowerCase()
@@ -47,9 +49,27 @@ const DeliveriesPage: React.FC = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
-    // Combine all conditions
     return stateMatch && destinationMatch && searchMatch;
   });
+
+  // Calcular elementos para la página actual
+  const totalPages = Math.ceil(filteredDeliveries.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredDeliveries.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  // Manejar cambio de página
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Resetear a página 1 cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, filterDestination, searchTerm]);
 
   const handleStartDelivery = (id: string) => {
     setAllDeliveries(
@@ -211,7 +231,6 @@ const DeliveriesPage: React.FC = () => {
       console.error("Error confirming delivery:", error);
     } finally {
       setIsModalLoading(false);
-      //setIsModalOpen(false);
     }
   };
 
@@ -237,16 +256,14 @@ const DeliveriesPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <label
             htmlFor="state-filter"
-            className="text-sm font-medium text-gray-700"
-          >
+            className="text-sm font-medium text-gray-700">
             Filtrar por estado:
           </label>
           <select
             id="state-filter"
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
+            onChange={(e) => setFilter(e.target.value)}>
             <option value="">All</option>
             {allDeliveries
               .map((delivery) => delivery.dstate)
@@ -262,16 +279,14 @@ const DeliveriesPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <label
             htmlFor="state-filter"
-            className="text-sm font-medium text-gray-700"
-          >
+            className="text-sm font-medium text-gray-700">
             Filtrar por destino:
           </label>
           <select
             id="state-filter"
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             value={filterDestination}
-            onChange={(e) => setFilterDestination(e.target.value)}
-          >
+            onChange={(e) => setFilterDestination(e.target.value)}>
             <option value="">All</option>
             <option value="e">Emitente</option>
             <option value="r">Receptor</option>
@@ -297,8 +312,7 @@ const DeliveriesPage: React.FC = () => {
       <div className="mb-4 p-4 border rounded-md bg-gray-50">
         <label
           htmlFor="confirmation-code"
-          className="block text-sm font-medium text-gray-700"
-        >
+          className="block text-sm font-medium text-gray-700">
           Código de Confirmación:
         </label>
         <input
@@ -314,21 +328,33 @@ const DeliveriesPage: React.FC = () => {
           type="button"
           className="mt-2 px-4 py-3 w-full gap-2 sm:w-auto bg-green-600 text-white rounded-md hover:bg-green-700 transition"
           onClick={confirmationCodeForButton}
-          disabled={isLoading}
-        >
+          disabled={isLoading}>
           Confirmar
         </button>
       </div>
 
       <div className="mb-2 text-sm text-gray-600">
-        Mostrando {filteredDeliveries.length} de {allDeliveries.length} entregas
+        Mostrando {currentItems.length} de {filteredDeliveries.length} entregas
+        (Página {currentPage} de {totalPages})
       </div>
 
       <DeliveryTable
-        deliveries={filteredDeliveries}
+        deliveries={currentItems}
         onStartDelivery={handleStartDelivery}
         onCancelDelivery={handleCancelDelivery}
       />
+
+      {/* Paginación */}
+      {filteredDeliveries.length > itemsPerPage && (
+        <div className="mt-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
+
       {isLoading && (
         <div className="flex justify-center">
           <Louder />
@@ -338,8 +364,7 @@ const DeliveriesPage: React.FC = () => {
       <div className="mt-8 flex justify-center">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center align-center "
-        >
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center align-center ">
           <div className="flex justify-center items-center w-full">
             <p className="flex gap-2 text-center items-center">
               <svg
@@ -347,8 +372,7 @@ const DeliveriesPage: React.FC = () => {
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+                stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

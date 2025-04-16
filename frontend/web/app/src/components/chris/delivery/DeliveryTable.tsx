@@ -1,6 +1,6 @@
 import React from "react";
 import { Delivery } from "../../../types/data/IDelivery";
-import { Pagination } from "../../bryan/Pagination";
+
 import { useNavigate } from "react-router-dom";
 
 interface DeliveryTableProps {
@@ -76,8 +76,7 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
                       : delivery.dstate === "cancelled"
                       ? "bg-red-100 text-red-800"
                       : "bg-yellow-100 text-yellow-800"
-                  }`}
-                  >
+                  }`}>
                     {delivery.dstate}
                   </span>
                 </td>
@@ -93,8 +92,7 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-2">
                   <button
                     className="px-3 py-1 bg-gray-200 text-gray-800 text-xs rounded hover:bg-gray-300 transition"
-                    onClick={() => navigate("details/" + delivery.instanceId)}
-                  >
+                    onClick={() => navigate("details/" + delivery.instanceId)}>
                     Detalles
                   </button>
                 </td>
@@ -103,7 +101,6 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
     </div>
   );
 };
