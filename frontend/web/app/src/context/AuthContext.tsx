@@ -135,6 +135,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("username");
     localStorage.removeItem("role");
     setIsAuthenticated(false);
+    setUserData(null);
   };
 
   return (
