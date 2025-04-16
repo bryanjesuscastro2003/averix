@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { format, parseISO, set } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Pagination } from "../../../components/bryan/Pagination";
-import Navigate, { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useEffect } from "react";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
@@ -10,13 +10,15 @@ import { IResponse } from "../../../types/responses/IResponse";
 import Louder from "../../../components/chris/louder";
 
 export const ProfilesPage = () => {
-  // Sample data with all attributes
   const [users, setUsers] = useState<IProfile[]>([]);
-
   const [usernameFilter, setUsernameFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
+
+  // Estados para la paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // Mostrar 4 elementos por página
 
   const { userData } = useAuth();
 
@@ -28,6 +30,7 @@ export const ProfilesPage = () => {
     ),
   ];
 
+  // Filtrar usuarios
   const filteredUsers = users.filter(
     (user) =>
       user.attributes.email
@@ -35,6 +38,17 @@ export const ProfilesPage = () => {
         .includes(usernameFilter.toLowerCase()) &&
       (statusFilter === "ALL" || user.enabled === (statusFilter === "ACTIVE"))
   );
+
+  // Calcular páginas y elementos a mostrar
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Cambiar página
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const formatDateTime = (dateString: string) => {
     return format(parseISO(dateString), "MMM dd, yyyy HH:mm");
@@ -61,6 +75,7 @@ export const ProfilesPage = () => {
         console.error("Error toggling user status:", data.message);
       }
     } catch (error) {
+      console.error("Error toggling user status:", error);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +102,6 @@ export const ProfilesPage = () => {
 
   const handleDeliveries = (username: string) => {
     console.log(`View deliveries for user: ${username}`);
-    // Implement your actual deliveries view logic here
   };
 
   const fetchProfiles = async () => {
@@ -126,6 +140,11 @@ export const ProfilesPage = () => {
     fetchProfiles();
   }, []);
 
+  // Resetear a página 1 cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [usernameFilter, statusFilter]);
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">User Management</h1>
@@ -135,8 +154,7 @@ export const ProfilesPage = () => {
         <div>
           <label
             htmlFor="usernameFilter"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+            className="block text-sm font-medium text-gray-700 mb-1">
             Filter by Email
           </label>
           <input
@@ -152,36 +170,14 @@ export const ProfilesPage = () => {
         <div>
           <label
             htmlFor="statusFilter"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+            className="block text-sm font-medium text-gray-700 mb-1">
             Filter by Status
           </label>
           <select
             id="statusFilter"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            {statusOptions.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label
-            htmlFor="statusFilter"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Filtro por confirmación
-          </label>
-          <select
-            id="statusFilter"
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
+            onChange={(e) => setStatusFilter(e.target.value)}>
             {statusOptions.map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -193,7 +189,8 @@ export const ProfilesPage = () => {
 
       {/* Results count */}
       <div className="mb-2 text-sm text-gray-600">
-        Showing {filteredUsers.length} of {users.length} users
+        Showing {currentItems.length} of {filteredUsers.length} users (Page{" "}
+        {currentPage} of {totalPages})
       </div>
 
       {/* Table */}
@@ -202,7 +199,7 @@ export const ProfilesPage = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ByUsername
+                Username
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
@@ -233,16 +230,15 @@ export const ProfilesPage = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoading && <Louder />}
             {message && <div className="p-4 text-red-500">{message}</div>}
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
+            {currentItems.length > 0 ? (
+              currentItems.map((user) => (
                 <tr
                   key={user.username}
                   className={
                     user.attributes.email === userData?.email
                       ? "bg-gray-100 hover:bg-gray-200"
                       : "hover:bg-gray-50"
-                  }
-                >
+                  }>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <div className="truncate max-w-xs">{user.username}</div>
                   </td>
@@ -253,8 +249,7 @@ export const ProfilesPage = () => {
                         user.enabled === true
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
+                      }`}>
                       {user.enabled === true ? "Active" : "Inactive"}
                     </span>
                   </td>
@@ -274,8 +269,7 @@ export const ProfilesPage = () => {
                           user.attributes.email_verified === "true"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
-                        }`}
-                    >
+                        }`}>
                       {user.attributes.email_verified === "true"
                         ? "Confirmed"
                         : "Unconfirmed"}
@@ -284,8 +278,7 @@ export const ProfilesPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
                       onClick={() => handleDeliveries(user.username)}
-                      className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200"
-                    >
+                      className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200">
                       View Deliveries
                     </button>
                   </td>
@@ -296,8 +289,7 @@ export const ProfilesPage = () => {
                         user.attributes["custom:role"] === "admin"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
+                      }`}>
                       {user.attributes["custom:role"]}
                     </span>
                   </td>
@@ -311,8 +303,7 @@ export const ProfilesPage = () => {
                             user.enabled
                               ? "bg-red-100 text-red-800 hover:bg-red-200"
                               : "bg-green-100 text-green-800 hover:bg-green-200"
-                          }`}
-                      >
+                          }`}>
                         {user.enabled ? "Disable" : "Enable"}
                       </button>
                     </div>
@@ -322,9 +313,8 @@ export const ProfilesPage = () => {
             ) : (
               <tr>
                 <td
-                  colSpan={8}
-                  className="px-6 py-4 text-center text-sm text-gray-500"
-                >
+                  colSpan={9}
+                  className="px-6 py-4 text-center text-sm text-gray-500">
                   No users found matching your filters.
                 </td>
               </tr>
@@ -332,14 +322,19 @@ export const ProfilesPage = () => {
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
 
       {/* Create New Profile Button */}
       <div className="flex justify-end">
         <Link
           to="createProfile"
-          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
-        >
+          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
           Create New Profile
         </Link>
       </div>
