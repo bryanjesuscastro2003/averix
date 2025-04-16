@@ -22,7 +22,7 @@ import DeliveriesPage from "./pages/dashboard/deliveries/Deliveries.page";
 import { CreateInstancePage } from "./pages/dashboard/instances/CreateInstance.page";
 import { DeliveryTrackingPage } from "./pages/dashboard/deliveries/tracking/DeliveryTrackingPage";
 import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/TrackingLogsPage";
-import { CertificatesPage } from "./pages/dashboard/instances/CertificatesPage";
+
 import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
 import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/tracking/details/DeliveryDetailsPage";
 import { InstanceDetailsPage } from "./pages/dashboard/instances/details/Instancedetailspage";
@@ -103,10 +103,7 @@ createRoot(document.getElementById("root")!).render(
 
                   <Route path="tracking" element={<DeliveryTrackingPage />} />
                   <Route path="trackinglogs" element={<TrackingLogsPage />} />
-                  <Route
-                    path="certificatesActions"
-                    element={<CertificatesPage />}
-                  />
+                  
                   <Route
                     path="admin/*"
                     element={

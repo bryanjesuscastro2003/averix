@@ -135,7 +135,8 @@ export const DroneCertificateCard: React.FC<DroneCertificateCardProps> = ({ cert
             <span className="text-xs font-mono bg-gray-100 p-2 rounded truncate flex-1">
               {certificate.certificateS3Path}
             </span>
-            <button 
+            <button
+             
               onClick={() => copyToClipboard(certificate.certificateS3Path)}
               className="ml-2 text-gray-500 hover:text-blue-500 p-1"
             >

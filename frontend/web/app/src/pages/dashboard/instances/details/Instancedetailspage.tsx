@@ -104,22 +104,11 @@ export const InstanceDetailsPage =()=>{
 
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-      {/* Fila 1 */}
-      <div className="md:col-span-1">
-        <DroneCard drone={droneData} />
-      </div>
-      <div className="md:col-span-1">
-        <DroneStatusCard status={droneStatusData} />
-      </div>
-      
-      {/* Fila 2 */}
-      <div className="md:col-span-1">
-        <MasterSlaveCard master={masterData} slave={slaveData} />
-      </div>
-      <div className="md:col-span-1">
-        <DroneCertificateCard certificate={certificateData} />
-      </div>
-    </div>
+        <div>
+               <DroneCard drone={droneData} />
+               <DroneStatusCard status={droneStatusData} />
+               <MasterSlaveCard  master={masterData} slave={slaveData} />
+               <DroneCertificateCard certificate={certificateData} />
+        </div>
     )
 }
