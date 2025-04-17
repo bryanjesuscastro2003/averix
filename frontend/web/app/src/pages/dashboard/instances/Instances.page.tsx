@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { IInstance } from "../../../types/data/IInstance";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
+import "./Instancessyles.css";
 
 const capacityOptions = [
   "DRONAUTICA_SMALL_INSTANCE",
@@ -161,7 +162,8 @@ export const InstancesPage = () => {
                 setIsAssociatedFilter(
                   e.target.value === "" ? null : e.target.value === "true"
                 )
-              }>
+              }
+            >
               <option value="">All</option>
               <option value="true">Associated</option>
               <option value="false">Not Associated</option>
@@ -175,7 +177,8 @@ export const InstancesPage = () => {
             <select
               className="w-full p-2 border border-gray-300 rounded-md"
               value={capacityFilter}
-              onChange={(e) => setCapacityFilter(e.target.value)}>
+              onChange={(e) => setCapacityFilter(e.target.value)}
+            >
               <option value="">All</option>
               {capacityOptions.map((capacity) => (
                 <option key={capacity} value={capacity}>
@@ -195,46 +198,37 @@ export const InstancesPage = () => {
 
       {/* Table */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="overflow-x-auto p-4 font-sans">
+          <table className="w-full border-collapse border border-gray-300 bg-white">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Model
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Capacity
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Associated
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created at
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Updated
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
+                {[
+                  "Name",
+                  "Model",
+                  "Capacity",
+                  "Associated",
+                  "Location",
+                  "Status",
+                  "Created at",
+                  "Last Updated",
+                  "Acciones",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="p-2 border border-gray-300 text-left text-xs font-bold uppercase bg-gray-100"
+                  >
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {isloading && <Louder />}
               {message && <div className="p-4 text-red-500">{message}</div>}
               {currentItems.length > 0 ? (
                 currentItems.map((drone) => (
                   <tr key={drone.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="p-2 border border-gray-300 text-sm">
                       <div className="font-medium text-gray-900">
                         {drone.name}
                       </div>
@@ -242,41 +236,43 @@ export const InstancesPage = () => {
                         {drone.description}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {drone.model}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {drone.capacity
                         .replace("DRONAUTICA_", "")
                         .replace("_", " ")}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="p-2 border border-gray-300">
                       <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${
-                          drone.isAssociated
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}>
+                        className={`px-2 py-1 text-xs font-semibold rounded-full 
+                  ${
+                    drone.isAssociated
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                      >
                         {drone.isAssociated ? "Yes" : "No"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {parseLocation(drone.stationLocation)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {drone.dstate.replace("_ST_", " ").replace(/_/g, " ")}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {formatDate(drone.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {formatDate(drone.updatedAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       <button
                         onClick={() => navigate(drone.id)}
-                        className="text-blue-600 hover:text-blue-800">
+                        className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-gray-800 text-sm transition-colors"
+                      >
                         Detalles
                       </button>
                     </td>
@@ -286,7 +282,8 @@ export const InstancesPage = () => {
                 <tr>
                   <td
                     colSpan={9}
-                    className="px-6 py-4 text-center text-sm text-gray-500">
+                    className="p-4 text-center text-sm text-gray-500 border border-gray-300"
+                  >
                     No drones found matching your filters
                   </td>
                 </tr>
@@ -307,7 +304,8 @@ export const InstancesPage = () => {
       <div className="flex justify-end py-4">
         <Link
           to="createInstance"
-          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
+        >
           Create New Instance
         </Link>
       </div>

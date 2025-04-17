@@ -9,6 +9,7 @@ export interface Delivery {
     instanceId: string;
     startedRequestAt: string;
     acceptedRequestAt: string;
+    endedRequestAt: string;
     dstate: string;
     createdAt: string;
     updatedAt: string;

@@ -28,7 +28,6 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
         <table className="delivery-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Usuario Principal</th>
               <th>Usuario Secundario</th>
               <th>Estado</th>
@@ -41,7 +40,6 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
           <tbody>
             {deliveries.map((delivery) => (
               <tr key={delivery.id}>
-                <td>{delivery.id}</td>
                 <td>{delivery.primaryUser}</td>
                 <td>{delivery.secondaryUser}</td>
                 <td>
@@ -51,11 +49,12 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
                 </td>
                 <td>{formatDate(delivery.startedRequestAt)}</td>
                 <td>{formatDate(delivery.acceptedRequestAt)}</td>
-                <td>{formatDate(delivery.startedRequestAt)}</td>
+                <td>{formatDate(delivery.endedRequestAt)}</td>
                 <td>
                   <button
                     className="btn-detalles"
-                    onClick={() => navigate("details/" + delivery.instanceId)}>
+                    onClick={() => navigate("details/" + delivery.id)}
+                  >
                     Detalles
                   </button>
                 </td>
@@ -70,10 +69,11 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
         {deliveries.map((delivery) => (
           <div key={delivery.id} className="mobile-card">
             <div className="card-header">
-              <p>ID: {delivery.id}</p>
+              <p>ID: {delivery.primaryUser}</p>
               <button
                 className="btn-detalles"
-                onClick={() => navigate("details/" + delivery.instanceId)}>
+                onClick={() => navigate("details/" + delivery.id)}
+              >
                 Detalles
               </button>
             </div>

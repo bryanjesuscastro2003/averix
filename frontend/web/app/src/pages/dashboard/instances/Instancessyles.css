@@ -1,0 +1,105 @@
+/* Add this to your CSS file (or as a <style> tag if using CSS-in-JS) */
+
+/* Table container styles */
+.table-container {
+    overflow-x: auto;
+    padding: 1rem;
+    font-family: Arial, sans-serif;
+}
+
+/* Table styles to match the previous design */
+.min-w-full {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    background-color: white;
+}
+
+.min-w-full th,
+.min-w-full td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+}
+
+.min-w-full th {
+    background-color: #f3f3f3;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Button styles */
+.text-blue-600 {
+    padding: 6px 12px;
+    background-color: #e2e2e2;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.3s;
+    color: #333 !important;
+    /* Override text-blue-600 */
+    text-decoration: none !important;
+}
+
+.text-blue-600:hover {
+    background-color: #ccc;
+    color: #333 !important;
+}
+
+/* Status badge styles - you can keep your existing Tailwind classes 
+   or use these for more precise control */
+.bg-green-100 {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.bg-red-100 {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Add these if you need specific status colors like the previous table */
+.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-in-progress {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Mobile styles - if you want to add mobile responsiveness */
+@media screen and (max-width: 640px) {
+    .table-desktop {
+        display: none;
+    }
+
+    .table-mobile {
+        display: block;
+    }
+
+    /* You might want to add specific mobile styles for this table */
+}

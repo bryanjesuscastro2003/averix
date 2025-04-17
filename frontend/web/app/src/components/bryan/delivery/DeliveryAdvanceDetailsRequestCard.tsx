@@ -8,6 +8,8 @@ import { AcceptDeliveryModal } from "./AcceptDeliveryModal";
 import { ShareKeysModal } from "./ShareKeysModal";
 import { ConfirmationModal } from "../ConfirmationModal";
 import { useAuth } from "../../../context/AuthContext";
+import { DashboardEndpoints } from "../../../endpoints/dashboard";
+import { useNavigate } from "react-router-dom";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   data: DeliveryData;
@@ -24,6 +26,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const { userData } = useAuth();
+  const navigate = useNavigate();
 
   const locationA: Location =
     data.delivery.locationA !== null
@@ -67,8 +70,67 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       locationT !== null ? { name: "Ubicación actual", ...locationT } : null,
   };
 
+  const acceptService = async () => {
+    try {
+      const response = await fetch(
+        DashboardEndpoints.acceptDeliveryTripEndpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("idToken"),
+          },
+          body: JSON.stringify({
+            deliveryId: data.delivery.id,
+            instanceId: data.delivery.instanceId,
+          }),
+        }
+      );
+      const dataResponse = await response.json();
+      console.log("Response:", dataResponse);
+      if (!response.ok) {
+        // Handle error
+      } else {
+        navigate("/dashboard/deliveries");
+      }
+    } catch (e) {
+      console.error("Error:", e);
+    } finally {
+      console.log("Service accepted");
+      setIsAcceptModalOpen(false);
+    }
+  };
+
+  const cancelService = async () => {
+    try {
+      const response = await fetch(
+        DashboardEndpoints.cancelDeliveryTripEndpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("idToken"),
+          },
+          body: JSON.stringify({
+            deliveryId: data.delivery.id,
+            instanceId: data.delivery.instanceId,
+          }),
+        }
+      );
+      const dataResponse = await response.json();
+      console.log("Response:", dataResponse);
+      if (!response.ok) {
+      } else {
+        navigate("/dashboard/deliveries");
+      }
+    } catch (e) {
+    } finally {
+    }
+  };
+
   useEffect(() => {
     console.log("Tracking Points:", trackingPoints);
+    console.log("Location A:", data.delivery);
   }, []);
 
   return (
@@ -100,13 +162,13 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
-                      Primary User
+                      Usuario Principal
                     </h3>
                     <p className="text-gray-900">{data.delivery.primaryUser}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
-                      Secondary User
+                      Usuario Secundario
                     </h3>
                     <p className="text-gray-900">
                       {data.delivery.secondaryUser}
@@ -117,7 +179,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
-                      Started At
+                      Iniciado En
                     </h3>
                     <p className="text-gray-900">
                       {formatDate(data.delivery.startedRequestAt)}
@@ -125,7 +187,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
-                      Accepted At
+                      Aceptado En
                     </h3>
                     <p className="text-gray-900">
                       {data.delivery.acceptedRequestAt !== null
@@ -135,11 +197,11 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
-                      Ended At
+                      Finalizado En
                     </h3>
                     <p className="text-gray-900">
-                      {data.delivery.acceptedRequestAt !== null
-                        ? formatDate(data.delivery.acceptedRequestAt)
+                      {data.delivery.endedRequestAt !== null
+                        ? formatDate(data.delivery.endedRequestAt)
                         : "-"}
                     </p>
                   </div>
@@ -147,7 +209,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <div className="gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-2">
-                      Route Progress
+                      Progreso de la Ruta
                     </h3>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div
@@ -162,7 +224,23 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <div className="grid grid-cols-1 w-full mt-8 flex justify-center gap-4">
                   {data.delivery.dstate !== "PENDING" ? (
                     <>
-                      {data.delivery.primaryUser === userData?.email ? (
+                      {data.delivery.dstate === "CANCELED" ? (
+                        <p className="text-red-500 text-sm">
+                          Entrega cancelada
+                        </p>
+                      ) : data.delivery.dstate === "RUNNING" ? (
+                        <button
+                          onClick={() => setIsModalOpen(true)}
+                          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center w-full"
+                        >
+                          <p className="text-center w-full">Seguimiento</p>
+                        </button>
+                      ) : data.delivery.dstate === "COMPLETED" ? (
+                        <p className="text-green-500 text-sm">
+                          Entrega completada
+                        </p>
+                      ) : data.delivery.primaryUser === userData?.email &&
+                        data.delivery.dstate === "CONFIRMED" ? (
                         <button
                           onClick={() => setIsAcceptModalOpen(true)}
                           className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center"
@@ -171,17 +249,8 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                         </button>
                       ) : (
                         <p className="text-gray-500 text-sm">
-                          En espera de la aceptacion del viaje
+                          En espera de la aceptación del viaje
                         </p>
-                      )}
-
-                      {data.delivery.dstate === "RUNNING" && (
-                        <button
-                          onClick={() => setIsModalOpen(true)}
-                          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center w-full"
-                        >
-                          <p className="text-center w-full">Seguimiento</p>
-                        </button>
                       )}
                     </>
                   ) : (
@@ -197,7 +266,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                         className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center w-full"
                       >
                         <p className="text-center w-full">
-                          Claves de confirmacion
+                          Claves de confirmación
                         </p>
                       </button>
                     </>
@@ -218,18 +287,14 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                       ? "Retornando a la central"
                       : data.tracking.mfstate === "BA"
                       ? "Devolviendo el producto"
-                      : "Completed"
+                      : "Completado"
                   }
                 />
                 <AcceptDeliveryModal
                   isOpen={isAcceptModalOpen}
                   onClose={() => setIsAcceptModalOpen(false)}
                   onCancel={() => setIsCancelModalOpen(true)}
-                  onConfirm={() => {
-                    // Handle the confirmation logic here
-                    console.log("Delivery accepted!");
-                    setIsAcceptModalOpen(false);
-                  }}
+                  onConfirm={acceptService}
                   price={parseFloat(data.delivery.totalCost)}
                   distance={parseFloat(data.delivery.totalDistance)}
                 />
@@ -242,14 +307,11 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <ConfirmationModal
                   isOpen={isCancelModalOpen}
                   onClose={() => setIsCancelModalOpen(false)}
-                  onConfirm={() => {
-                    // Your cancellation logic here
-                    console.log("Action confirmed!");
-                  }}
-                  title="Are you sure?"
-                  message="This action cannot be undone. The delivery will be permanently cancelled."
-                  confirmText="Yes, cancel"
-                  cancelText="No, keep it"
+                  onConfirm={cancelService}
+                  title="¿Estás seguro?"
+                  message="Esta acción no se puede deshacer. La entrega será cancelada permanentemente."
+                  confirmText="Sí, cancelar"
+                  cancelText="No, mantener"
                   danger={true}
                 />
               </div>
