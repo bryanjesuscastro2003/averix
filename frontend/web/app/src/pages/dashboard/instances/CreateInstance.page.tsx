@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"; // or your preferred routing met
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
 import Louder from "../../../components/chris/louder";
+import { BackButton } from "../../../components/grez/comun/BackButton";
 
 type DroneModel = "DRONEC1" | "DRONEC2" | "DRONEC3";
 type DroneCapacity =
@@ -104,8 +105,11 @@ export const CreateInstancePage = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <BackButton>
+  
+  </BackButton>
       <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        Create New Drone Instance
+        Crear nuevo Dron
       </h2>
 
       {message && (
@@ -120,7 +124,7 @@ export const CreateInstancePage = () => {
             htmlFor="name"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Name *
+            Nombre *
           </label>
           <input
             type="text"
@@ -137,7 +141,7 @@ export const CreateInstancePage = () => {
             htmlFor="model"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Model *
+            Modelo *
           </label>
           <select
             id="model"
@@ -147,7 +151,7 @@ export const CreateInstancePage = () => {
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
-            <option value="">Select a model</option>
+            <option value="">Seleccionar una opcion</option>
             {modelOptions.map((model) => (
               <option key={model} value={model}>
                 {model}
@@ -160,7 +164,7 @@ export const CreateInstancePage = () => {
             htmlFor="capacity"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Capacity *
+            Capacidad*
           </label>
           <select
             id="capacity"
@@ -170,7 +174,7 @@ export const CreateInstancePage = () => {
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
-            <option value="">Select a capacity</option>
+            <option value="">Selecccionar capacidad</option>
             {capacityOptions.map((capacity) => (
               <option key={capacity} value={capacity}>
                 {capacity
@@ -186,7 +190,7 @@ export const CreateInstancePage = () => {
             htmlFor="description"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Description *
+            Descripcion *
           </label>
           <textarea
             id="description"
@@ -204,14 +208,14 @@ export const CreateInstancePage = () => {
             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             disabled={isLoading}
           >
-            Cancel
+            Cancelar
           </button>
           <button
             type="submit"
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
             disabled={isLoading}
           >
-            Create Drone
+            Crear Dron
           </button>
         </div>
         {isLoading && <Louder />}

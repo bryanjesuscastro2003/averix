@@ -147,7 +147,7 @@ export const ProfilesPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">User Management</h1>
+      <h1 className="text-2xl font-bold mb-6">Panel de Usuarios</h1>
 
       {/* Filter controls */}
       <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -155,13 +155,13 @@ export const ProfilesPage = () => {
           <label
             htmlFor="usernameFilter"
             className="block text-sm font-medium text-gray-700 mb-1">
-            Filter by Email
+            Filtro  por correo
           </label>
           <input
             type="text"
             id="usernameFilter"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search email..."
+            placeholder="buscar email..."
             value={usernameFilter}
             onChange={(e) => setUsernameFilter(e.target.value)}
           />
@@ -171,7 +171,7 @@ export const ProfilesPage = () => {
           <label
             htmlFor="statusFilter"
             className="block text-sm font-medium text-gray-700 mb-1">
-            Filter by Status
+            Filtrar por estado
           </label>
           <select
             id="statusFilter"
@@ -199,31 +199,31 @@ export const ProfilesPage = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Username
+                Nombre de Usuario
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                Estado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
+                Creado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Modified
+                Modificado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Confirmed
+                Confirmado
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Deliveries
+                Entregas
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Role
+                Rol
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                Acciones
               </th>
             </tr>
           </thead>
@@ -279,7 +279,7 @@ export const ProfilesPage = () => {
                     <button
                       onClick={() => handleDeliveries(user.username)}
                       className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200">
-                      View Deliveries
+                      Ver entregas
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -315,7 +315,7 @@ export const ProfilesPage = () => {
                 <td
                   colSpan={9}
                   className="px-6 py-4 text-center text-sm text-gray-500">
-                  No users found matching your filters.
+                  Ningun Usuario
                 </td>
               </tr>
             )}
@@ -335,7 +335,7 @@ export const ProfilesPage = () => {
         <Link
           to="createProfile"
           className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
-          Create New Profile
+          Crear nuevo perfil
         </Link>
       </div>
     </div>

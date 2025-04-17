@@ -5,6 +5,7 @@ import { DroneCard } from "../../../../components/grez/instances/DroneCard";
 import { DroneStatusCard } from "../../../../components/grez/instances/DroneStatusCard";
 import { MasterSlaveCard } from "../../../../components/grez/instances/MasterSlaveCard";
 import { DroneCertificateCard } from "../../../../components/grez/instances/DroneCertificateCard";
+import { BackButton } from "../../../../components/grez/comun/BackButton";
 
 export const InstanceDetailsPage = () => {
   const { InstanceId } = useParams();
@@ -101,6 +102,7 @@ export const InstanceDetailsPage = () => {
 
   return (
     <div>
+      <BackButton></BackButton>
       <DroneCard drone={droneData} />
       <DroneStatusCard status={droneStatusData} />
       <MasterSlaveCard master={masterData} slave={slaveData} />

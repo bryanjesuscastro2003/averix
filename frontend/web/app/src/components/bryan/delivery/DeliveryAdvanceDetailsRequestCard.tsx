@@ -10,6 +10,7 @@ import { ConfirmationModal } from "../ConfirmationModal";
 import { useAuth } from "../../../context/AuthContext";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { useNavigate } from "react-router-dom";
+import { BackButton } from "../../grez/comun/BackButton";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   data: DeliveryData;
@@ -135,9 +136,12 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+
+<BackButton />
+
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Delivery Tracking Dashboard
+        Panel de Seguimiento de Entregas
         </h1>
 
         {/* Main Grid */}
@@ -147,7 +151,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-xl font-bold text-gray-800">
-                  Delivery Information
+                  Informacion del viaje
                 </h2>
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold ${

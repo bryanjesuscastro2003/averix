@@ -7,6 +7,7 @@ import Louder from "../../components/chris/louder";
 import { IResponse } from "../../types/responses/IResponse";
 import { DashboardEndpoints } from "../../endpoints/dashboard";
 import { set } from "date-fns";
+import { BackButton } from "../../components/grez/comun/BackButton";
 
 const LogupPage: React.FC = () => {
   //uso de datos para el logup
@@ -101,8 +102,12 @@ const LogupPage: React.FC = () => {
   };
 
   return (
+    
     <div className="min-h-screen bg-[#f6f7f8] flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full border border-[#e0e0e0]">
+      <BackButton>
+  
+  </BackButton>
         <h1 className="text-2xl font-bold text-[#072146] text-center mb-6">
           {isAuthenticated
             ? isSignUpSubmitted

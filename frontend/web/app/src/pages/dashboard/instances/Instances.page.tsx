@@ -117,19 +117,19 @@ export const InstancesPage = () => {
 
   return (
     <div className="container mx-auto p-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Drones Management</h1>
+      <h1 className="text-2xl font-bold mb-6">Panel de Drones</h1>
 
       {/* Filters Section */}
       <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h2 className="text-lg font-semibold mb-4">Filters</h2>
+        <h2 className="text-lg font-semibold mb-4">Filtros</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
+              Nombre
             </label>
             <input
               type="text"
-              placeholder="Filter by name"
+              placeholder="Filtro por nombre"
               className="w-full p-2 border border-gray-300 rounded-md"
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value)}
@@ -138,11 +138,11 @@ export const InstancesPage = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+            Estado
             </label>
             <input
               type="text"
-              placeholder="Filter by status"
+              placeholder="Filtro por estado"
               className="w-full p-2 border border-gray-300 rounded-md"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -151,7 +151,7 @@ export const InstancesPage = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Association Status
+              Estado de Asociacion
             </label>
             <select
               className="w-full p-2 border border-gray-300 rounded-md"
@@ -164,22 +164,22 @@ export const InstancesPage = () => {
                 )
               }
             >
-              <option value="">All</option>
-              <option value="true">Associated</option>
-              <option value="false">Not Associated</option>
+              <option value="">Todos</option>
+              <option value="true">Asociados</option>
+              <option value="false">No asociados</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Capacity
+              Capacidad
             </label>
             <select
               className="w-full p-2 border border-gray-300 rounded-md"
               value={capacityFilter}
               onChange={(e) => setCapacityFilter(e.target.value)}
             >
-              <option value="">All</option>
+              <option value="">Todos</option>
               {capacityOptions.map((capacity) => (
                 <option key={capacity} value={capacity}>
                   {capacity.replace("DRONAUTICA_", "").replace("_", " ")}
@@ -203,14 +203,14 @@ export const InstancesPage = () => {
             <thead>
               <tr>
                 {[
-                  "Name",
-                  "Model",
-                  "Capacity",
-                  "Associated",
-                  "Location",
-                  "Status",
-                  "Created at",
-                  "Last Updated",
+                  "Nombre",
+                  "Modelo",
+                  "Capacidad",
+                  "Asociados",
+                  "Locacion",
+                  "Estado",
+                  "Creado",
+                  "Actualizado",
                   "Acciones",
                 ].map((header) => (
                   <th
@@ -284,7 +284,7 @@ export const InstancesPage = () => {
                     colSpan={9}
                     className="p-4 text-center text-sm text-gray-500 border border-gray-300"
                   >
-                    No drones found matching your filters
+                    Ningun Dron
                   </td>
                 </tr>
               )}
@@ -306,7 +306,7 @@ export const InstancesPage = () => {
           to="createInstance"
           className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
         >
-          Create New Instance
+          Crear nuevo Dron
         </Link>
       </div>
     </div>
