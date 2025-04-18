@@ -6,8 +6,9 @@ import Louder from "../../../components/chris/louder";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { IResponse } from "../../../types/responses/IResponse";
 import { useAuth } from "../../../context/AuthContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Pagination } from "../../../components/bryan/Pagination";
+import { useWebSocket } from "../../../socket/WebSocketConn";
 
 const DeliveriesPage: React.FC = () => {
   const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([]);
@@ -27,6 +28,10 @@ const DeliveriesPage: React.FC = () => {
   const [showCategory, setShowCategory] = useState<boolean>(true);
   const { userData } = useAuth();
   const { deliveryId } = useParams();
+  const { sendMessage, isConnected } = useWebSocket(
+    "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
+  );
+  const navigate = useNavigate();
 
   // Estados para la paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -123,7 +128,6 @@ const DeliveriesPage: React.FC = () => {
               lng,
             },
           };
-
       const response = await fetch(
         !isConfirmationCodeLoaded
           ? DashboardEndpoints.createDeliveryTripEndpoint
@@ -138,15 +142,33 @@ const DeliveriesPage: React.FC = () => {
           mode: "cors",
         }
       );
-      const data: IResponse<any> = await response.json();
+      const data: IResponse<{
+        deliveryId: string;
+        primaryUser: string;
+      }> = await response.json();
+      console.log("Response from fetchStartDelivery:", data);
       if (!data.ok) {
         setError(data.message);
         setMessage("");
       } else {
-        setMessage("Viaje confirmado con éxito");
-        setError("");
-        setIsConfirmationCodeValid(false);
-        fetchDeliveries();
+        if (!isConfirmationCodeLoaded) {
+          navigate("details/" + data.data.deliveryId);
+        } else {
+          setMessage("Viaje confirmado con éxito. espera instrucciones");
+          setError("");
+          if (isConnected) {
+            sendMessage({
+              action: "confirmTrip",
+              data: {
+                targetUserId: data.data.primaryUser,
+                user: userData?.email || "",
+                message: "Hello from the client!",
+              },
+            });
+          }
+          setIsConfirmationCodeValid(false);
+          fetchDeliveries();
+        }
       }
     } catch (error) {
       setError("Error al iniciar el viaje");
@@ -256,14 +278,16 @@ const DeliveriesPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <label
             htmlFor="state-filter"
-            className="text-sm font-medium text-gray-700">
+            className="text-sm font-medium text-gray-700"
+          >
             Filtrar por estado:
           </label>
           <select
             id="state-filter"
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}>
+            onChange={(e) => setFilter(e.target.value)}
+          >
             <option value="">All</option>
             {allDeliveries
               .map((delivery) => delivery.dstate)
@@ -279,14 +303,16 @@ const DeliveriesPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <label
             htmlFor="state-filter"
-            className="text-sm font-medium text-gray-700">
+            className="text-sm font-medium text-gray-700"
+          >
             Filtrar por destino:
           </label>
           <select
             id="state-filter"
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             value={filterDestination}
-            onChange={(e) => setFilterDestination(e.target.value)}>
+            onChange={(e) => setFilterDestination(e.target.value)}
+          >
             <option value="">All</option>
             <option value="e">Emitente</option>
             <option value="r">Receptor</option>
@@ -312,7 +338,8 @@ const DeliveriesPage: React.FC = () => {
       <div className="mb-4 p-4 border rounded-md bg-gray-50">
         <label
           htmlFor="confirmation-code"
-          className="block text-sm font-medium text-gray-700">
+          className="block text-sm font-medium text-gray-700"
+        >
           Código de Confirmación:
         </label>
         <input
@@ -328,7 +355,8 @@ const DeliveriesPage: React.FC = () => {
           type="button"
           className="mt-2 px-4 py-3 w-full gap-2 sm:w-auto bg-green-600 text-white rounded-md hover:bg-green-700 transition"
           onClick={confirmationCodeForButton}
-          disabled={isLoading}>
+          disabled={isLoading}
+        >
           Confirmar
         </button>
       </div>
@@ -364,7 +392,8 @@ const DeliveriesPage: React.FC = () => {
       <div className="mt-8 flex justify-center">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center align-center ">
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center align-center "
+        >
           <div className="flex justify-center items-center w-full">
             <p className="flex gap-2 text-center items-center">
               <svg
@@ -372,7 +401,8 @@ const DeliveriesPage: React.FC = () => {
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor">
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

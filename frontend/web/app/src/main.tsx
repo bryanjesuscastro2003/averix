@@ -26,6 +26,7 @@ import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/Tracking
 import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
 import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/tracking/details/DeliveryDetailsPage";
 import { InstanceDetailsPage } from "./pages/dashboard/instances/details/Instancedetailspage";
+import { SocketProvider } from "./socket/SocketProvider";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -103,7 +104,7 @@ createRoot(document.getElementById("root")!).render(
 
                   <Route path="tracking" element={<DeliveryTrackingPage />} />
                   <Route path="trackinglogs" element={<TrackingLogsPage />} />
-                  
+
                   <Route
                     path="admin/*"
                     element={
@@ -155,6 +156,7 @@ createRoot(document.getElementById("root")!).render(
           {/* Catch-all route for 404 */}
         </Routes>
       </Router>
+      <SocketProvider />
 
       {/*<InteractiveNotification
           type="info"

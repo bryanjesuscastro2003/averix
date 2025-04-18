@@ -10,6 +10,7 @@ import { ConfirmationModal } from "../ConfirmationModal";
 import { useAuth } from "../../../context/AuthContext";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { useNavigate } from "react-router-dom";
+import { useWebSocket } from "../../../socket/WebSocketConn";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   data: DeliveryData;
@@ -25,6 +26,9 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       data.delivery.id
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const { sendMessage, isConnected } = useWebSocket(
+    "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
+  );
   const { userData } = useAuth();
   const navigate = useNavigate();
 
@@ -91,6 +95,16 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       if (!response.ok) {
         // Handle error
       } else {
+        if (isConnected) {
+          sendMessage({
+            action: "acceptTrip",
+            data: {
+              targetUserId: data.delivery.secondaryUser,
+              user: userData?.email || "",
+              message: "Hello from the client!",
+            },
+          });
+        }
         navigate("/dashboard/deliveries");
       }
     } catch (e) {
