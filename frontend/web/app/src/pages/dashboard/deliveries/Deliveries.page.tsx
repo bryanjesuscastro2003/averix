@@ -148,7 +148,7 @@ const DeliveriesPage: React.FC = () => {
       }> = await response.json();
       console.log("Response from fetchStartDelivery:", data);
       if (!data.ok) {
-        setError(data.message);
+        setError("Error al iniciar el viaje, porfavor intente de nuevo");
         setMessage("");
       } else {
         if (!isConfirmationCodeLoaded) {
@@ -203,13 +203,12 @@ const DeliveriesPage: React.FC = () => {
       const data: IResponse<{ count: number; items: Delivery[] }> =
         await response.json();
       if (!data.ok) {
-        setMessage(data.message);
+        setMessage("Error al obtener entregas, porfavor recarga la página");
       } else {
         setAllDeliveries(data.data.items);
       }
-      console.log("Fetched deliveries:", data);
     } catch (error) {
-      console.error("Error fetching deliveries:", error);
+      setMessage("Error al obtener entregas, porfavor recarga la página");
     } finally {
       setIsLoading(false);
     }
@@ -240,7 +239,9 @@ const DeliveriesPage: React.FC = () => {
       );
       const data: IResponse<any> = await response.json();
       if (!data.ok) {
-        setError(data.message);
+        setError(
+          "Código de confirmación incorrecto, porfavor intente de nuevo"
+        );
         setIsConfirmationCodeLoaded(false);
       } else {
         setMessage(
@@ -250,7 +251,8 @@ const DeliveriesPage: React.FC = () => {
         setIsConfirmationCodeValid(true);
       }
     } catch (error) {
-      console.error("Error confirming delivery:", error);
+      setError("Error al verificar el código de confirmación");
+      setIsConfirmationCodeLoaded(false);
     } finally {
       setIsModalLoading(false);
     }
@@ -288,13 +290,21 @@ const DeliveriesPage: React.FC = () => {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           >
-            <option value="">All</option>
+            <option value="">Todos</option>
             {allDeliveries
               .map((delivery) => delivery.dstate)
               .filter((value, index, self) => self.indexOf(value) === index)
               .map((state) => (
                 <option key={state} value={state}>
-                  {state}
+                  {state === "CONFIRMED"
+                    ? "Confirmado"
+                    : state === "RUNNING"
+                    ? "En Progreso"
+                    : state === "CANCELED"
+                    ? "Cancelado"
+                    : state === "COMPLETED"
+                    ? "Completado"
+                    : state}
                 </option>
               ))}
           </select>
@@ -313,7 +323,7 @@ const DeliveriesPage: React.FC = () => {
             value={filterDestination}
             onChange={(e) => setFilterDestination(e.target.value)}
           >
-            <option value="">All</option>
+            <option value="">Todos</option>
             <option value="e">Emitente</option>
             <option value="r">Receptor</option>
           </select>

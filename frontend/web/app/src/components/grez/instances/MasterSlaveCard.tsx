@@ -1,30 +1,15 @@
-import React from 'react';
-
-interface MasterData {
-  createdAt: string;
-  id: string;
-  participants: number;
-  timestream: string;
-  topicMaster: string;
-  updatedAt: string;
-}
-
-interface SlaveData {
-  createdAt: string;
-  id: string;
-  instanceId: string;
-  masterId: string;
-  tiimestamp: string;
-  topicSlave: string;
-  updatedAt: string;
-}
+import React from "react";
+import { IInstanceMaster, IInstanceSlave } from "../../../types/data/IInstance";
 
 interface MasterSlaveCardProps {
-  master: MasterData;
-  slave: SlaveData;
+  master: IInstanceMaster;
+  slave: IInstanceSlave;
 }
 
-export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({ master, slave }) => {
+export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({
+  master,
+  slave,
+}) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
@@ -36,10 +21,12 @@ export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({ master, slave 
   };
 
   return (
-    <div className="w-full rounded-2xl shadow-md bg-white border border-gray-200">
+    <div className="w-full max-w-md mx-auto sm:max-w-full sm:px-4 md:px-6 lg:px-8 mb-6 border border-gray-600 shadow-md">
       {/* Encabezado */}
-      <div className="px-6 py-4 bg-indigo-50 border-b rounded-t-2xl">
-        <h2 className="text-xl font-bold text-indigo-800">Relación Master-Slave</h2>
+      <div className="bg-indigo-50 border-b rounded-t-2xl">
+        <h2 className="text-xl font-bold text-indigo-800">
+          Relación Master-Slave
+        </h2>
         <p className="text-sm text-indigo-600 mt-1">
           Conectado desde: {formatDate(slave.createdAt)}
         </p>
@@ -106,7 +93,9 @@ export const MasterSlaveCard: React.FC<MasterSlaveCardProps> = ({ master, slave 
 
         {/* Sección de sincronización (abajo en pantallas pequeñas, al lado en grandes) */}
         <div className="lg:col-span-2 mt-4 pt-4 border-t border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Sincronización</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+            Sincronización
+          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-gray-600">
             <div className="flex justify-between">
               <span>Timestream Master:</span>

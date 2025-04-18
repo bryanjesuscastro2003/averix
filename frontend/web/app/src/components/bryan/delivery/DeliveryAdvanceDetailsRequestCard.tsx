@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-
 import "leaflet/dist/leaflet.css";
 import { StartDeliveryModal } from "../../chris/delivery/StartDeliveryModal";
 import { DeliveryData, Location } from "../../../types/data/IDelivery";
@@ -10,7 +8,6 @@ import { ConfirmationModal } from "../ConfirmationModal";
 import { useAuth } from "../../../context/AuthContext";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { useNavigate } from "react-router-dom";
-import { BackButton } from "../../grez/comun/BackButton";
 import { useWebSocket } from "../../../socket/WebSocketConn";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
@@ -150,8 +147,6 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <BackButton />
-
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Panel de Seguimiento de Entregas

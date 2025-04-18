@@ -20,10 +20,6 @@ import { ResetPassword } from "./pages/auth/ResetPassword.page";
 import { ProfilesPage } from "./pages/dashboard/profiles/Profiles.page";
 import DeliveriesPage from "./pages/dashboard/deliveries/Deliveries.page";
 import { CreateInstancePage } from "./pages/dashboard/instances/CreateInstance.page";
-import { DeliveryTrackingPage } from "./pages/dashboard/deliveries/tracking/DeliveryTrackingPage";
-import { TrackingLogsPage } from "./pages/dashboard/deliveries/tracking/TrackingLogsPage";
-
-import { InteractiveNotification } from "./components/grez/notifications/InteractiveNotification";
 import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/tracking/details/DeliveryDetailsPage";
 import { InstanceDetailsPage } from "./pages/dashboard/instances/details/Instancedetailspage";
 import { SocketProvider } from "./socket/SocketProvider";
@@ -101,9 +97,6 @@ createRoot(document.getElementById("root")!).render(
                       </Routes>
                     }
                   />
-
-                  <Route path="tracking" element={<DeliveryTrackingPage />} />
-                  <Route path="trackinglogs" element={<TrackingLogsPage />} />
 
                   <Route
                     path="admin/*"

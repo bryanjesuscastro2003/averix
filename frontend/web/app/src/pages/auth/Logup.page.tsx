@@ -27,8 +27,6 @@ const LogupPage: React.FC = () => {
 
   const handleChange = (e: any) => {
     setRole(e.target.value);
-    console.log("Rol seleccionado:", e.target.value);
-    // Aquí podrías redirigir, mostrar algo, etc.
   };
 
   const handleLogup = async (e: React.FormEvent) => {
@@ -67,9 +65,9 @@ const LogupPage: React.FC = () => {
       if (data.ok) {
         setIsSignUpSubmitted(true);
         setMessage("");
-      } else setMessage(data.message || "An error occurred");
+      } else setMessage("Error al registrarse, intente nuevamente");
     } catch (e) {
-      setMessage("Unexpected error occurred, please try again later ...");
+      setMessage("Error al registrarse, intente nuevamente");
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +76,6 @@ const LogupPage: React.FC = () => {
   const handleConfirmation = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("Confirmation code:", confirmationCode);
     try {
       const response = await fetch(AuthEndpoints.signUpConfirmationEndpoint, {
         method: "POST",
@@ -93,21 +90,18 @@ const LogupPage: React.FC = () => {
         !isAuthenticated
           ? (window.location.href = "/auth/login")
           : navigate("/dashboard/admin/profiles");
-      } else setMessage(data.message || "An error occurred");
+      } else setMessage("Error al confirmar la cuenta, intente nuevamente");
     } catch (error) {
-      setMessage("Unexpected error occurred, please try again later ...");
+      setMessage("Error al confirmar la cuenta, intente nuevamente");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    
     <div className="min-h-screen bg-[#f6f7f8] flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full border border-[#e0e0e0]">
-      <BackButton>
-  
-  </BackButton>
+        <BackButton></BackButton>
         <h1 className="text-2xl font-bold text-[#072146] text-center mb-6">
           {isAuthenticated
             ? isSignUpSubmitted
@@ -290,7 +284,10 @@ const LogupPage: React.FC = () => {
                 </Link>
               )}
               <button
-                onClick={() => setIsSignUpSubmitted(true)}
+                onClick={() => {
+                  setMessage("");
+                  setIsSignUpSubmitted(true);
+                }}
                 className="text-[#00a0d2] font-medium hover:underline"
               >
                 ¿Tienes un código de confirmación?

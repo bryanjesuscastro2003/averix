@@ -105,9 +105,7 @@ export const CreateInstancePage = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <BackButton>
-  
-  </BackButton>
+      <BackButton></BackButton>
       <h2 className="text-2xl font-bold mb-6 text-gray-800">
         Crear nuevo Dron
       </h2>
@@ -177,10 +175,11 @@ export const CreateInstancePage = () => {
             <option value="">Selecccionar capacidad</option>
             {capacityOptions.map((capacity) => (
               <option key={capacity} value={capacity}>
-                {capacity
-                  .replace("DRONAUTICA_", "")
-                  .replace("_INSTANCE", "")
-                  .replace("_", " ")}
+                {capacity === "DRONAUTICA_SMALL_INSTANCE"
+                  ? "Pequeña"
+                  : capacity === "DRONAUTICA_MEDIUM_INSTANCE"
+                  ? "Mediana"
+                  : "Grande"}
               </option>
             ))}
           </select>
@@ -204,7 +203,7 @@ export const CreateInstancePage = () => {
         <div className="flex justify-end space-x-3">
           <button
             type="button"
-            onClick={() => navigate("/drones")} // or your cancel behavior
+            onClick={() => navigate("/dashboard/admin/instances")}
             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             disabled={isLoading}
           >

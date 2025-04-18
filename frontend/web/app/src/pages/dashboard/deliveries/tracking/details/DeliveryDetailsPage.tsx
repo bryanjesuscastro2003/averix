@@ -5,6 +5,7 @@ import { IResponse } from "../../../../../types/responses/IResponse";
 import { Loader } from "../../../../../components/grez/Louder";
 import { DeliveryData } from "../../../../../types/data/IDelivery";
 import { DeliveryAdvanceDetailsRequestCard } from "../../../../../components/bryan/delivery/DeliveryAdvanceDetailsRequestCard";
+import { BackButton } from "../../../../../components/grez/comun/BackButton";
 
 export const DeliveryDetailsPage = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -35,14 +36,18 @@ export const DeliveryDetailsPage = () => {
       );
       const data: IResponse<DeliveryData> = await response.json();
       if (!response.ok) {
-        setMessage(data.message);
+        setMessage(
+          "Error al obtener los datos de la entrega, intente de nuevo"
+        );
+        setDeliveryData(null);
         return;
       }
       setDeliveryData(data.data);
       setTrackingLogsId(data.data.trackingLogs.id);
       setMessage("");
     } catch (error) {
-      setMessage("Error fetching delivery data");
+      setMessage("Error al obtener los datos de la entrega, intente de nuevo");
+      setDeliveryData(null);
     } finally {
       setIsLoading(false);
     }
@@ -54,10 +59,17 @@ export const DeliveryDetailsPage = () => {
 
   return (
     <div className="p-4">
-      {isLoading || deliveryData === null ? (
+      <BackButton />
+      {isLoading ? (
         <Loader />
+      ) : message ? (
+        <div className="flex flex-col items-center justify-center w-full h-full p-4">
+          <p className="text-sm font-bold text-red-600">{message}</p>
+        </div>
       ) : (
-        <DeliveryAdvanceDetailsRequestCard data={deliveryData!} />
+        deliveryData && (
+          <DeliveryAdvanceDetailsRequestCard data={deliveryData!} />
+        )
       )}
     </div>
   );

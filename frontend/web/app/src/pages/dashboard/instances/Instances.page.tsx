@@ -50,9 +50,15 @@ export const InstancesPage = () => {
         }> = await response.json();
         setDrones(data.data.instances);
         setFilteredDrones(data.data.instances);
-        if (!data.ok) setMessage(data.message);
+        if (!data.ok) {
+          setMessage(
+            "Error al cargar los drones. Por favor, intenta de nuevo más tarde."
+          );
+        }
       } catch (err) {
-        setMessage("Failed to fetch drones");
+        setMessage(
+          "Error al cargar los drones. Por favor, intenta de nuevo más tarde."
+        );
       } finally {
         setLoading(false);
       }
@@ -138,7 +144,7 @@ export const InstancesPage = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-            Estado
+              Estado
             </label>
             <input
               type="text"
@@ -151,7 +157,7 @@ export const InstancesPage = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Estado de Asociacion
+              Por estado asociado
             </label>
             <select
               className="w-full p-2 border border-gray-300 rounded-md"
@@ -182,7 +188,11 @@ export const InstancesPage = () => {
               <option value="">Todos</option>
               {capacityOptions.map((capacity) => (
                 <option key={capacity} value={capacity}>
-                  {capacity.replace("DRONAUTICA_", "").replace("_", " ")}
+                  {capacity === "DRONAUTICA_SMALL_INSTANCE"
+                    ? "Pequeño"
+                    : capacity === "DRONAUTICA_MEDIUM_INSTANCE"
+                    ? "Mediano"
+                    : "Grande"}
                 </option>
               ))}
             </select>
@@ -192,8 +202,8 @@ export const InstancesPage = () => {
 
       {/* Results Count */}
       <div className="mb-2 text-sm text-gray-600">
-        Showing {currentItems.length} of {filteredDrones.length} drones (Page{" "}
-        {currentPage} of {totalPages})
+        Mostrando {currentItems.length} de {filteredDrones.length} drones
+        (Pagina {currentPage} de {totalPages})
       </div>
 
       {/* Table */}

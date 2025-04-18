@@ -61,7 +61,7 @@ const Header = () => {
                           to="/dashboard/admin/instances"
                           className="nav-link"
                         >
-                          Instancias
+                          Drones
                         </Link>
                       </li>
                       <li className="nav-item">
@@ -140,7 +140,7 @@ const Header = () => {
                       className="mobile-nav-link"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      Instancias
+                      Drones
                     </Link>
                   </li>
                   <li className="mobile-nav-item">

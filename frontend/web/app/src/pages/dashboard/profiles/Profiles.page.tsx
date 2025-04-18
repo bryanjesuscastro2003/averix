@@ -69,13 +69,11 @@ export const ProfilesPage = () => {
         }),
       });
       const data: IResponse<null> = await response.json();
-      console.log(data);
       if (!data.ok) {
-        setMessage(data.message);
-        console.error("Error toggling user status:", data.message);
+        setMessage("Error al cambiar el estado del usuario");
       }
     } catch (error) {
-      console.error("Error toggling user status:", error);
+      setMessage("Error al cambiar el estado del usuario");
     } finally {
       setIsLoading(false);
     }
@@ -124,13 +122,11 @@ export const ProfilesPage = () => {
       if (data.ok) {
         setUsers(data.data.users);
       } else {
-        setMessage(data.message);
-        console.error("Error fetching profiles:", data.message);
+        setMessage("Error al obtener los perfiles, por favor intente de nuevo");
       }
       console.log(data);
     } catch (error) {
-      console.error("Error fetching profiles:", error);
-      setMessage("Error fetching profiles");
+      setMessage("Error al obtener los perfiles, por favor intente de nuevo");
     } finally {
       setIsLoading(false);
     }
@@ -154,8 +150,9 @@ export const ProfilesPage = () => {
         <div>
           <label
             htmlFor="usernameFilter"
-            className="block text-sm font-medium text-gray-700 mb-1">
-            Filtro  por correo
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Filtro por correo
           </label>
           <input
             type="text"
@@ -170,17 +167,23 @@ export const ProfilesPage = () => {
         <div>
           <label
             htmlFor="statusFilter"
-            className="block text-sm font-medium text-gray-700 mb-1">
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Filtrar por estado
           </label>
           <select
             id="statusFilter"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}>
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
             {statusOptions.map((status) => (
               <option key={status} value={status}>
-                {status}
+                {status == "ALL"
+                  ? "Todos"
+                  : status == "ACTIVE"
+                  ? "Activos"
+                  : "Suspendidos"}
               </option>
             ))}
           </select>
@@ -189,8 +192,8 @@ export const ProfilesPage = () => {
 
       {/* Results count */}
       <div className="mb-2 text-sm text-gray-600">
-        Showing {currentItems.length} of {filteredUsers.length} users (Page{" "}
-        {currentPage} of {totalPages})
+        Mostrando {currentItems.length} de {filteredUsers.length} usuarios
+        (Pagina {currentPage} de {totalPages})
       </div>
 
       {/* Table */}
@@ -238,7 +241,8 @@ export const ProfilesPage = () => {
                     user.attributes.email === userData?.email
                       ? "bg-gray-100 hover:bg-gray-200"
                       : "hover:bg-gray-50"
-                  }>
+                  }
+                >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <div className="truncate max-w-xs">{user.username}</div>
                   </td>
@@ -249,7 +253,8 @@ export const ProfilesPage = () => {
                         user.enabled === true
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
-                      }`}>
+                      }`}
+                    >
                       {user.enabled === true ? "Active" : "Inactive"}
                     </span>
                   </td>
@@ -269,7 +274,8 @@ export const ProfilesPage = () => {
                           user.attributes.email_verified === "true"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
-                        }`}>
+                        }`}
+                    >
                       {user.attributes.email_verified === "true"
                         ? "Confirmed"
                         : "Unconfirmed"}
@@ -278,7 +284,8 @@ export const ProfilesPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
                       onClick={() => handleDeliveries(user.username)}
-                      className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200">
+                      className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200"
+                    >
                       Ver entregas
                     </button>
                   </td>
@@ -289,7 +296,8 @@ export const ProfilesPage = () => {
                         user.attributes["custom:role"] === "admin"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-yellow-100 text-yellow-800"
-                      }`}>
+                      }`}
+                    >
                       {user.attributes["custom:role"]}
                     </span>
                   </td>
@@ -303,7 +311,8 @@ export const ProfilesPage = () => {
                             user.enabled
                               ? "bg-red-100 text-red-800 hover:bg-red-200"
                               : "bg-green-100 text-green-800 hover:bg-green-200"
-                          }`}>
+                          }`}
+                      >
                         {user.enabled ? "Disable" : "Enable"}
                       </button>
                     </div>
@@ -314,7 +323,8 @@ export const ProfilesPage = () => {
               <tr>
                 <td
                   colSpan={9}
-                  className="px-6 py-4 text-center text-sm text-gray-500">
+                  className="px-6 py-4 text-center text-sm text-gray-500"
+                >
                   Ningun Usuario
                 </td>
               </tr>
@@ -334,7 +344,8 @@ export const ProfilesPage = () => {
       <div className="flex justify-end">
         <Link
           to="createProfile"
-          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+          className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
+        >
           Crear nuevo perfil
         </Link>
       </div>

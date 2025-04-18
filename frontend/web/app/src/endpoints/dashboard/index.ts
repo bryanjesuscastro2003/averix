@@ -12,4 +12,5 @@ export const DashboardEndpoints = {
     verifyDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/verify",
     cancelDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/final/cancel",
     acceptDeliveryTripEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/delivery/trips/final/accept",
+    downloadInstanceCredentialsEndpoint: "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/aviren/instances/item/credentials",
 }
