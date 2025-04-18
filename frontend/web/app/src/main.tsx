@@ -42,7 +42,11 @@ const AuthenticatedProtectedRouteRoute: React.FC<{
 }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  return isAuthenticated ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/auth/login" replace />
+  );
 };
 
 const AdminProtectedRoute: React.FC<{ children: React.ReactNode }> = ({

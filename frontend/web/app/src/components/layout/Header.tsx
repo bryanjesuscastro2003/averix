@@ -17,7 +17,7 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/auth/login");
+    window.location.href = "/auth/login";
     setMobileMenuOpen(false);
   };
 
