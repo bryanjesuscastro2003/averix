@@ -11,6 +11,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "../../grez/comun/BackButton";
+import { useWebSocket } from "../../../socket/WebSocketConn";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   data: DeliveryData;
@@ -26,6 +27,9 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       data.delivery.id
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const { sendMessage, isConnected } = useWebSocket(
+    "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
+  );
   const { userData } = useAuth();
   const navigate = useNavigate();
 
@@ -92,6 +96,16 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       if (!response.ok) {
         // Handle error
       } else {
+        if (isConnected) {
+          sendMessage({
+            action: "acceptTrip",
+            data: {
+              targetUserId: data.delivery.secondaryUser,
+              user: userData?.email || "",
+              message: "Hello from the client!",
+            },
+          });
+        }
         navigate("/dashboard/deliveries");
       }
     } catch (e) {
@@ -136,12 +150,11 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-
-<BackButton />
+      <BackButton />
 
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        Panel de Seguimiento de Entregas
+          Panel de Seguimiento de Entregas
         </h1>
 
         {/* Main Grid */}
