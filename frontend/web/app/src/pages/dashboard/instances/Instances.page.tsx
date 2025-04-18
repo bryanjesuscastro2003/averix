@@ -13,6 +13,14 @@ const capacityOptions = [
   "DRONAUTICA_LARGE_INSTANCE",
 ] as const;
 
+const statusOptions = [
+  { value: "AVAILABLE", label: "Disponible" },
+  { value: "UNAVAILABLE", label: "No disponible" },
+  { value: "RUNNING", label: "En ejecución" },
+  { value: "MAINTENANCE", label: "En mantenimiento" },
+  { value: "ERROR", label: "Error" },
+];
+
 export const InstancesPage = () => {
   const [drones, setDrones] = useState<IInstance[]>([]);
   const [filteredDrones, setFilteredDrones] = useState<IInstance[]>([]);
@@ -84,9 +92,12 @@ export const InstancesPage = () => {
     }
 
     if (statusFilter) {
-      result = result.filter((drone) =>
-        drone.dstate.toLowerCase().includes(statusFilter.toLowerCase())
-      );
+      if (statusFilter === "RUNNING")
+        result = result.filter(
+          (drone) =>
+            drone.dstate === "BUSY_ST_1" || drone.dstate === "BUSY_ST_2"
+        );
+      else result = result.filter((drone) => drone.dstate === statusFilter);
     }
 
     if (capacityFilter) {
@@ -146,13 +157,18 @@ export const InstancesPage = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Estado
             </label>
-            <input
-              type="text"
-              placeholder="Filtro por estado"
+            <select
               className="w-full p-2 border border-gray-300 rounded-md"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-            />
+            >
+              <option value="">Todos los estados</option>
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -203,7 +219,7 @@ export const InstancesPage = () => {
       {/* Results Count */}
       <div className="mb-2 text-sm text-gray-600">
         Mostrando {currentItems.length} de {filteredDrones.length} drones
-        (Pagina {currentPage} de {totalPages})
+        (Página {currentPage} de {totalPages})
       </div>
 
       {/* Table */}
@@ -217,7 +233,7 @@ export const InstancesPage = () => {
                   "Modelo",
                   "Capacidad",
                   "Asociados",
-                  "Locacion",
+                  "Locación",
                   "Estado",
                   "Creado",
                   "Actualizado",
@@ -263,14 +279,16 @@ export const InstancesPage = () => {
                       : "bg-red-100 text-red-800"
                   }`}
                       >
-                        {drone.isAssociated ? "Yes" : "No"}
+                        {drone.isAssociated ? "Sí" : "No"}
                       </span>
                     </td>
                     <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {parseLocation(drone.stationLocation)}
                     </td>
                     <td className="p-2 border border-gray-300 text-sm text-gray-500">
-                      {drone.dstate.replace("_ST_", " ").replace(/_/g, " ")}
+                      {statusOptions.find((opt) => opt.value === drone.dstate)
+                        ?.label ||
+                        drone.dstate.replace("_ST_", " ").replace(/_/g, " ")}
                     </td>
                     <td className="p-2 border border-gray-300 text-sm text-gray-500">
                       {formatDate(drone.createdAt)}
@@ -294,7 +312,7 @@ export const InstancesPage = () => {
                     colSpan={9}
                     className="p-4 text-center text-sm text-gray-500 border border-gray-300"
                   >
-                    Ningun Dron
+                    Ningún dron encontrado
                   </td>
                 </tr>
               )}
@@ -316,7 +334,7 @@ export const InstancesPage = () => {
           to="createInstance"
           className="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
         >
-          Crear nuevo Dron
+          Crear nuevo dron
         </Link>
       </div>
     </div>
