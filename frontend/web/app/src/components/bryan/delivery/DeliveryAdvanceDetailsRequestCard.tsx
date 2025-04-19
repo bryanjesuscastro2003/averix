@@ -141,7 +141,8 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   };
 
   const startTrankingService = () => {
-    if (isConnected) {
+    if (isConnected && data.delivery.dstate === "RUNNING") {
+      console.log("Sending startTracking message");
       sendMessage({
         action: "trackingStart",
         data: {

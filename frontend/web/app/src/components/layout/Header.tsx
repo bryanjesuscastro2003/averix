@@ -1,19 +1,65 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Header.css";
+import { useWebSocket } from "../../socket/WebSocketConn";
 
 const Header = () => {
   const { isAuthenticated, logout, userData } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [currentSection, setCurrentSection] = useState("");
+  const { sendMessage, isConnected } = useWebSocket(
+    "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
+  );
 
   useEffect(() => {
     if (userData?.["custom:role"] === "admin") {
       setIsAdmin(true);
     }
   }, [userData]);
+
+  useEffect(() => {
+    // Extract the main section from the pathname
+    const path = location.pathname;
+    let section = "";
+
+    if (path.startsWith("/dashboard/profile")) {
+      section = "profile";
+    } else if (path.startsWith("/dashboard/deliveries")) {
+      section = "deliveries";
+    } else if (path.startsWith("/dashboard/admin/instances")) {
+      section = "drones";
+    } else if (path.startsWith("/dashboard/admin/profiles")) {
+      section = "users";
+    } else if (path.startsWith("/auth/login")) {
+      section = "login";
+    } else if (path.startsWith("/auth/logup")) {
+      section = "register";
+    } else if (path.startsWith("/dashboard")) {
+      section = "dashboard";
+    }
+
+    // Only update if section actually changed
+    if (section !== currentSection) {
+      setCurrentSection(section);
+      console.log(`Section changed to: ${section}`);
+      // Finish any active tracking service
+      if (isConnected && userData !== null) {
+        console.log("Sending finishTracking message");
+        sendMessage({
+          action: "trackingFinish",
+          data: {
+            targetUserId: "",
+            user: userData?.email || "",
+            message: "Finishing tracking",
+          },
+        });
+      }
+    }
+  }, [location, currentSection]);
 
   const handleLogout = () => {
     logout();
@@ -26,51 +72,65 @@ const Header = () => {
   };
 
   return (
-    <header className="header bg-indigo-600">
+    <header className="header">
       <div className="header-container">
         <div className="header-content">
           {/* Logo */}
-          <Link
+          <NavLink
             to="/dashboard"
             className="logo-link"
             onClick={() => setMobileMenuOpen(false)}
           >
             <div className="logo-box">AVI</div>
             <span className="logo-text">REN</span>
-          </Link>
+          </NavLink>
 
-          {/* Menú de navegación para desktop */}
+          {/* Desktop Navigation */}
           <nav className="desktop-nav">
             {isAuthenticated ? (
               <>
                 <ul className="nav-links">
                   <li className="nav-item">
-                    <Link to="/dashboard/profile" className="nav-link">
+                    <NavLink
+                      to="/dashboard/profile"
+                      className={({ isActive }) =>
+                        `nav-link ${isActive ? "active" : ""}`
+                      }
+                    >
                       Mi perfil
-                    </Link>
+                    </NavLink>
                   </li>
                   <li className="nav-item">
-                    <Link to="/dashboard/deliveries" className="nav-link">
+                    <NavLink
+                      to="/dashboard/deliveries"
+                      className={({ isActive }) =>
+                        `nav-link ${isActive ? "active" : ""}`
+                      }
+                    >
                       Viajes
-                    </Link>
+                    </NavLink>
                   </li>
                   {isAdmin && (
                     <>
                       <li className="nav-item">
-                        <Link
+                        <NavLink
                           to="/dashboard/admin/instances"
-                          className="nav-link"
+                          className={({ isActive }) =>
+                            `nav-link ${isActive ? "active" : ""}`
+                          }
                         >
                           Drones
-                        </Link>
+                        </NavLink>
                       </li>
                       <li className="nav-item">
-                        <Link
+                        <NavLink
                           to="/dashboard/admin/profiles"
-                          className="nav-link"
+                          className={({ isActive }) =>
+                            `nav-link ${isActive ? "active" : ""}`
+                          }
                         >
                           Usuarios
-                        </Link>
+                        </NavLink>
                       </li>
                     </>
                   )}
@@ -83,74 +143,88 @@ const Header = () => {
               <>
                 <ul className="nav-links">
                   <li className="nav-item">
-                    <Link to="/auth/login" className="nav-link">
+                    <NavLink
+                      to="/auth/login"
+                      className={({ isActive }) =>
+                        `nav-link ${isActive ? "active" : ""}`
+                      }
+                    >
                       Iniciar sesión
-                    </Link>
+                    </NavLink>
                   </li>
                 </ul>
-                <Link to="/auth/logup" className="nav-button">
+                <NavLink
+                  to="/auth/logup"
+                  className={({ isActive }) =>
+                    `nav-button ${isActive ? "active-button" : ""}`
+                  }
+                >
                   Registrarse
-                </Link>
+                </NavLink>
               </>
             )}
           </nav>
 
-          {/* Botón del menú móvil */}
+          {/* Mobile menu button */}
           <button
             className="mobile-menu-button"
             onClick={toggleMobileMenu}
             aria-expanded={mobileMenuOpen}
             aria-label="Menú de navegación"
           >
-            {mobileMenuOpen ? (
-              <span>✕</span> /* Icono de cerrar */
-            ) : (
-              <span>☰</span> /* Icono de hamburguesa */
-            )}
+            {mobileMenuOpen ? <span>✕</span> : <span>☰</span>}
           </button>
         </div>
 
-        {/* Menú de navegación para móvil */}
+        {/* Mobile Navigation */}
         <nav className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}>
           {isAuthenticated ? (
             <ul className="mobile-nav-links">
               <li className="mobile-nav-item">
-                <Link
+                <NavLink
                   to="/dashboard/profile"
-                  className="mobile-nav-link"
+                  className={({ isActive }) =>
+                    `mobile-nav-link ${isActive ? "active" : ""}`
+                  }
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Mi perfil
-                </Link>
+                </NavLink>
               </li>
               <li className="mobile-nav-item">
-                <Link
+                <NavLink
                   to="/dashboard/deliveries"
-                  className="mobile-nav-link"
+                  className={({ isActive }) =>
+                    `mobile-nav-link ${isActive ? "active" : ""}`
+                  }
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Viajes
-                </Link>
+                </NavLink>
               </li>
               {isAdmin && (
                 <>
                   <li className="mobile-nav-item">
-                    <Link
+                    <NavLink
                       to="/dashboard/admin/instances"
-                      className="mobile-nav-link"
+                      className={({ isActive }) =>
+                        `mobile-nav-link ${isActive ? "active" : ""}`
+                      }
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Drones
-                    </Link>
+                    </NavLink>
                   </li>
                   <li className="mobile-nav-item">
-                    <Link
+                    <NavLink
                       to="/dashboard/admin/profiles"
-                      className="mobile-nav-link"
+                      className={({ isActive }) =>
+                        `mobile-nav-link ${isActive ? "active" : ""}`
+                      }
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Usuarios
-                    </Link>
+                    </NavLink>
                   </li>
                 </>
               )}
@@ -163,22 +237,26 @@ const Header = () => {
           ) : (
             <ul className="mobile-nav-links">
               <li className="mobile-nav-item">
-                <Link
+                <NavLink
                   to="/auth/login"
-                  className="mobile-nav-link"
+                  className={({ isActive }) =>
+                    `mobile-nav-link ${isActive ? "active" : ""}`
+                  }
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Iniciar sesión
-                </Link>
+                </NavLink>
               </li>
               <li className="mobile-nav-item">
-                <Link
+                <NavLink
                   to="/auth/logup"
-                  className="mobile-nav-button"
+                  className={({ isActive }) =>
+                    `mobile-nav-button ${isActive ? "active-button" : ""}`
+                  }
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Registrarse
-                </Link>
+                </NavLink>
               </li>
             </ul>
           )}
