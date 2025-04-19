@@ -140,6 +140,35 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
     }
   };
 
+  const startTrankingService = () => {
+    if (isConnected) {
+      sendMessage({
+        action: "trackingStart",
+        data: {
+          targetUserId: "",
+          user: userData?.email || "",
+          message: "Hello from the client!",
+          deliveryId: data.delivery.id,
+        },
+      });
+    }
+    setIsModalOpen(true);
+  };
+
+  const finishTrankingService = () => {
+    if (isConnected) {
+      sendMessage({
+        action: "trackingFinish",
+        data: {
+          targetUserId: "",
+          user: userData?.email || "",
+          message: "Hello from the client!",
+        },
+      });
+    }
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     console.log("Tracking Points:", trackingPoints);
     console.log("Location A:", data.delivery);
@@ -221,13 +250,28 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 <div className="gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-2">
-                      Progreso de la Ruta
+                      Progreso de la Ruta:
+                      {data.tracking.mfstate === "ZA"
+                        ? "  Recogiendo el producto"
+                        : data.tracking.mfstate === "AB"
+                        ? "  Entregando el producto"
+                        : data.tracking.mfstate === "BZ"
+                        ? "  Retornando a la central"
+                        : data.tracking.mfstate === "BA"
+                        ? "  Devolviendo el producto"
+                        : "  Completado"}
                     </h3>
+
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div
                         className="bg-blue-600 h-2.5 rounded-full"
                         style={{
-                          width: data.tracking.mfZA_endedAt ? "100%" : "50%",
+                          width:
+                            data.tracking.mfstate === "ZA"
+                              ? "30%"
+                              : data.delivery.dstate === "AB"
+                              ? "60%"
+                              : "100%",
                         }}
                       ></div>
                     </div>
@@ -242,7 +286,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                         </p>
                       ) : data.delivery.dstate === "RUNNING" ? (
                         <button
-                          onClick={() => setIsModalOpen(true)}
+                          onClick={startTrankingService}
                           className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-lg font-semibold shadow-lg w-full text-center w-full"
                         >
                           <p className="text-center w-full">Seguimiento</p>
@@ -286,7 +330,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                 </div>
                 <StartDeliveryModal
                   isOpen={isModalOpen}
-                  onClose={() => setIsModalOpen(false)}
+                  onClose={finishTrankingService}
                   onStart={() => {}}
                   points={trackingPoints}
                   draggable={false}
@@ -301,6 +345,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                       ? "Devolviendo el producto"
                       : "Completado"
                   }
+                  deliveryId={data.delivery.id}
                 />
                 <AcceptDeliveryModal
                   isOpen={isAcceptModalOpen}

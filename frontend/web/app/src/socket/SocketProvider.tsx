@@ -53,7 +53,7 @@ export const SocketProvider = () => {
           message: "Hello from the client!",
         },
       });
-      setInterval(() => {
+      /*setInterval(() => {
         console.log("Refreshing...");
         if (isConnected && userData !== null) {
           sendMessage({
@@ -65,7 +65,7 @@ export const SocketProvider = () => {
             },
           });
         }
-      }, 4000);
+      }, 4000);*/
     }
   }, [isConnected, userData?.email]);
 

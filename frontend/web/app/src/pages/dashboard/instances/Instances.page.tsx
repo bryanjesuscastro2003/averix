@@ -95,7 +95,9 @@ export const InstancesPage = () => {
       if (statusFilter === "RUNNING")
         result = result.filter(
           (drone) =>
-            drone.dstate === "BUSY_ST_1" || drone.dstate === "BUSY_ST_2"
+            drone.dstate === "BUSY_ST_1" ||
+            drone.dstate === "BUSY_ST_2" ||
+            drone.dstate === "TAKEOFF"
         );
       else result = result.filter((drone) => drone.dstate === statusFilter);
     }

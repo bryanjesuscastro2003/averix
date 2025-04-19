@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Mapa from "./Mapa";
 import Louder from "../louder";
 import { se } from "date-fns/locale";
+import { useWebSocket } from "../../../socket/WebSocketConn";
+import { useAuth } from "../../../context/AuthContext";
 
 interface TrackingPoints {
   locationA: { lat: number; lng: number; name: string } | null;
@@ -22,6 +24,7 @@ interface StartDeliveryModalProps {
   isModalLoading?: boolean;
   block?: boolean;
   showCategory?: boolean;
+  deliveryId?: string;
 }
 
 export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
