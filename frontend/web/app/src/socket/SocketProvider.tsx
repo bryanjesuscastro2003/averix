@@ -16,7 +16,7 @@ interface Notification {
 
 export const SocketProvider = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { sendMessage, isConnected, addMessageHandler } = useWebSocket(
+  const { sendMessage, isConnected, addMessageHandler, connect } = useWebSocket(
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );
   const { userData, isAuthenticated } = useAuth();
@@ -59,6 +59,20 @@ export const SocketProvider = () => {
           message: "Hello from the client!",
         },
       });
+    }
+    // if is not connected, try to reconnect
+    if (!isConnected) {
+      console.log("WebSocket not connected, trying to reconnect...");
+      // interval to reconnect until connected
+      const interval = setInterval(() => {
+        console.log("Trying to reconnect...");
+        if (!isConnected) {
+          connect();
+        } else {
+          clearInterval(interval);
+        }
+      }, 5000); // Try to reconnect every 5 seconds
+      return () => clearInterval(interval);
     }
   }, [isConnected, userData?.email]);
 

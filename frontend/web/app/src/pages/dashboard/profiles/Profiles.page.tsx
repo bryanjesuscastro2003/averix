@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { Pagination } from "../../../components/bryan/Pagination";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useEffect } from "react";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
@@ -15,7 +15,7 @@ export const ProfilesPage = () => {
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
-
+  const navigate = useNavigate();
   // Estados para la paginación
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4; // Mostrar 4 elementos por página
@@ -99,7 +99,7 @@ export const ProfilesPage = () => {
   };
 
   const handleDeliveries = (username: string) => {
-    console.log(`View deliveries for user: ${username}`);
+    navigate("/dashboard/deliveries/" + username);
   };
 
   const fetchProfiles = async () => {
@@ -202,13 +202,10 @@ export const ProfilesPage = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nombre de Usuario
+                Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Estado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Creado
@@ -243,8 +240,8 @@ export const ProfilesPage = () => {
                       : "hover:bg-gray-50"
                   }
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <div className="truncate max-w-xs">{user.username}</div>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {user.attributes.email}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -257,9 +254,6 @@ export const ProfilesPage = () => {
                     >
                       {user.enabled === true ? "Active" : "Inactive"}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.attributes.email}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDateTime(user.created)}
@@ -283,7 +277,7 @@ export const ProfilesPage = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
-                      onClick={() => handleDeliveries(user.username)}
+                      onClick={() => handleDeliveries(user.attributes.email)}
                       className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs hover:bg-indigo-200"
                     >
                       Ver entregas
@@ -334,11 +328,13 @@ export const ProfilesPage = () => {
       </div>
 
       {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      <div className="mt-4 flex overflow-x-auto items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
 
       {/* Create New Profile Button */}
       <div className="flex justify-end">

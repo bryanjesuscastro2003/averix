@@ -3,6 +3,7 @@ export interface Delivery {
     timestamp: string;
     primaryUser: string;
     secondaryUser: string;
+    description: string,
     locationA: string;
     locationB: string;
     locationZ: string;

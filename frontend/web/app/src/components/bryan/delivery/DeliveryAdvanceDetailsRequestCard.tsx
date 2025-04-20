@@ -9,6 +9,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { useNavigate } from "react-router-dom";
 import { useWebSocket } from "../../../socket/WebSocketConn";
+import { ResponseDeliveryModal } from "./ResponseDeliveryModal";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   dataPacket: DeliveryData;
@@ -27,6 +28,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   const { sendMessage, isConnected, addMessageHandler } = useWebSocket(
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );
+
   const { userData } = useAuth();
   const navigate = useNavigate();
 
@@ -297,6 +299,16 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                   </div>
                 </div>
                 <div className="gap-4">
+                  <div className="grid grid-cols-1 mb-4">
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Descripción:
+                    </h3>
+                    <p className="text-gray-900">
+                      {data.delivery.description
+                        ? data.delivery.description
+                        : "Sin descripción"}
+                    </p>
+                  </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-2">
                       Progreso de la Ruta:

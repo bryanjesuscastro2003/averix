@@ -64,8 +64,12 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <Router>
-        <Header /> {/* Include the Header component */}
+        <Header />
         <Routes>
+          <Route
+            path="/"
+            element={<Navigate to="/auth/login" replace />}
+          ></Route>
           <Route
             path="/auth/*"
             element={

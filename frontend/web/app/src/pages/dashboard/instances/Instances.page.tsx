@@ -323,11 +323,13 @@ export const InstancesPage = () => {
         </div>
         {/* Paginación */}
         {filteredDrones.length > itemsPerPage && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          <div className="mt-4 flex overflow-x-auto items-center justify-center ">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
         )}
       </div>
 

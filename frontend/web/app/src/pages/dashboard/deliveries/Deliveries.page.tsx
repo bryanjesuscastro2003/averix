@@ -9,6 +9,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { Pagination } from "../../../components/bryan/Pagination";
 import { useWebSocket } from "../../../socket/WebSocketConn";
+import { ResponseDeliveryModal } from "../../../components/bryan/delivery/ResponseDeliveryModal";
 
 const DeliveriesPage: React.FC = () => {
   const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([]);
@@ -28,6 +29,7 @@ const DeliveriesPage: React.FC = () => {
   const [showCategory, setShowCategory] = useState<boolean>(true);
   const { userData } = useAuth();
   const { deliveryId } = useParams();
+
   const { sendMessage, isConnected } = useWebSocket(
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );
@@ -46,14 +48,15 @@ const DeliveriesPage: React.FC = () => {
 
     const searchMatch =
       searchTerm === "" ||
-      delivery.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (delivery.primaryUser || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
       (delivery.secondaryUser || "")
         .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (delivery.description || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase());
-
     return stateMatch && destinationMatch && searchMatch;
   });
 
@@ -108,7 +111,8 @@ const DeliveriesPage: React.FC = () => {
   const fetchStartDelivery = async (
     lat: number,
     lng: number,
-    capacity: string
+    capacity: string,
+    description: string
   ) => {
     try {
       setIsModalLoading(true);
@@ -120,6 +124,7 @@ const DeliveriesPage: React.FC = () => {
               lng,
             },
             capacity,
+            description,
           }
         : {
             deliveryId: confirmationCode,
@@ -148,7 +153,9 @@ const DeliveriesPage: React.FC = () => {
       }> = await response.json();
       console.log("Response from fetchStartDelivery:", data);
       if (!data.ok) {
-        setError("Error al iniciar el viaje, porfavor intente de nuevo");
+        !isConfirmationCodeLoaded
+          ? setError("Error al iniciar el viaje, no hay drones disponibles.")
+          : setError("Error al confirmar el viaje, porfavor intente de nuevo");
         setMessage("");
       } else {
         if (!isConfirmationCodeLoaded) {
@@ -179,14 +186,15 @@ const DeliveriesPage: React.FC = () => {
 
   const handleStartNewDelivery = (
     userLocation: [number, number] | null,
-    capacity: string
+    capacity: string,
+    description: string
   ) => {
     console.log("User location:", userLocation);
     if (!userLocation) {
       setError("Ubicación no válida");
       return;
     }
-    fetchStartDelivery(userLocation[0], userLocation[1], capacity);
+    fetchStartDelivery(userLocation[0], userLocation[1], capacity, description);
   };
 
   const fetchDeliveries = async () => {
@@ -242,6 +250,7 @@ const DeliveriesPage: React.FC = () => {
         setError(
           "Código de confirmación incorrecto, porfavor intente de nuevo"
         );
+
         setIsConfirmationCodeLoaded(false);
       } else {
         setMessage(
@@ -264,8 +273,12 @@ const DeliveriesPage: React.FC = () => {
 
   useEffect(() => {
     if (deliveryId && deliveryId !== "") {
-      setConfirmationCode(deliveryId);
-      confirmationCodeAction(deliveryId);
+      if (deliveryId.length > 8) {
+        setSearchTerm(deliveryId);
+      } else {
+        setConfirmationCode(deliveryId);
+        confirmationCodeAction(deliveryId);
+      }
     }
     fetchDeliveries();
   }, []);
@@ -304,6 +317,8 @@ const DeliveriesPage: React.FC = () => {
                     ? "Cancelado"
                     : state === "COMPLETED"
                     ? "Completado"
+                    : state === "PENDING"
+                    ? "Pendiente"
                     : state}
                 </option>
               ))}
@@ -337,7 +352,7 @@ const DeliveriesPage: React.FC = () => {
             type="text"
             id="search"
             className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2"
-            placeholder="Buscar por ID, usuario o ubicación..."
+            placeholder="Buscar usuario"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -384,7 +399,7 @@ const DeliveriesPage: React.FC = () => {
 
       {/* Paginación */}
       {filteredDeliveries.length > itemsPerPage && (
-        <div className="mt-4">
+        <div className="mt-4 flex overflow-x-auto items-center justify-center">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Mapa from "./Mapa";
 import Louder from "../louder";
-import { se } from "date-fns/locale";
-import { useWebSocket } from "../../../socket/WebSocketConn";
-import { useAuth } from "../../../context/AuthContext";
+import { ResponseDeliveryModal } from "../../bryan/delivery/ResponseDeliveryModal";
 
 interface TrackingPoints {
   locationA: { lat: number; lng: number; name: string } | null;
@@ -18,7 +16,11 @@ interface StartDeliveryModalProps {
   draggable?: boolean;
   headingTo?: string;
   onClose: () => void;
-  onStart: (userLocation: [number, number] | null, capacity: string) => void;
+  onStart: (
+    userLocation: [number, number] | null,
+    capacity: string,
+    descripción: string
+  ) => void;
   message?: string;
   error?: string;
   isModalLoading?: boolean;
@@ -49,6 +51,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [capacity, setCapacity] = useState<string>("small");
+  const [description, setDescription] = useState<string>("");
 
   const getUserLocation = () => {
     setIsLoading(true);
@@ -130,24 +133,43 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
 
         {/*Instance category "small, micro, large" small => 0 - 3kg , micro => 3kg - 6kg, large => 6kg - 10kg*/}
         {showCategory && (
-          <div className="mb-6 p-4">
-            <label
-              htmlFor="category"
-              className="block text-sm font-semibold text-gray-800 mb-2"
-            >
-              Selecciona la categoría
-            </label>
-            <select
-              id="category"
-              name="category"
-              className="block w-full px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition ease-in-out duration-150"
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
-            >
-              <option value="small">Pequeño (0 - 3kg)</option>
-              <option value="medium">Medio (3kg - 6kg)</option>
-              <option value="large">Grande (6kg - 10kg)</option>
-            </select>
+          <div className="block mb-6 p-4">
+            <div className="mb-4">
+              <label
+                htmlFor="category"
+                className="block text-sm font-semibold text-gray-800 mb-2"
+              >
+                Selecciona la categoría
+              </label>
+              <select
+                id="category"
+                name="category"
+                className="block w-full px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition ease-in-out duration-150"
+                value={capacity}
+                onChange={(e) => setCapacity(e.target.value)}
+              >
+                <option value="small">Pequeño (3kg)</option>
+                <option value="medium">Medio (3kg - 6kg)</option>
+                <option value="large">Grande (6kg - 10kg)</option>
+              </select>
+            </div>
+            <div className="">
+              <label
+                htmlFor="description"
+                className="block text-sm font-semibold text-gray-800 mb-2"
+              >
+                Descripcion
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                className="block w-full px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition ease-in-out duration-150"
+                placeholder="Descripción del viaje"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              ></textarea>
+            </div>
           </div>
         )}
 
@@ -166,7 +188,7 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             <div>
               <button
                 onClick={() => {
-                  onStart(userLocation, capacity);
+                  onStart(userLocation, capacity, description);
                   //onClose();
                   //setUserLocation(null);
                 }}

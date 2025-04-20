@@ -109,6 +109,59 @@
   }
 
   .table-mobile {
-    display: block;
+      display: flex;
+        flex-direction: column;
   }
+}
+
+.delivery-list-mobile {
+
+  gap: 12px;
+  padding: 12px;
+}
+
+
+.delivery-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.status-pill {
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 9999px;
+}
+
+/* State-specific colors */
+.status-pill.pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.status-pill.delivered {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.status-pill.shipped {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+}
+
+.status-pill.cancelled {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
+
+.btn-details {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

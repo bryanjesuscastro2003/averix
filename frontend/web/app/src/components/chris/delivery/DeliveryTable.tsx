@@ -31,6 +31,7 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
               <th>Usuario Principal</th>
               <th>Usuario Secundario</th>
               <th>Estado</th>
+              <th>Descripcion</th>
               <th>Hora de inicio</th>
               <th>Hora de aceptación</th>
               <th>Hora de entrega</th>
@@ -45,6 +46,13 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
                 <td>
                   <span className={`estado ${delivery.dstate}`}>
                     {delivery.dstate}
+                  </span>
+                </td>
+                <td>
+                  <span className="text-sm ">
+                    {delivery.description
+                      ? delivery.description
+                      : "Sin descripción"}
                   </span>
                 </td>
                 <td>{formatDate(delivery.startedRequestAt)}</td>
@@ -65,22 +73,39 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
       </div>
 
       {/* Mobile View */}
-      <div className="table-mobile">
+      <div className="table-mobile delivery-list-mobile">
         {deliveries.map((delivery) => (
-          <div key={delivery.id} className="mobile-card">
-            <div className="card-header">
-              <p>ID: {delivery.primaryUser}</p>
+          <div key={delivery.id} className="delivery-card">
+            {/* Card Header */}
+            <div className="card-header flex justify-between items-center p-3 bg-gray-50 border-b">
+              <div className="flex items-center">
+                <span className="text-xs font-medium text-gray-500 mr-1">
+                  ID:
+                </span>
+                <p className="text-sm font-semibold text-gray-700 truncate">
+                  {delivery.primaryUser}
+                </p>
+              </div>
               <button
-                className="btn-detalles"
+                className="btn-details px-3 py-1 text-xs font-medium rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
                 onClick={() => navigate("details/" + delivery.id)}
               >
                 Detalles
               </button>
             </div>
-            <div className="card-body">
-              <span className={`estado ${delivery.dstate}`}>
-                {delivery.dstate}
-              </span>
+
+            {/* Card Body */}
+            <div className="card-body p-3 space-y-2">
+              <div className="flex items-center">
+                <span
+                  className={`status-pill ${delivery.dstate} px-2 py-1 text-xs font-medium rounded-full capitalize`}
+                >
+                  {delivery.dstate}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {delivery.description || "No description available"}
+              </p>
             </div>
           </div>
         ))}
