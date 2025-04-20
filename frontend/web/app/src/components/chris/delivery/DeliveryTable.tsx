@@ -104,7 +104,7 @@ export const DeliveryTable: React.FC<DeliveryTableProps> = ({
                 </span>
               </div>
               <p className="text-sm text-gray-600 line-clamp-2">
-                {delivery.description || "No description available"}
+                {delivery.description || "Sin descripción"}
               </p>
             </div>
           </div>

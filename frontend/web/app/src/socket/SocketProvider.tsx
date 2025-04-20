@@ -126,15 +126,17 @@ export const SocketProvider = () => {
             ))}
           </div>
 
-          {/* Online status - unchanged */}
-          <div className="flex items-center justify-end space-x-2 mt-3">
-            <span
-              className={`h-3 w-3 rounded-full ${
-                isConnected ? "bg-green-500" : "bg-red-500"
-              }`}
-              title={isConnected ? "Online" : "Offline"}
-            ></span>
-            <p>{isConnected ? "Online" : "Offline"}</p>
+          {/* Online status  */}
+          <div className="fixed right-0 bottom-4 z-[1000]  max-w-xs">
+            <div className="flex right-0 items-center justify-end space-x-2 mt-3 w-20">
+              <span
+                className={`h-3 w-3 rounded-full ${
+                  isConnected ? "bg-green-500" : "bg-red-500"
+                }`}
+                title={isConnected ? "Online" : "Offline"}
+              ></span>
+              <p>{isConnected ? "Online" : "Offline"}</p>
+            </div>
           </div>
         </>
       )}
