@@ -114,10 +114,20 @@
   }
 }
 
+.table_mobile_modal {
+  margin-top: 50px;
+}
+
+@media screen and (max-width: 640px) {
+  .table_mobile_modal {
+    margin-top: 200px;
+  }
+}
+
 .delivery-list-mobile {
 
   gap: 12px;
-  padding: 12px;
+  padding: 1px;
 }
 
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Mapa from "./Mapa";
 import Louder from "../louder";
 import { ResponseDeliveryModal } from "../../bryan/delivery/ResponseDeliveryModal";
+import "./DeliveryTable.css";
 
 interface TrackingPoints {
   locationA: { lat: number; lng: number; name: string } | null;
@@ -80,8 +81,8 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 mt-20">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+    <div className="fixed inset-0 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4 z-100 ">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl table_mobile_modal">
         <div className="p-4 border-b">
           <h2 className="text-xl font-bold">
             {draggable ? "Confirmar Ubicación" : "Rastreo de Entrega"}

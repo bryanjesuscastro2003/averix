@@ -1,6 +1,6 @@
 export interface IInstance {
     model: string;
-    capacity: string;
+    capacity: string | any;
     createdAt: string;
     credentialsId: string;
     logsServiceId: string;
@@ -42,6 +42,17 @@ export interface IInstanceSlave {
     topicSlave: string;
     updatedAt: string;
 };
+
+export type DroneCapacity =
+    | "DRONAUTICA_SMALL_INSTANCE"
+    | "DRONAUTICA_MEDIUM_INSTANCE"
+    | "DRONAUTICA_LARGE_INSTANCE";
+
+export interface PartialDroneData {
+    model: string;
+    capacity: DroneCapacity;
+    description: string;
+}
 
 export interface IInstanceMaster {
     createdAt: string;
