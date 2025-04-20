@@ -68,7 +68,7 @@ export const DeliveryDetailsPage = () => {
         </div>
       ) : (
         deliveryData && (
-          <DeliveryAdvanceDetailsRequestCard data={deliveryData!} />
+          <DeliveryAdvanceDetailsRequestCard dataPacket={deliveryData!} />
         )
       )}
     </div>

@@ -11,12 +11,12 @@ import { useNavigate } from "react-router-dom";
 import { useWebSocket } from "../../../socket/WebSocketConn";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
-  data: DeliveryData;
-}> = ({ data }) => {
+  dataPacket: DeliveryData;
+}> = ({ dataPacket }) => {
   // Parse locations
+  const [data, setData] = useState<DeliveryData>(dataPacket);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState<boolean>(false);
-  const [deliveryPrice, setDeliveryPrice] = useState<number>(12.5);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [verificationCode, setVerificationCode] = useState(data.delivery.id);
   const [verificationLinkCode, setVerificationLinkCode] = useState(
@@ -24,7 +24,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       data.delivery.id
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const { sendMessage, isConnected } = useWebSocket(
+  const { sendMessage, isConnected, addMessageHandler } = useWebSocket(
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );
   const { userData } = useAuth();
@@ -64,13 +64,24 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
     COMPLETED: "bg-gray-100 text-gray-800",
   };
 
-  const trackingPoints = {
+  type point = {
+    lat: number;
+    lng: number;
+    name: string;
+  } | null;
+
+  const [trackingPoints, setTrackingPoints] = useState<{
+    locationA: point;
+    locationB: point;
+    locationZ: point;
+    locationT: point;
+  }>({
     locationA: locationA !== null ? { name: "Tienda", ...locationA } : null,
     locationB: locationB !== null ? { name: "Cliente", ...locationB } : null,
     locationZ: locationZ !== null ? { name: "Central", ...locationZ } : null,
     locationT:
       locationT !== null ? { name: "Ubicación actual", ...locationT } : null,
-  };
+  });
 
   const acceptService = async () => {
     try {
@@ -148,6 +159,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
         data: {
           targetUserId: "",
           user: userData?.email || "",
+          sessionId: localStorage.getItem("idToken"),
           message: "Hello from the client!",
           deliveryId: data.delivery.id,
         },
@@ -163,12 +175,48 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
         data: {
           targetUserId: "",
           user: userData?.email || "",
+          sessionId: localStorage.getItem("idToken"),
           message: "Hello from the client!",
         },
       });
     }
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    const cleanup = addMessageHandler(
+      (dataMessage: { lat: string; lng: string; mfstate: string }) => {
+        try {
+          const lat = parseFloat(dataMessage.lat);
+          const lng = parseFloat(dataMessage.lng);
+          const mfstate = dataMessage.mfstate;
+          if (mfstate !== data.tracking.mfstate) {
+            setData((prev) => ({
+              ...prev,
+              tracking: {
+                ...prev.tracking,
+                mfstate: mfstate,
+              },
+            }));
+          }
+          const location = {
+            lat: lat,
+            lng: lng,
+            name: "Ubicación actual",
+          };
+          setTrackingPoints((prev) => ({
+            ...prev,
+            locationT: location,
+          }));
+          console.log("Received location update:", location);
+        } catch (error) {
+          console.error("Error processing notification:", error);
+        }
+      }
+    );
+
+    return cleanup;
+  }, [addMessageHandler]);
 
   useEffect(() => {
     console.log("Tracking Points:", trackingPoints);
