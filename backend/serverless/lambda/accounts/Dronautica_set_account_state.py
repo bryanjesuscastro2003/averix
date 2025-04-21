@@ -6,6 +6,7 @@ from typing import Dict, Any
 cognito = boto3.client('cognito-idp')
 USER_POOL_ID = 'us-east-1_Zv8onB8HZ'  
 
+
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         # Parse request body
