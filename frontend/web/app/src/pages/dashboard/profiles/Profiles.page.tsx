@@ -69,8 +69,9 @@ export const ProfilesPage = () => {
         }),
       });
       const data: IResponse<null> = await response.json();
+
       if (!data.ok) {
-        setMessage("Error al cambiar el estado del usuario");
+        setMessage(data.message || "Error al cambiar el estado del usuario");
       }
     } catch (error) {
       setMessage("Error al cambiar el estado del usuario");
@@ -122,9 +123,11 @@ export const ProfilesPage = () => {
       if (data.ok) {
         setUsers(data.data.users);
       } else {
-        setMessage("Error al obtener los perfiles, por favor intente de nuevo");
+        setMessage(
+          data.message ||
+            "Error al obtener los perfiles, por favor intente de nuevo"
+        );
       }
-      console.log(data);
     } catch (error) {
       setMessage("Error al obtener los perfiles, por favor intente de nuevo");
     } finally {

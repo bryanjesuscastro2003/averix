@@ -2,110 +2,124 @@ import boto3
 import json
 from typing import Dict, Any
 
-# Cognito configuration
-cognito = boto3.client('cognito-idp')
+# AWS Configuration
+COGNITO_CLIENT = boto3.client('cognito-idp')
+LAMBDA_CLIENT = boto3.client('lambda')
 CLIENT_ID = '2i4fho4p2dcservoqvq265r16e'
-CLIENT_SECRET = '1unm0loiir7le37pv93kp2j3elucn6uqu23ejqa36cs0gkoltm7r'
-
-# Lambda service 
-lambda_service = boto3.client('lambda')
-
-# Lambdas 
-DRONAUTICA_COGNITO_HASH = "Dronautica_cognito_secret_hash"
+SECRET_HASH_LAMBDA = "Dronautica_cognito_secret_hash"
 
 def get_user_role(user_attributes: list) -> str:
     """
-    Get the user's role from custom:role attribute
-    Defaults to 'user' if no role is found
+    Extracts user role from custom attributes
+    Returns 'user' if no role specified
     """
-    for attribute in user_attributes:
-        if attribute['Name'] == 'custom:role':
-            return attribute['Value'].lower()  # Ensure lowercase for consistency
-    return 'user'  # Default role
+    for attr in user_attributes:
+        if attr['Name'] == 'custom:role':
+            return attr['Value'].lower()
+    return 'user'
 
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    """
+    Handles user login authentication via Cognito
+    Returns JWT tokens and user role on success
+    """
     try:
+        # --- Input Validation ---
         body = json.loads(event.get("body", "{}"))
-        username = body.get("username", None)
-        password = body.get("password", None)
+        username = body.get("username")
+        password = body.get("password")
 
-        if None in [username, password]:
-            raise Exception("Missing username or password")
+        if not all([username, password]):
+            raise ValueError("Usuario y contraseña son requeridos")  # Spanish
 
-        # Calculate the Secret Hash
-        args = {"username": username}
-        lambda_response = lambda_service.invoke(
-            FunctionName=DRONAUTICA_COGNITO_HASH,
-            InvocationType='RequestResponse',
-            Payload=json.dumps(args)
-        )
-        lambda_response_payload = json.loads(lambda_response['Payload'].read())
-        secret_hash = lambda_response_payload['data']
+        # --- Generate Secret Hash ---
+        try:
+            hash_response = LAMBDA_CLIENT.invoke(
+                FunctionName=SECRET_HASH_LAMBDA,
+                InvocationType='RequestResponse',
+                Payload=json.dumps({"username": username})
+            )
+            secret_hash = json.loads(hash_response['Payload'].read())['data']
+        except Exception:
+            raise RuntimeError("Error de autenticación. Intente nuevamente")  # Spanish
 
-        # Authenticate the user
-        response = cognito.initiate_auth(
+        # --- Authenticate User ---
+        auth_response = COGNITO_CLIENT.initiate_auth(
             AuthFlow='USER_PASSWORD_AUTH',
             AuthParameters={
                 'USERNAME': username,
                 'PASSWORD': password,
-                'SECRET_HASH': secret_hash  
+                'SECRET_HASH': secret_hash
             },
             ClientId=CLIENT_ID
         )
-        
-        # Get user details to extract role
-        user_info = cognito.get_user(
-            AccessToken=response['AuthenticationResult']['AccessToken']
+
+        # --- Get User Role ---
+        user_data = COGNITO_CLIENT.get_user(
+            AccessToken=auth_response['AuthenticationResult']['AccessToken']
         )
-        
-        # Extract role from custom attribute
-        role = get_user_role(user_info['UserAttributes'])
-        
-        # Add role to authentication result
-        auth_result = response['AuthenticationResult']
+        role = get_user_role(user_data['UserAttributes'])
+
+        # --- Format Success Response ---
+        auth_result = auth_response['AuthenticationResult']
         auth_result['role'] = role
-        
-        return {
-            'statusCode': 200,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({                
-                "ok": True, 
-                "message": "User authenticated successfully",
-                "error": None, 
-                "data": auth_result
-            })
-        }
-    except cognito.exceptions.NotAuthorizedException:
-        return {
-            'statusCode': 401,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                "ok": False, 
-                "message": "Incorrect username or password",
-                "error": "NotAuthorizedException", 
-                "data": None
-            })
-        }
+
+        return _build_response(
+            status_code=200,
+            message="Autenticación exitosa", 
+            data=auth_result
+        )
+
+    except COGNITO_CLIENT.exceptions.NotAuthorizedException:
+        return _build_response(
+            status_code=401,
+            message="Usuario o contraseña incorrectos",  
+            error="INVALID_CREDENTIALS"
+        )
+    except COGNITO_CLIENT.exceptions.UserNotFoundException:
+        return _build_response(
+            status_code=404,
+            message="Usuario no encontrado",  
+            error="USER_NOT_FOUND"
+        )
+    except COGNITO_CLIENT.exceptions.UserNotConfirmedException:
+        return _build_response(
+            status_code=403,
+            message="Cuenta no verificada. Por favor verifique su email.",  
+            error="USER_NOT_CONFIRMED"
+        )
+    except ValueError as e:
+        return _build_response(
+            status_code=400,
+            message=str(e),  
+            error="MISSING_REQUIRED_FIELDS"
+        )
     except Exception as e:
-        return {
-            'statusCode': 500,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                "ok": False, 
-                "message": "Authentication failed",
-                "error": str(e), 
-                "data": None
-            })
-        }
+        print(f"Login error: {str(e)}")  #
+        return _build_response(
+            status_code=500,
+            message="Error durante la autenticación",  
+            error="AUTHENTICATION_FAILED"
+        )
+
+def _build_response(
+    status_code: int,
+    message: str,
+    data: Any = None,
+    error: str = None
+) -> Dict[str, Any]:
+    """Standardized response formatter"""
+    return {
+        'statusCode': status_code,
+        'headers': {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+        'body': json.dumps({
+            'ok': error is None,
+            'message': message, 
+            'data': data,
+            'error': error 
+        })
+    }

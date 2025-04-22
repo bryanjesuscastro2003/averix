@@ -64,8 +64,7 @@ const LogupPage: React.FC = () => {
       setMessage(data.message);
       if (data.ok) {
         setIsSignUpSubmitted(true);
-        setMessage("");
-      } else setMessage("Error al registrarse, intente nuevamente");
+      }
     } catch (e) {
       setMessage("Error al registrarse, intente nuevamente");
     } finally {
@@ -90,9 +89,31 @@ const LogupPage: React.FC = () => {
         !isAuthenticated
           ? (window.location.href = "/auth/login")
           : navigate("/dashboard/admin/profiles");
-      } else setMessage("Error al confirmar la cuenta, intente nuevamente");
+      } else setMessage(data.message);
     } catch (error) {
       setMessage("Error al confirmar la cuenta, intente nuevamente");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        AuthEndpoints.signUpResendConfirmationEndpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: email }),
+        }
+      );
+      const data: IResponse<null> = await response.json();
+      setMessage(data.message);
+    } catch (error) {
+      setMessage("Error al reenviar el código, intente nuevamente");
     } finally {
       setIsLoading(false);
     }
@@ -261,6 +282,16 @@ const LogupPage: React.FC = () => {
             >
               Confirmar
             </button>
+
+            <button
+              type="button"
+              className="w-full py-3 px-4 bg-[#f6f7f8] text-[#00a0d2] font-medium rounded-sm border border-[#00a0d2] hover:bg-[#e0f7fa] focus:outline-none focus:ring-2 focus:ring-[#00a0d2] focus:ring-offset-2 transition-colors"
+              onClick={handleResendConfirmation}
+              disabled={isLoading}
+            >
+              Reenviar código de confirmación
+            </button>
+
             {isLoading && <Louder />}
           </form>
         )}

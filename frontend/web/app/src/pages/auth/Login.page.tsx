@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
         setMessage(data.message);
       }
     } catch (error) {
-      console.error("Login error:", error);
+      //console.error("Login error:", error);
     } finally {
       setIsLoading(false); // Desactiva el loader cuando termina
     }

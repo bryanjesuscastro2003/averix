@@ -2,231 +2,120 @@ import boto3
 import json
 from typing import Dict, Any
 
-# Cognito configuration
-cognito = boto3.client('cognito-idp')
+# AWS Configuration
+COGNITO_CLIENT = boto3.client('cognito-idp')
+LAMBDA_CLIENT = boto3.client('lambda')
 CLIENT_ID = '2i4fho4p2dcservoqvq265r16e'
-CLIENT_SECRET = '1unm0loiir7le37pv93kp2j3elucn6uqu23ejqa36cs0gkoltm7r'
-
-# Lambda service 
-lambda_service = boto3.client('lambda')
-
-# Lambda function names
-DRONAUTICA_COGNITO_HASH = "Dronautica_cognito_secret_hash"
-
-class PasswordResetException(Exception):
-    """Base class for password reset exceptions"""
-    pass
-
-class MissingRequiredFieldException(PasswordResetException):
-    """Exception raised when required fields are missing"""
-    pass
-
-class UserNotFoundException(PasswordResetException):
-    """Exception raised when user doesn't exist"""
-    pass
-
-class InvalidParameterException(PasswordResetException):
-    """Exception raised when parameters are invalid"""
-    pass
-
-class TooManyRequestsException(PasswordResetException):
-    """Exception raised when too many requests are made"""
-    pass
-
-class CodeDeliveryFailureException(PasswordResetException):
-    """Exception raised when code delivery fails"""
-    pass
-
-class SecretHashGenerationException(PasswordResetException):
-    """Exception raised when secret hash generation fails"""
-    pass
+SECRET_HASH_LAMBDA = "Dronautica_cognito_secret_hash"
 
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    """
+    Initiates password reset process by sending confirmation code
+    - Validates username
+    - Handles all Cognito password reset scenarios
+    - Returns responses in Spanish
+    """
     try:
-        
-        """
-            EVENT DATA
-        """
+        # --- Input Validation ---
         body = json.loads(event.get("body", "{}"))
         username = body.get('username')
 
         if not username:
-            raise MissingRequiredFieldException("Username is required to reset password")
+            raise ValueError("El nombre de usuario es requerido para restablecer la contraseña")  # Spanish
 
-        # Generate secret hash
+        # --- Generate Secret Hash ---
         try:
-            args = {"username": username}
-            lambda_response = lambda_service.invoke(
-                FunctionName=DRONAUTICA_COGNITO_HASH,
+            hash_response = LAMBDA_CLIENT.invoke(
+                FunctionName=SECRET_HASH_LAMBDA,
                 InvocationType='RequestResponse',
-                Payload=json.dumps(args)
+                Payload=json.dumps({"username": username})
             )
-            lambda_response_payload = json.loads(lambda_response['Payload'].read())
-            secret_hash = lambda_response_payload['data']
-        except Exception as e:
-            raise SecretHashGenerationException("Failed to generate security token. Please try again.") from e
+            secret_hash = json.loads(hash_response['Payload'].read())['data']
+        except Exception:
+            raise RuntimeError("Error de seguridad. Por favor intente nuevamente")  # Spanish
 
-        # Initiate password reset
+        # --- Initiate Password Reset ---
         try:
-            response = cognito.forgot_password(
+            response = COGNITO_CLIENT.forgot_password(
                 ClientId=CLIENT_ID,
-                SecretHash=secret_hash, 
+                SecretHash=secret_hash,
                 Username=username
             )
-            
-            # Extract delivery details if available
-            delivery_details = response.get('CodeDeliveryDetails', {})
-            delivery_data = {
-                'destination': delivery_details.get('Destination', ''),
-                'delivery_medium': delivery_details.get('DeliveryMedium', ''),
-                'attribute_name': delivery_details.get('AttributeName', '')
-            } if delivery_details else None
-            
-            return {
-                'statusCode': 200,
-                'headers': {
-                    "Access-Control-Allow-Origin": "*", 
-                    "Access-Control-Allow-Methods": "POST, OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-                },
-                'body': json.dumps({
-                    'ok': True,
-                    'message': 'Password reset code sent successfully! Check your registered email/phone.',
-                    'error': None,
-                    'data': delivery_data
-                })
-            }
-            
-        except cognito.exceptions.UserNotFoundException:
-            raise UserNotFoundException("No account found with this username. Please check your username.")
-        except cognito.exceptions.InvalidParameterException:
-            raise InvalidParameterException("Invalid username format. Please check your input.")
-        except cognito.exceptions.TooManyRequestsException:
-            raise TooManyRequestsException("Too many attempts. Please wait before trying again.")
-        except cognito.exceptions.CodeDeliveryFailureException:
-            raise CodeDeliveryFailureException("Failed to send verification code. Please try again later.")
-        except cognito.exceptions.NotAuthorizedException:
-            raise PasswordResetException("Password reset is not allowed for this user.")
-        except Exception as e:
-            raise PasswordResetException(f"Password reset failed: {str(e)}")
 
-    except MissingRequiredFieldException as e:
-        return {
-            'statusCode': 400,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': str(e),
-                'error': 'MISSING_REQUIRED_FIELD',
-                'data': None
-            })
-        }
-    except UserNotFoundException as e:
-        return {
-            'statusCode': 404,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': str(e),
-                'error': 'USER_NOT_FOUND',
-                'data': None
-            })
-        }
-    except InvalidParameterException as e:
-        return {
-            'statusCode': 400,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': str(e),
-                'error': 'INVALID_PARAMETER',
-                'data': None
-            })
-        }
-    except TooManyRequestsException as e:
-        return {
-            'statusCode': 429,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': str(e),
-                'error': 'TOO_MANY_REQUESTS',
-                'data': None
-            })
-        }
-    except CodeDeliveryFailureException as e:
-        return {
-            'statusCode': 500,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': str(e),
-                'error': 'CODE_DELIVERY_FAILURE',
-                'data': None
-            })
-        }
-    except SecretHashGenerationException as e:
-        return {
-            'statusCode': 500,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': str(e),
-                'error': 'SECURITY_ERROR',
-                'data': None
-            })
-        }
-    except PasswordResetException as e:
-        return {
-            'statusCode': 400,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': str(e),
-                'error': 'PASSWORD_RESET_ERROR',
-                'data': None
-            })
-        }
+            # --- Format Delivery Details ---
+            delivery_details = response.get('CodeDeliveryDetails', {})
+            masked_destination = _mask_destination(delivery_details.get('Destination', ''))
+
+            return _build_response(
+                status_code=200,
+                message="Código de restablecimiento enviado. Revise su email/teléfono registrado.",  # Spanish
+                data={
+                    'delivery_medium': delivery_details.get('DeliveryMedium'),
+                    'destination': masked_destination,
+                    'attribute_name': delivery_details.get('AttributeName')
+                }
+            )
+
+        except COGNITO_CLIENT.exceptions.UserNotFoundException:
+            raise ValueError("Usuario no encontrado. Verifique el nombre de usuario")  # Spanish
+        except COGNITO_CLIENT.exceptions.InvalidParameterException:
+            raise ValueError("Formato de usuario inválido. Por favor verifíquelo")  # Spanish
+        except COGNITO_CLIENT.exceptions.TooManyRequestsException:
+            raise RuntimeError("Demasiados intentos. Por favor espere antes de intentar nuevamente")  # Spanish
+        except COGNITO_CLIENT.exceptions.CodeDeliveryFailureException:
+            raise RuntimeError("Error al enviar el código. Por favor intente más tarde")  # Spanish
+        except COGNITO_CLIENT.exceptions.NotAuthorizedException:
+            raise ValueError("Restablecimiento de contraseña no permitido para este usuario")  # Spanish
+
+    except ValueError as e:
+        return _build_response(
+            status_code=400,
+            message=str(e),  # Spanish message
+            error="VALIDATION_ERROR"
+        )
+    except RuntimeError as e:
+        status_code = 429 if "Demasiados intentos" in str(e) else 500
+        return _build_response(
+            status_code=status_code,
+            message=str(e),  # Spanish message
+            error="PROCESSING_ERROR"
+        )
     except Exception as e:
-        return {
-            'statusCode': 500,
-            'headers': {
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-            'body': json.dumps({
-                'ok': False,
-                'message': 'An unexpected error occurred. Please try again later.',
-                'error': 'INTERNAL_SERVER_ERROR',
-                'data': None
-            })
-        }
+        print(f"Password reset error: {str(e)}")  # English log
+        return _build_response(
+            status_code=500,
+            message="Error inesperado. Por favor intente más tarde",  # Spanish
+            error="INTERNAL_ERROR"
+        )
+
+def _mask_destination(destination: str) -> str:
+    """Masks sensitive destination information (email/phone)"""
+    if not destination:
+        return ""
+    if "@" in destination:  # Email
+        parts = destination.split("@")
+        return f"{parts[0][0]}***@{parts[1]}"
+    else:  # Phone number
+        return f"***{destination[-4:]}" if len(destination) > 4 else destination
+
+def _build_response(
+    status_code: int,
+    message: str,
+    data: Any = None,
+    error: str = None
+) -> Dict[str, Any]:
+    """Standardized response formatter"""
+    return {
+        'statusCode': status_code,
+        'headers': {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+        'body': json.dumps({
+            'ok': error is None,
+            'message': message,  # Spanish
+            'data': data,
+            'error': error  # English
+        })
+    }

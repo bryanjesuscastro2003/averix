@@ -3,6 +3,8 @@ export const AuthEndpoints = {
     "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/auth/logup",
   signUpConfirmationEndpoint:
     "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/auth/logup/confirm",
+  signUpResendConfirmationEndpoint:
+    "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/auth/logup/confirm/resend",
   signInEndpoint:
     "https://hags70h3uh.execute-api.us-east-1.amazonaws.com/shjs/auth/login",
   profileEndpoint:

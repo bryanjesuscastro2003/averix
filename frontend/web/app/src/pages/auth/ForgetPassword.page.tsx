@@ -25,8 +25,9 @@ export const ForgotPassword = () => {
         body: JSON.stringify({ username: email }),
       });
       const data: IResponse<null> = await response.json();
+      console.log(data);
+      setError(data.message || "");
       if (!data.ok) {
-        setError(data.message || "Something went wrong");
       } else {
         setSuccess(true);
       }
