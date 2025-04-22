@@ -10,12 +10,17 @@ import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { useNavigate } from "react-router-dom";
 import { useWebSocket } from "../../../socket/WebSocketConn";
 import { ResponseDeliveryModal } from "./ResponseDeliveryModal";
+import { setMinutes } from "date-fns";
+import { IResponse } from "../../../types/responses/IResponse";
+import { Loader } from "../../grez/Louder";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   dataPacket: DeliveryData;
 }> = ({ dataPacket }) => {
   // Parse locations
   const [data, setData] = useState<DeliveryData>(dataPacket);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState<boolean>(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -127,6 +132,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   };
 
   const cancelService = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         DashboardEndpoints.cancelDeliveryTripEndpoint,
@@ -142,14 +148,16 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
           }),
         }
       );
-      const dataResponse = await response.json();
+      const dataResponse: IResponse<any> = await response.json();
       console.log("Response:", dataResponse);
       if (!response.ok) {
+        setMessage(dataResponse.message);
       } else {
         navigate("/dashboard/deliveries");
       }
     } catch (e) {
     } finally {
+      setIsCancelModalOpen(false);
     }
   };
 
@@ -388,6 +396,8 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                       </button>
                     </>
                   )}
+                  {message && <p className="text-red-500 text-sm">{message}</p>}
+                  {isLoading && <Loader />}
                 </div>
                 <StartDeliveryModal
                   isOpen={isModalOpen}

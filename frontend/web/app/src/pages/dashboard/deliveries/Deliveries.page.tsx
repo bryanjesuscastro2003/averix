@@ -154,8 +154,14 @@ const DeliveriesPage: React.FC = () => {
       console.log("Response from fetchStartDelivery:", data);
       if (!data.ok) {
         !isConfirmationCodeLoaded
-          ? setError("Error al iniciar el viaje, no hay drones disponibles.")
-          : setError("Error al confirmar el viaje, porfavor intente de nuevo");
+          ? setError(
+              data.message ||
+                "Error al iniciar el viaje, no hay drones disponibles."
+            )
+          : setError(
+              data.message ||
+                "Error al confirmar el viaje, porfavor intente de nuevo"
+            );
         setMessage("");
       } else {
         if (!isConfirmationCodeLoaded) {

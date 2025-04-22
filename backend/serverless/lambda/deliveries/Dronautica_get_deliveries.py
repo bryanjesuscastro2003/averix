@@ -1,62 +1,89 @@
 import json
 import boto3
-from datetime import datetime
+from typing import Dict, Any
 
-# Lambda service client
-lambda_client = boto3.client('lambda')
+# AWS clients
+LAMBDA_CLIENT = boto3.client('lambda')
 
-
-def lambda_handler(event, context):
-    try: 
-
-        """ 
-            EVENT DATA
-        """
+def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    """
+    Retrieves delivery items from DynamoDB through another Lambda
+    - Filters by user unless admin/moderator
+    - Returns formatted delivery items
+    """
+    try:
+        # Extract user info from auth claims
         claims = event['requestContext']['authorizer']['claims']
-        username = claims.get('email', None)
+        username = claims.get('email')
         user_role = claims.get('custom:role', 'user')
         
-        if user_role in ['admin', 'moderator']:
-            username = None
+        # Admins/moderators get all items, regular users get their own
+        filter_user = None if user_role in ['admin', 'moderator'] else username
 
-        args = {
-             "ACTION": "GETITEMS",
-             "DATA": {
-                "PRIMARYUSER": username
-             }
+        # Prepare payload for DynamoDB Lambda
+        payload = {
+            "ACTION": "GETITEMS",
+            "DATA": {
+                "PRIMARYUSER": filter_user
+            }
         }
-        lambda_response = lambda_client.invoke(
+
+        # Call DynamoDB Lambda
+        response = LAMBDA_CLIENT.invoke(
             FunctionName='Dronautica_dynamodb_delivery_actions',
-            InvocationType='RequestResponse',  # Use 'Event' for async invocation
-            Payload=json.dumps(args)
-        )
-        lambda_response = json.load(lambda_response['Payload'])
-        if lambda_response['STATE'] != "OK":
-            raise Exception(f"Error loading instances . {lambda_response["VALUE"]["ERROR"]}") 
+            InvocationType='RequestResponse',
+            Payload=json.dumps(payload))
         
-        items = lambda_response['DATA']['ITEMS']
+        # Parse response
+        db_response = json.loads(response['Payload'].read())
+        
+        if db_response['STATE'] != "OK":
+            raise ValueError(f"Database error: {db_response.get('VALUE', {}).get('ERROR', 'Unknown error')}")
 
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',  
-                'Access-Control-Allow-Methods': 'GET, OPTIONS',  
-                'Access-Control-Allow-Headers': 'Content-Type',  
-                'Content-Type': 'application/json'  
-            },
-            'body': json.dumps({
-                'ok': True,
-                'message': 'Deliveries retrieved successfully',
-                'error': None,
-                'data': {
-                    'items': items,  # List of filtered drones
-                    'count': len(items)  # Number of filtered drones
-                }
-            })
-        }
+        items = db_response['DATA']['ITEMS']
 
+        return _build_response(
+            status_code=200,
+            message="Deliveries retrieved successfully",
+            data={
+                'items': items,
+                'count': len(items)
+            }
+        )
 
-
+    except ValueError as e:
+        return _build_response(
+            status_code=400,
+            message=str(e),
+            error="DATABASE_ERROR"
+        )
     except Exception as e:
-        print(e)
-        raise e
+        print(f"Error retrieving deliveries: {str(e)}")
+        return _build_response(
+            status_code=500,
+            message="Failed to retrieve deliveries",
+            error="INTERNAL_ERROR"
+        )
+
+def _build_response(
+    status_code: int,
+    message: str,
+    data: Any = None,
+    error: str = None
+) -> Dict[str, Any]:
+    """Standardized response formatter"""
+    return {
+        'statusCode': status_code,
+        'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps({
+            'ok': error is None,
+            'message': message,
+            'error': error,
+            'data': data
+        })
+    }
