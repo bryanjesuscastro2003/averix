@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useWebSocket } from "./WebSocketConn";
+import React, { useEffect } from "react";
 import { InteractiveNotification } from "../components/grez/notifications/InteractiveNotification";
+import { useNotifications } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
 
-interface Notification {
+export interface Notification {
   id: string;
   type: "success" | "error" | "warning" | "info";
   instructions: string;
@@ -12,45 +12,27 @@ interface Notification {
   isLink: boolean;
   linkValue: string;
   timestamp: number;
+  coordinates: {
+    lat: string;
+    lng: string;
+  };
+  mfstate: string;
 }
 
 export const SocketProvider = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { sendMessage, isConnected, addMessageHandler, connect } = useWebSocket(
-    "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
-  );
+  const {
+    notifications,
+    setNotifications,
+    setCurrentNotification,
+    isSocketConnected,
+    sendSocketMessage,
+  } = useNotifications();
+
   const { userData, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const cleanup = addMessageHandler((data: any) => {
-      console.log("Received message:", data.message);
-      try {
-        const newNotification: Notification = {
-          id: Math.random().toString(36).substring(2, 9),
-          type: data.type || "info",
-          instructions: data.instructions || "",
-          content: data.content || "",
-          title: data.title || "",
-          isLink: !!data.link,
-          linkValue: data.link || "",
-          timestamp: Date.now(),
-        };
-
-        setNotifications((prev) => {
-          const updated = [newNotification, ...prev];
-          return updated.slice(0, 5); // Limit to 5 notifications
-        });
-      } catch (error) {
-        console.error("Error processing notification:", error);
-      }
-    });
-
-    return cleanup;
-  }, [addMessageHandler]);
-
-  useEffect(() => {
-    if (isConnected && userData !== null) {
-      sendMessage({
+    if (isSocketConnected && userData !== null) {
+      sendSocketMessage({
         action: "imhere",
         data: {
           targetUserId: "",
@@ -60,21 +42,9 @@ export const SocketProvider = () => {
         },
       });
     }
-    // if is not connected, try to reconnect
-    if (!isConnected) {
-      console.log("WebSocket not connected, trying to reconnect...");
-      // interval to reconnect until connected
-      const interval = setInterval(() => {
-        console.log("Trying to reconnect...");
-        if (!isConnected) {
-          connect();
-        } else {
-          clearInterval(interval);
-        }
-      }, 5000); // Try to reconnect every 5 seconds
-      return () => clearInterval(interval);
-    }
-  }, [isConnected, userData?.email]);
+
+    // The reconnection logic is now handled by the useWebSocket hook inside NotificationProvider
+  }, [isSocketConnected, userData?.email, sendSocketMessage]);
 
   const handleCloseNotification = (id: string) => {
     setNotifications((prev) =>
@@ -126,16 +96,15 @@ export const SocketProvider = () => {
             ))}
           </div>
 
-          {/* Online status  */}
-          <div className="fixed right-2 bottom-4 z-[1000]  max-w-xs">
+          {/* Online status indicator */}
+          <div className="fixed right-2 bottom-4 z-[1000] max-w-xs">
             <div className="flex right-4 items-center justify-end space-x-2 mt-3 w-20">
               <span
                 className={`h-3 w-3 rounded-full ${
-                  isConnected ? "bg-green-500" : "bg-red-500"
+                  isSocketConnected ? "bg-green-500" : "bg-red-500"
                 }`}
-                title={isConnected ? "Online" : "Offline"}
+                title={isSocketConnected ? "Online" : "Offline"}
               ></span>
-              {/*<p>{isConnected ? "Online" : "Offline"}</p>*/}
             </div>
           </div>
         </>

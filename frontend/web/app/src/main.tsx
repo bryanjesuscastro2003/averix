@@ -23,6 +23,7 @@ import { CreateInstancePage } from "./pages/dashboard/instances/CreateInstance.p
 import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/tracking/details/DeliveryDetailsPage";
 import { InstanceDetailsPage } from "./pages/dashboard/instances/details/Instancedetailspage";
 import { SocketProvider } from "./socket/SocketProvider";
+import { NotificationProvider } from "./context/SocketContext";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -63,113 +64,106 @@ const AdminProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <Router>
-        <Header />
-        <Routes>
-          <Route
-            path="/"
-            element={<Navigate to="/auth/login" replace />}
-          ></Route>
-          <Route
-            path="/auth/*"
-            element={
-              <AuthProtectedRouteRoute>
-                <Routes>
-                  <Route path="login" element={<LoginPage />} />
-                  <Route path="logup" element={<LogupPage />} />
-                  <Route path="forgot-password" element={<ForgotPassword />} />
-                  <Route path="reset-password" element={<ResetPassword />} />
-                </Routes>
-              </AuthProtectedRouteRoute>
-            }
-          ></Route>
-          <Route
-            path="/dashboard/*"
-            element={
-              <AuthenticatedProtectedRouteRoute>
-                <Routes>
-                  <Route path="" element={<DashboardPage />} />
-                  <Route path="profile" element={<ProfilePage />} />
-                  <Route
-                    path="deliveries/*"
-                    element={
-                      <Routes>
-                        <Route
-                          path=":deliveryId?"
-                          element={<DeliveriesPage />}
-                        />
-                        <Route
-                          path="details/:instanceId"
-                          element={<DeliveryDetailsPage />}
-                        />
-                      </Routes>
-                    }
-                  />
-
-                  <Route
-                    path="admin/*"
-                    element={
-                      <AdminProtectedRoute>
+      <NotificationProvider>
+        <Router>
+          <Header />
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to="/auth/login" replace />}
+            ></Route>
+            <Route
+              path="/auth/*"
+              element={
+                <AuthProtectedRouteRoute>
+                  <Routes>
+                    <Route path="login" element={<LoginPage />} />
+                    <Route path="logup" element={<LogupPage />} />
+                    <Route
+                      path="forgot-password"
+                      element={<ForgotPassword />}
+                    />
+                    <Route path="reset-password" element={<ResetPassword />} />
+                  </Routes>
+                </AuthProtectedRouteRoute>
+              }
+            ></Route>
+            <Route
+              path="/dashboard/*"
+              element={
+                <AuthenticatedProtectedRouteRoute>
+                  <Routes>
+                    <Route path="" element={<DashboardPage />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route
+                      path="deliveries/*"
+                      element={
                         <Routes>
                           <Route
-                            path="profiles/*"
-                            element={
-                              <Routes>
-                                <Route path="" element={<ProfilesPage />} />
-                                <Route
-                                  path="createProfile"
-                                  element={<LogupPage />}
-                                />
-                              </Routes>
-                            }
+                            path=":deliveryId?"
+                            element={<DeliveriesPage />}
                           />
                           <Route
-                            path="instances/*"
-                            element={
-                              <Routes>
-                                <Route path="" element={<InstancesPage />} />
-                                <Route
-                                  path="createInstance"
-                                  element={<CreateInstancePage />}
-                                />
-
-                                <Route
-                                  path=":InstanceId"
-                                  element={<InstanceDetailsPage />}
-                                />
-
-                                <Route
-                                  path=""
-                                  element={<CreateInstancePage />}
-                                />
-                              </Routes>
-                            }
+                            path="details/:instanceId"
+                            element={<DeliveryDetailsPage />}
                           />
                         </Routes>
-                      </AdminProtectedRoute>
-                    }
-                  ></Route>
-                </Routes>
-              </AuthenticatedProtectedRouteRoute>
-            }
-          />
-          <Route path="*" element={<NotFoundPage />} />{" "}
-          {/* Catch-all route for 404 */}
-        </Routes>
-      </Router>
-      <SocketProvider />
+                      }
+                    />
 
-      {/*<InteractiveNotification
-          type="info"
-          message="El dron ha llegado a su destino"
-          onClose={() => console.log("Notificación cerrada")}
-          chatContent={
-            <div>
-              <p>Mensaje de bienvenida personalizado</p>
-              <p>Puedes poner cualquier contenido React aquí</p>
-            </div>
-          }
-        />*/}
+                    <Route
+                      path="admin/*"
+                      element={
+                        <AdminProtectedRoute>
+                          <Routes>
+                            <Route
+                              path="profiles/*"
+                              element={
+                                <Routes>
+                                  <Route path="" element={<ProfilesPage />} />
+                                  <Route
+                                    path="createProfile"
+                                    element={<LogupPage />}
+                                  />
+                                </Routes>
+                              }
+                            />
+                            <Route
+                              path="instances/*"
+                              element={
+                                <Routes>
+                                  <Route path="" element={<InstancesPage />} />
+                                  <Route
+                                    path="createInstance"
+                                    element={<CreateInstancePage />}
+                                  />
+
+                                  <Route
+                                    path=":InstanceId"
+                                    element={<InstanceDetailsPage />}
+                                  />
+
+                                  <Route
+                                    path=""
+                                    element={<CreateInstancePage />}
+                                  />
+                                </Routes>
+                              }
+                            />
+                          </Routes>
+                        </AdminProtectedRoute>
+                      }
+                    ></Route>
+                  </Routes>
+                </AuthenticatedProtectedRouteRoute>
+              }
+            />
+            <Route path="*" element={<NotFoundPage />} />{" "}
+            {/* Catch-all route for 404 */}
+          </Routes>
+        </Router>
+        <SocketProvider />
+      </NotificationProvider>
     </AuthProvider>
   </StrictMode>
 );

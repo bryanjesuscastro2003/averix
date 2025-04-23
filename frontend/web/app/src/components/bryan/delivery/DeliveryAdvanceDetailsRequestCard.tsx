@@ -13,6 +13,7 @@ import { ResponseDeliveryModal } from "./ResponseDeliveryModal";
 import { setMinutes } from "date-fns";
 import { IResponse } from "../../../types/responses/IResponse";
 import { Loader } from "../../grez/Louder";
+import { useNotifications } from "../../../context/SocketContext";
 
 export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   dataPacket: DeliveryData;
@@ -21,6 +22,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   const [data, setData] = useState<DeliveryData>(dataPacket);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState<boolean>(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -30,10 +32,8 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       data.delivery.id
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const { sendMessage, isConnected, addMessageHandler } = useWebSocket(
-    "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
-  );
-
+  const { isSocketConnected, sendSocketMessage, currentNotification } =
+    useNotifications();
   const { userData } = useAuth();
   const navigate = useNavigate();
 
@@ -107,26 +107,21 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
         }
       );
       const dataResponse = await response.json();
-      console.log("Response:", dataResponse);
-      if (!response.ok) {
-        // Handle error
-      } else {
-        if (isConnected) {
-          sendMessage({
-            action: "acceptTrip",
-            data: {
-              targetUserId: data.delivery.secondaryUser,
-              user: userData?.email || "",
-              message: "Hello from the client!",
-            },
-          });
-        }
+
+      if (dataResponse.ok && isSocketConnected) {
+        sendSocketMessage({
+          action: "acceptTrip",
+          data: {
+            targetUserId: data.delivery.secondaryUser,
+            user: userData?.email || "",
+            deliveryId: data.delivery.id,
+          },
+        });
         navigate("/dashboard/deliveries");
       }
     } catch (e) {
       console.error("Error:", e);
     } finally {
-      console.log("Service accepted");
       setIsAcceptModalOpen(false);
     }
   };
@@ -162,16 +157,13 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   };
 
   const startTrankingService = () => {
-    if (isConnected && data.delivery.dstate === "RUNNING") {
-      console.log("Sending startTracking message");
-      sendMessage({
+    if (isSocketConnected && data.delivery.dstate === "RUNNING") {
+      sendSocketMessage({
         action: "trackingStart",
         data: {
-          targetUserId: "",
+          deliveryId: data.delivery.id,
           user: userData?.email || "",
           sessionId: localStorage.getItem("idToken"),
-          message: "Hello from the client!",
-          deliveryId: data.delivery.id,
         },
       });
     }
@@ -179,14 +171,13 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   };
 
   const finishTrankingService = () => {
-    if (isConnected) {
-      sendMessage({
+    if (isSocketConnected) {
+      sendSocketMessage({
         action: "trackingFinish",
         data: {
-          targetUserId: "",
+          deliveryId: data.delivery.id,
           user: userData?.email || "",
           sessionId: localStorage.getItem("idToken"),
-          message: "Hello from the client!",
         },
       });
     }
@@ -194,44 +185,41 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   };
 
   useEffect(() => {
-    const cleanup = addMessageHandler(
-      (dataMessage: { lat: string; lng: string; mfstate: string }) => {
-        try {
-          const lat = parseFloat(dataMessage.lat);
-          const lng = parseFloat(dataMessage.lng);
-          const mfstate = dataMessage.mfstate;
-          if (mfstate !== data.tracking.mfstate) {
-            setData((prev) => ({
-              ...prev,
-              tracking: {
-                ...prev.tracking,
-                mfstate: mfstate,
-              },
-            }));
-          }
-          const location = {
-            lat: lat,
-            lng: lng,
-            name: "Ubicación actual",
-          };
-          setTrackingPoints((prev) => ({
-            ...prev,
-            locationT: location,
-          }));
-          console.log("Received location update:", location);
-        } catch (error) {
-          console.error("Error processing notification:", error);
-        }
+    if (!currentNotification) return;
+
+    try {
+      const { coordinates, mfstate, content } = currentNotification;
+      const lat = parseFloat(coordinates.lat);
+      const lng = parseFloat(coordinates.lng);
+
+      setContent(content);
+
+      // Update tracking state if changed
+      if (mfstate !== data.tracking.mfstate) {
+        setData((prev) => ({
+          ...prev,
+          tracking: {
+            ...prev.tracking,
+            mfstate: mfstate,
+          },
+        }));
       }
-    );
 
-    return cleanup;
-  }, [addMessageHandler]);
+      // Update current location
+      const newLocation = {
+        lat,
+        lng,
+        name: "Ubicación actual",
+      };
 
-  useEffect(() => {
-    console.log("Tracking Points:", trackingPoints);
-    console.log("Location A:", data.delivery);
-  }, []);
+      setTrackingPoints((prev) => ({
+        ...prev,
+        locationT: newLocation,
+      }));
+    } catch (error) {
+      console.error("Error processing notification:", error);
+    }
+  }, [currentNotification]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -405,6 +393,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                   onStart={() => {}}
                   points={trackingPoints}
                   draggable={false}
+                  message={content}
                   headingTo={
                     data.tracking.mfstate === "ZA"
                       ? "Recogiendo su producto"

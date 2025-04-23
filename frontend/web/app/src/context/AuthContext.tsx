@@ -61,7 +61,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       : null
   );
 
-  // Fetch profile endpoint
   const fetchProfile = async (
     accessToken: string,
     refreshToken: string,
@@ -98,12 +97,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    // Check if the user is already logged in (e.g., tokens exist in localStorage)
     const accessToken: string | null = localStorage.getItem("accessToken");
     if (accessToken) {
       setIsAuthenticated(true);
       if (userData !== null) {
-        // Fetch user profile
         fetchProfile(
           localStorage.getItem("accessToken")!,
           localStorage.getItem("refreshToken")!,
@@ -147,7 +144,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, userData, fetchProfile }}
+      value={{
+        isAuthenticated,
+        login,
+        logout,
+        userData,
+        fetchProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>
