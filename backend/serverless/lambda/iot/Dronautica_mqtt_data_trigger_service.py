@@ -13,6 +13,8 @@ def lambda_handler(event, context):
         stateAction = event.get('sA', None)
         currentLocation = event.get('cLN', None)
 
+        print("VAMOS A EHTRAR ", instanceId, nameAction, stateAction, currentLocation)
+
         """
             Delivery Data Wrapper
         """ 
@@ -53,8 +55,8 @@ def lambda_handler(event, context):
                 }
             }
             lambda_response = lambda_client.invoke(
-                FunctionName='Dronautica_dynamodb_instance_actions',  # Name of the Lambda function to invoke
-                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                FunctionName='Dronautica_dynamodb_instance_actions', 
+                InvocationType='RequestResponse',  
                 Payload=json.dumps(args)
             )
             lambda_response = json.load(lambda_response['Payload'])
@@ -65,37 +67,13 @@ def lambda_handler(event, context):
         """
             Set tracking log current location
         """
+        trackingLocation = None
         if currentLocation != None:
             currentLocation = {
                 "lat": float(currentLocation["lat"]), 
                 "lng": float(currentLocation["lng"])
             }
-
-            """
-                Notification service 
-            """
-            body = {
-                "action": "NOTIFICATION_DELIVERY_TRACKING_RUNNING",
-                "data": {
-                    "targetUserId": deliveryItem["primaryUser"],
-                    "user": deliveryItem["secondaryUser"],
-                    "sessionId": "",
-                    "message": None,
-                    "lat": str(currentLocation["lat"]),
-                    "lng": str(currentLocation["lng"]),
-                    "deliveryId": deliveryItem["id"],
-                    "mfstate": trackingItem["mfstate"]
-                }
-            }
-            args = {
-                "requestContext": {"connectionId": None},
-                "body": json.dumps(body)
-            }
-            lambda_response = lambda_client.invoke(
-                FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
-                InvocationType='RequestResponse',  # Use 'Event' for async invocation
-                Payload=json.dumps(args)
-            )
+            trackingLocation = currentLocation
 
             """
                 Update tracking logs current location
@@ -115,15 +93,56 @@ def lambda_handler(event, context):
                 Payload=json.dumps(args)
             )
             lambda_response = json.load(lambda_response['Payload'])
-            print(lambda_response)
             if lambda_response['STATE'] != "OK":
-                raise Exception(f"Error updating current location  . {lambda_response["DATA"]["ERROR"]}")
+                raise Exception(f"Error updating current location  .")
+            
+            """
+                Notification service 
+            """
+            # IF NAME ACTION IS TRACKING
+            if nameAction == "TRACKING":
+                body = {
+                    "action": "NOTIFICATION_DELIVERY_TRACKING_RUNNING",
+                    "data": {
+                        "targetUserId": deliveryItem["primaryUser"],
+                        "user": deliveryItem["secondaryUser"],
+                        "sessionId": "",
+                        "message": None,
+                        "lat": str(trackingLocation["lat"]),
+                        "lng": str(trackingLocation["lng"]),
+                        "deliveryId": deliveryItem["id"],
+                        "mfstate": trackingItem["mfstate"]
+                    }
+                }
+                args = {
+                    "requestContext": {"connectionId": None},
+                    "body": json.dumps(body)
+                }
+                lambda_response = lambda_client.invoke(
+                    FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                    InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                    Payload=json.dumps(args)
+                )
 
+                return {
+                    'statusCode': 200,
+                    'body': json.dumps({})
+                }
+
+        else:
+            print("NO hay location default ")
+            print("este mehoir", trackingLogsItem["currentLocation"])
+            trackingLocation = json.loads(trackingLogsItem["currentLocation"])
+            print("nuevo: ", trackingLocation)
+            trackingLocation = {
+                "lat": float(trackingLocation["lat"]),
+                "lng": float(trackingLocation["lng"])
+            }
                 
         """
             Instance Actions
         """
-        print("prepare to takeoff")
+        print("prepare to takeoff bryan ", instanceId, nameAction, stateAction)
         if nameAction in ["AVAILABLE", 'BUSY_ST_2']:
             print("PREPARE TO TAKE OFF")
             if stateAction == "FALSE":
@@ -235,11 +254,39 @@ def lambda_handler(event, context):
             
             # Vefirify relative distance
             if distanceRelCalculated <= 5:
+
+
+                if trackingItem["mfstate"] == "BZ":
+                    payload = {
+                        "ACTION": "DOLANDST3", 
+                        "VALUE": 0
+                    }
+                    args = {
+                        "DATA": {
+                            "INSTANCEID": instanceId,
+                            "PAYLOAD": json.dumps(payload)
+                        }
+                    }
+                    lambda_response = lambda_client.invoke(
+                        FunctionName='Dronautica_mqtt_publisher_actions',  # Name of the Lambda function to invoke
+                        InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                        Payload=json.dumps(args)
+                    )
+                    lambda_response = json.load(lambda_response['Payload'])
+                    if lambda_response['STATE'] != "OK":
+                        raise Exception(f"Error loading mqtt message .")
+                    
+                    return {
+                        'statusCode': 200,
+                        'body': json.dumps({})
+                    }
+
+
                 """
-                    Prepare to land
+                    Prepare to land stage 1
                 """
                 payload = {
-                    "ACTION": "LAND", 
+                    "ACTION": "LANDST1", 
                     "VALUE": 0
                 }
                 args = {
@@ -255,7 +302,40 @@ def lambda_handler(event, context):
                 )
                 lambda_response = json.load(lambda_response['Payload'])
                 if lambda_response['STATE'] != "OK":
-                    raise Exception(f"Error loading mqtt message . {lambda_response["VALUE"]["ERROR"]}")
+                    raise Exception(f"Error loading mqtt message .")
+
+                """
+                    Notification service
+                """
+                targetUser = None
+                if trackingItem["mfstate"] == "ZA":
+                    targetUser = deliveryItem["primaryUser"]
+                elif trackingItem["mfstate"] == "AB":
+                    targetUser = deliveryItem["secondaryUser"]
+
+                body = {
+                    "action": "NOTIFICATION_DELIVERY_ARRIVED",
+                    "data": {
+                        "targetUserId": targetUser,
+                        "user": None,
+                        "sessionId": "",
+                        "message": None,
+                        "deliveryId": deliveryItem["id"],
+                        "mfstate": trackingItem["mfstate"],
+                        "leftTime": 0,
+                        "lat": str(trackingLocation["lat"]),
+                        "lng": str(trackingLocation["lng"]),
+                    }
+                }
+                args = {
+                    "requestContext": {"connectionId": None},
+                    "body": json.dumps(body)
+                }
+                lambda_response = lambda_client.invoke(
+                    FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                    InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                    Payload=json.dumps(args)
+                )
                 
             else:
             
@@ -284,7 +364,44 @@ def lambda_handler(event, context):
                 )
                 lambda_response = json.load(lambda_response['Payload'])
                 if lambda_response['STATE'] != "OK":
-                    raise Exception(f"Error loading mqtt message . {lambda_response["VALUE"]["ERROR"]}")
+                    raise Exception(f"Error loading mqtt message .")
+                
+                """
+                    Notification service 
+                """
+                # Calculate the left time to arrive 
+                mfstate = trackingItem["mfstate"]
+                def leftTime(distanceRelCalculated):
+                    speed = 0.5 
+                    return round((distanceRelCalculated / speed) * 60, 2) 
+                leftTimeValue = leftTime(distanceRelCalculated)
+
+                print("left time", leftTimeValue)
+
+                body = {
+                    "action": "NOTIFICATION_DELIVERY_LEFT_TIME",
+                    "data": {
+                        "targetUserId": deliveryItem["primaryUser"],
+                        "user": deliveryItem["secondaryUser"],
+                        "sessionId": "",
+                        "message": None,
+                        "deliveryId": deliveryItem["id"],
+                        "mfstate": trackingItem["mfstate"],
+                        "leftTime": leftTimeValue,
+                        "lat": str(trackingLocation["lat"]),
+                        "lng": str(trackingLocation["lng"]),
+                    }
+                }
+                args = {
+                    "requestContext": {"connectionId": None},
+                    "body": json.dumps(body)
+                }
+                lambda_response = lambda_client.invoke(
+                    FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                    InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                    Payload=json.dumps(args)
+                )
+
 
         # [SPINNING, MOVINGFORWARD]
         elif nameAction in ['SPINNING', 'MOVINGFORWARD']:
@@ -311,11 +428,187 @@ def lambda_handler(event, context):
             )
             lambda_response = json.load(lambda_response['Payload'])
             if lambda_response['STATE'] != "OK":
-                raise Exception(f"Error loading mqtt message . {lambda_response["VALUE"]["ERROR"]}")
+                raise Exception(f"Error loading mqtt message .")
+            
+            """
+                Notification service 
+            """
+            # drone landing 
         
-        elif nameAction == 'LAND':
+        elif nameAction == "LANDST1":
+            """
+                Notification service 
+            """ 
+            # can you see the drone over you
+            targetUser = None
+            if trackingItem["mfstate"] == "ZA":
+                targetUser = deliveryItem["primaryUser"]
+            elif trackingItem["mfstate"] == "AB":
+                targetUser = deliveryItem["secondaryUser"]
+
+            body = {
+                "action": "NOTIFICATION_DELIVERY_ARRIVED_ST1",
+                "data": {
+                    "targetUserId": targetUser,
+                    "user": None,
+                    "sessionId": "",
+                    "message": None,
+                    "deliveryId": deliveryItem["id"],
+                    "mfstate": trackingItem["mfstate"],
+                    "leftTime": 0,
+                    "lat": str(trackingLocation["lat"]),
+                    "lng": str(trackingLocation["lng"]),
+                    "instanceId": instanceId
+                }
+            }
+            args = {
+                "requestContext": {"connectionId": None},
+                "body": json.dumps(body)
+            }
+            lambda_response = lambda_client.invoke(
+                FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                Payload=json.dumps(args)
+            )
+        
+        elif nameAction == "DOLANDST2":
+            """
+                Prepare to land stage 2
+            """
+            payload = {
+                "ACTION": "LANDST2", 
+                "VALUE": 0
+            }
+            args = {
+                "DATA": {
+                    "INSTANCEID": instanceId,
+                    "PAYLOAD": json.dumps(payload)
+                }
+            }
+            lambda_response = lambda_client.invoke(
+                FunctionName='Dronautica_mqtt_publisher_actions',  # Name of the Lambda function to invoke
+                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                Payload=json.dumps(args)
+            )
+            lambda_response = json.load(lambda_response['Payload'])
+            if lambda_response['STATE'] != "OK":
+                raise Exception(f"Error loading mqtt message .")
+
+        elif nameAction == "LANDST2":
+            """
+                Notification service 
+            """ 
+            # your product is ready?
+            targetUser = None
+            if trackingItem["mfstate"] == "ZA":
+                targetUser = deliveryItem["primaryUser"]
+            elif trackingItem["mfstate"] == "AB":
+                targetUser = deliveryItem["secondaryUser"]
+
+            body = {
+                "action": "NOTIFICATION_DELIVERY_ARRIVED_ST2",
+                "data": {
+                    "targetUserId": targetUser,
+                    "user": None,
+                    "sessionId": "",
+                    "message": None,
+                    "deliveryId": deliveryItem["id"],
+                    "mfstate": trackingItem["mfstate"],
+                    "leftTime": 0,
+                    "lat": str(trackingLocation["lat"]),
+                    "lng": str(trackingLocation["lng"]),
+                    "instanceId": instanceId
+                }
+            }
+            args = {
+                "requestContext": {"connectionId": None},
+                "body": json.dumps(body)
+            }
+            lambda_response = lambda_client.invoke(
+                FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                Payload=json.dumps(args)
+            )       
+
+        elif nameAction in ['LANDST3', "DOLANDST3"]:
             if stateAction == "FALSE":
                 pass
+
+            if trackingItem["mfstate"] == "ZA":
+                body = {
+                    "action": "NOTIFICATION_DELIVERY_DONE_A",
+                    "data": {
+                        "targetUserId": deliveryItem["secondaryUser"],
+                        "user": None,
+                        "sessionId": "",
+                        "message": None,
+                        "deliveryId": deliveryItem["id"],
+                        "mfstate": trackingItem["mfstate"],
+                        "leftTime": 0,
+                        "lat": str(trackingLocation["lat"]),
+                        "lng": str(trackingLocation["lng"]),
+                        "instanceId": instanceId
+                    }
+                }
+                args = {
+                    "requestContext": {"connectionId": None},
+                    "body": json.dumps(body)
+                }
+                lambda_response = lambda_client.invoke(
+                    FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                    InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                    Payload=json.dumps(args)
+                )       
+            elif trackingItem["mfstate"] == "AB":
+                body = {
+                    "action": "NOTIFICATION_DELIVERY_DONE_B",
+                    "data": {
+                        "targetUserId": deliveryItem["primaryUser"],
+                        "user": None,
+                        "sessionId": "",
+                        "message": None,
+                        "deliveryId": deliveryItem["id"],
+                        "mfstate": trackingItem["mfstate"],
+                        "leftTime": 0,
+                        "lat": str(trackingLocation["lat"]),
+                        "lng": str(trackingLocation["lng"]),
+                        "instanceId": instanceId
+                    }
+                }
+                args = {
+                    "requestContext": {"connectionId": None},
+                    "body": json.dumps(body)
+                }
+                lambda_response = lambda_client.invoke(
+                    FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                    InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                    Payload=json.dumps(args)
+                )  
+            elif trackingItem["mfstate"] == "BZ":
+                body = {
+                    "action": "NOTIFICATION_DELIVERY_DONE_Z",
+                    "data": {
+                        "targetUserId": deliveryItem["primaryUser"],
+                        "user": deliveryItem["secondaryUser"],
+                        "sessionId": "",
+                        "message": None,
+                        "deliveryId": deliveryItem["id"],
+                        "mfstate": trackingItem["mfstate"],
+                        "leftTime": 0,
+                        "lat": str(trackingLocation["lat"]),
+                        "lng": str(trackingLocation["lng"]),
+                        "instanceId": instanceId
+                    }
+                }
+                args = {
+                    "requestContext": {"connectionId": None},
+                    "body": json.dumps(body)
+                }
+                lambda_response = lambda_client.invoke(
+                    FunctionName='Dronautica_notification_sendMessage',  # Name of the Lambda function to invoke
+                    InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                    Payload=json.dumps(args)
+                )  
 
             print("Changing target")
             args = {
@@ -395,7 +688,7 @@ def lambda_handler(event, context):
                 )
                 lambda_response = json.load(lambda_response['Payload'])
                 if lambda_response['STATE'] != "OK":
-                    raise Exception(f"Error loading mqtt message . {lambda_response["VALUE"]["ERROR"]}")
+                    raise Exception(f"Error loading mqtt message .")
                     
             # Take off action
             else:

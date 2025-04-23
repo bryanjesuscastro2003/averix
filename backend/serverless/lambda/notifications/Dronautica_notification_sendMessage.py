@@ -6,7 +6,20 @@ apigw_management = boto3.client('apigatewaymanagementapi',
     endpoint_url='https://12voeaacae.execute-api.us-east-1.amazonaws.com/development')
     
 dynamodb = boto3.resource('dynamodb')
+lambda_client = boto3.client('lambda')
 table = dynamodb.Table('WebSocketConnections')
+
+# delete item by connectionId -> bool
+def delete_user(connectionId):
+    items = table.scan(
+        FilterExpression='connectionId = :val',
+        ExpressionAttributeValues={':val': connectionId}
+    ).get('Items', [])
+    item = items[0] if items else None
+    if not item:
+        return False
+    table.delete_item(Key={'id': item["id"]})
+    return True
 
 def get_user(username) -> list:
     response = table.scan(
@@ -23,8 +36,39 @@ def put_user(username, sessionId, connectionId):
             'sessionId': sessionId, 
             'connectionId': connectionId,
             'timestamp': int(time.time()),
-            "deliveryId": ""
+            "deliveryId": "",
+            "instanceId": ""
         }
+    )
+    return True
+
+def update_instanceId_by_deliveryId(deliveryId, instanceId):
+    items = table.scan(
+        FilterExpression='deliveryId = :val',
+        ExpressionAttributeValues={':val': deliveryId}
+    ).get('Items', [])
+    item = items[0] if items else None
+    if not item:
+        return False
+    table.update_item(
+        Key={'id': item["id"]},
+        UpdateExpression='SET instanceId = :val',
+        ExpressionAttributeValues={':val': instanceId}
+    )
+    return True
+
+def update_instanceId_by_username(username, instanceId):
+    items = table.scan(
+        FilterExpression='username = :val',
+        ExpressionAttributeValues={':val': username}
+    ).get('Items', [])
+    item = items[0] if items else None
+    if not item:
+        return False
+    table.update_item(
+        Key={'id': item["id"]},
+        UpdateExpression='SET instanceId = :val',
+        ExpressionAttributeValues={':val': instanceId}
     )
     return True
 
@@ -130,79 +174,309 @@ def lambda_handler(event, context):
         finish_tracking(data["user"], data["sessionId"])
         roomClients = [connection_id] #get_user(data["user"])
         message = {
+            "cd": "A",
             "title": f"👋 ¡Bienvenido {data['user']}!",
             "type": "info",
             "instructions": "Sistema de entregas con drones",
             "content": "Estás conectado al sistema de seguimiento.\nRecibirás notificaciones sobre tus entregas.",
-            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates":{
+                "lat": "0",
+                "lng": "0", 
+            },
+            "mfstate": None,
+            "instanceId": ""
         }
 
     elif action == "confirmTrip":
         roomClients = get_user(data["targetUserId"])
         message = {
+            "cd": "B",
             "title": "✅ Ubicación confirmada",
             "type": "success",
             "instructions": "Ubicación del cliente verificada",
             "content": "Por favor acepta el viaje para iniciar el proceso de entrega.\n\n• Revisa los detalles de la ubicación\n• Confirma que el área es accesible para drones",
-            "link": "https://meet.google.com/landing"
+            "link": "https://meet.google.com/landing",
+            "coordinates":{
+                "lat": "0",
+                "lng": "0", 
+            },
+            "mfstate": None,
+            "instanceId": ""
         }
 
     elif action == "acceptTrip":
         roomClients = get_user(data["targetUserId"])
         message = {
+            "cd": "C",
             "title": "🔄 Viaje aceptado",
             "type": "success",
             "instructions": "Preparando tu entrega",
             "content": "El conductor ha aceptado tu solicitud.\n\n• El dron será preparado para el envío\n• Recibirás una notificación cuando esté en camino",
-            "link": "https://meet.google.com/landing"
+            "link": "https://meet.google.com/landing",
+            "coordinates":{
+                "lat": "0",
+                "lng": "0", 
+            },
+            "mfstate": None,
+            "instanceId": ""
         }
-
-
 
     elif action == "NOTIFICATION_DELIVERY_STARTED":
         roomClientsA = get_user(data["targetUserId"])
         roomClientsB = get_user(data["user"])
         roomClients = roomClientsA + roomClientsB
         message = {
+            "cd": "D",
             "title": "🚀 Viaje de entrega iniciado",
             "type": "info",
             "instructions": "Sigue el progreso de tu envío",
             "content": "Tu dron ha despegado con el pedido.\n\n• Recibirás actualizaciones periódicas\n• Prepárate para la llegada",
-            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates":{
+                "lat": "0",
+                "lng": "0", 
+            },
+            "mfstate": None,
+            "instanceId": ""
         }
 
     elif action == "NOTIFICATION_DELIVERY_TRACKING_RUNNING":
         roomClients = get_users_by_delivery_id(data["deliveryId"])
         message = {
-            "lat": data["lat"],
-            "lng": data["lng"], 
+            "cd": "E",
+            "coordinates": {
+                "lat": data["lat"],
+                "lng": data["lng"]}, 
             "mfstate": data["mfstate"],
             "title": "📍 Dron en movimiento",
             "type": "info",
             "instructions": "Posición actual del dron",
-            "content": f"El dron está en ruta a {data['mfstate']}",
-            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            "content": f"El dron está en camino.",
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "mfstate": None,
+            "instanceId": ""
         }
-
-    elif action == "NOTIFICATION_DELIVERY_CLOSE_TO_A":
+    
+    elif action == "NOTIFICATION_DELIVERY_ARRIVED":
         roomClients = get_user(data["targetUserId"])
         message = {
+            "cd": "F",
+            "title": "Hemos llegado !!!!",
+            "type": "info",
+            "instructions": "El dron ha llegado",
+            "content": "El dron ha llegado a tu locacion.",
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates":{
+                "lat": data["lat"],
+                "lng": data["lng"], 
+            },
+            "mfstate": data["mfstate"],
+            "instanceId": ""
+        }
+    
+    elif action == "NOTIFICATION_DELIVERY_ARRIVED_ST1":
+        roomClients = get_user(data["targetUserId"])
+        update_instanceId_by_username(data["targetUserId"], data["instanceId"])
+        message = {
+            "cd": "G",
+            "title": "Puedes ver el dron sobre ti?",
+            "code": "AX",
+            "type": "info",
+            "instructions": "El dron esta sobre ti .",
+            "content": "Sal y busca el dron , confirma si lo puedes ver. ",
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates":{
+                "lat": data["lat"],
+                "lng": data["lng"], 
+            },
+            "mfstate": data["mfstate"],
+            "instanceId": data["instanceId"]
+        }
+    
+    elif action == "NOTIFICATION_DELIVERY_ARRIVED_ST2":
+        roomClients = get_user(data["targetUserId"])
+        update_instanceId_by_username(data["targetUserId"], data["instanceId"])
+        mfstate = data["mfstate"]
+        isData = True
+
+        if mfstate == "ZA":
+            title = "La carga esta lista ?"
+            instructions = "Ponga con cuidado su producto en la compuerta y confirme cuando este listo ."
+            content = "El dron esta cargando el producto ."
+        elif mfstate == "AB":
+            title = "La entrega esta lista ?"
+            instructions = "Retire con cuidado su producto y confirme cuando este listo."
+            content = "El dron esta entregando el producto ."
+        else:
+            isData = False
+        
+        if isData:
+            message = {
+                "cd": "H",
+                "title": title,
+                "code": "AX",
+                "type": "info",
+                "instructions": instructions,
+                "content": content,
+                "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                "coordinates":{
+                    "lat": data["lat"],
+                    "lng": data["lng"],
+                },
+                "mfstate": mfstate,
+                "instanceId": data["instanceId"]
+            }
+        else:
+            message = None
+    
+    elif action == "NOTIFICATION_DELIVERY_DONE_A":
+        roomClients = get_user(data["targetUserId"])
+        message = {
+            "cd": "K",
+            "title": "Se acaba de recoger tu producto !!!",
+            "type": "info",
+            "instructions": "Carga exitosa.",
+            "content": "El dron acaba de recoger tu producto.",
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates":{
+                "lat": data["lat"],
+                "lng": data["lng"],
+            },
+            "mfstate": data["mfstate"],
+            "instanceId": ""
+        }
+    
+    elif action == "NOTIFICATION_DELIVERY_DONE_B":
+        roomClients = get_user(data["targetUserId"])
+        message = {
+            "cd": "L",
+            "title": "Se acaba de entregar el producto !!!",
+            "type": "info",
+            "instructions": "Entrega exitosa.",
+            "content": "El dron acaba de entregar el producto.",
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates":{
+                "lat": data["lat"],
+                "lng": data["lng"],
+            },
+            "mfstate": data["mfstate"],
+            "instanceId": ""
+        }
+    
+    elif action == "NOTIFICATION_DELIVERY_DONE_Z":
+        roomClients = get_user(data["targetUserId"]) + get_user(data["user"])
+        message = {
+            "cd": "M",
+            "title": "Viaje finalizado. ",
+            "type": "info",
+            "instructions": "Gracias por su confianza",
+            "content": "AVIREN.",
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates":{
+                "lat": data["lat"],
+                "lng": data["lng"],
+            },
+            "mfstate": data["mfstate"],
+            "instanceId": ""
+        }
+    
+    elif action == "confirm_arrived_st1":
+        """
+            Call main trigger
+        """
+
+        print("YA VEO EL DRON", data)
+        args = {
+            "iID": data["instanceId"],
+            "nA": "DOLANDST2",
+            "sA": "TRUE",
+            "cLN": None
+        }
+        lambda_response = lambda_client.invoke(
+            FunctionName='Dronautica_mqtt_data_trigger_service',  
+            InvocationType='RequestResponse',  
+            Payload=json.dumps(args)
+        )
+        lambda_response = json.load(lambda_response['Payload'])
+        message = None
+
+
+    elif action == "confirm_arrived_st2":
+        """
+            Call main trigger
+        """
+        print(" arr 2", data)
+        args = {
+            "iID": data["instanceId"],
+            "nA": "LANDST3",
+            "sA": "TRUE",
+            "cLN": None
+        }
+        lambda_response = lambda_client.invoke(
+            FunctionName='Dronautica_mqtt_data_trigger_service',  
+            InvocationType='RequestResponse',  
+            Payload=json.dumps(args)
+        )
+        lambda_response = json.load(lambda_response['Payload'])
+
+
+
+    elif action == "NOTIFICATION_DELIVERY_LEFT_TIME":
+        #roomClients = get_users_by_delivery_id(data["deliveryId"])
+        roomClients = get_user(data["targetUserId"]) + get_user(data["user"])
+        mfstate = data["mfstate"]
+        leftTime = data["leftTime"]
+
+        if mfstate == "ZA":
+            message = {
+                "cd": "I",
+                "title": "ZA",
+                "type": "info",
+                "instructions": "Recogiendo el producto",
+                "content": f"El dron llegará a la ubicación de recogida en: {leftTime} minutos.",
+                "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                "coordinates": {
+                    "lat": data["lat"],
+                    "lng": data["lng"],
+                },
+                "mfstate": mfstate
+            }
+
+        elif mfstate == "AB":
+            message = {
+                "cd": "I",
+                "title": "AB",
+                "type": "info",
+                "instructions": "Entregando el producto",
+                "content": f"El dron llegará a la ubicación de entrega en: {leftTime} minutos",
+                "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                "coordinates": {
+                    "lat": data["lat"],
+                    "lng": data["lng"],
+                },
+                "mfstate": mfstate
+            }
+        else:
+            message = None
+
+
+    elif action == "NOTIFICATION_DELIVERY_CLOSE":
+        roomClients = get_user(data["targetUserId"])
+        message = {
+            "cd": "J",
             "title": "🚁 Dron en camino para recoger tu pedido",
             "type": "info",
             "instructions": "Prepárese para la recogida",
             "content": f"El dron llegará a tu ubicación de recogida en: {data['leftTime']} minutos.\n\n• Por favor ten el paquete listo\n• Asegúrate que el área de recogida esté despejada",
-            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "coordinates": {
+                    "lat": data["lat"],
+                    "lng": data["lng"],
+                },
+            "mfstate": None
         }
 
-    elif action == "NOTIFICATION_DELIVERY_CLOSE_TO_B":
-        roomClients = get_user(data["targetUserId"])
-        message = {
-            "title": "📦 Dron acercándose con tu pedido",
-            "type": "info",
-            "instructions": "Prepárese para la entrega",
-            "content": f"Tu pedido llegará en aproximadamente: {data['leftTime']} minutos.\n\n• Mantén el área de entrega despejada\n• Retira cualquier obstáculo potencial",
-            "link": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-        }
 
     else:
         message = None

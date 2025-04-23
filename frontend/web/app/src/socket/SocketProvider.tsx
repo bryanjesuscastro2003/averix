@@ -51,45 +51,38 @@ export const SocketProvider = () => {
   }, [isSocketConnected, userData?.email, sendSocketMessage]);
 
   const handleCloseNotification = (id: string, decision: boolean) => {
-    const notification = notifications.find(
-      (notification) => notification.id === id
-    );
-    console.log("Notification to close:", notification);
-    if (notification) {
-      if (
-        notification.title.includes("Puedes ver el dron sobre ti?") ||
-        notification.title.includes("La carga esta lista ?") ||
-        notification.title.includes("La entrega esta lista ?")
-      ) {
+    const notificationToClose = notifications.find((n) => n.id === id); // Renamed to avoid shadowing
+    console.log("Notification to close:", notificationToClose);
+
+    if (notificationToClose) {
+      if (notificationToClose.cd === "G" || notificationToClose.cd === "H") {
         if (decision) {
-          setNotifications((prev) =>
-            prev.filter((notification) => notification.id !== id)
+          setNotifications(
+            (prev) => prev.filter((n) => n.id !== id) // Use consistent parameter name
           );
           if (isSocketConnected) {
-            console.log("Sending confirmation message", notification);
+            console.log("Sending confirmation message", notificationToClose);
             sendSocketMessage({
-              action: notification.title.includes(
-                "Puedes ver el dron sobre ti?"
-              )
-                ? "confirm_arrived_st1"
-                : "confirm_arrived_st2",
+              action:
+                notificationToClose.cd === "G"
+                  ? "confirm_arrived_st1"
+                  : "confirm_arrived_st2",
               data: {
                 deliveryId: null,
                 user: userData?.email || "",
                 sessionId: localStorage.getItem("idToken"),
-                instanceId: notification.instanceId,
+                instanceId: notificationToClose.instanceId,
               },
             });
           }
         }
       } else {
-        setNotifications((prev) =>
-          prev.filter((notification) => notification.id !== id)
+        setNotifications(
+          (prev) => prev.filter((n) => n.id !== id) // Use consistent parameter name
         );
       }
     }
   };
-
   return (
     <div className="fixed bottom-4 right-4 z-[1000] w-full max-w-xs">
       {isAuthenticated && (
@@ -109,11 +102,7 @@ export const SocketProvider = () => {
                   onClose={handleCloseNotification}
                   showForm={
                     notification.title
-                      ? notification.title.includes(
-                          "Puedes ver el dron sobre ti?"
-                        ) ||
-                        notification.title.includes("La carga esta lista ?") ||
-                        notification.title.includes("La entrega esta lista ?")
+                      ? notification.cd === "G" || notification.cd === "H"
                       : false
                   }
                   chatContent={

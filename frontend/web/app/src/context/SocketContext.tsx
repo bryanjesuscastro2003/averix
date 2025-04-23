@@ -56,7 +56,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         // Add new notification to the list
         setNotifications((prev) => [data, ...prev]);
       // Set as current notification
-      setCurrentNotification(data);
+      else setCurrentNotification(data);
     });
 
     return cleanup;
