@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { InteractiveNotification } from "../components/grez/notifications/InteractiveNotification";
 import { useNotifications } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
 
 export interface Notification {
   id: string;
+  cd: string;
   type: "success" | "error" | "warning" | "info";
   instructions: string;
   content: string;
@@ -17,6 +18,7 @@ export interface Notification {
     lng: string;
   };
   mfstate: string;
+  instanceId: string;
 }
 
 export const SocketProvider = () => {
@@ -26,9 +28,11 @@ export const SocketProvider = () => {
     setCurrentNotification,
     isSocketConnected,
     sendSocketMessage,
+    currentNotification,
   } = useNotifications();
 
   const { userData, isAuthenticated } = useAuth();
+  const [confirmDecision, setConfirmDecision] = useState<boolean>(false);
 
   useEffect(() => {
     if (isSocketConnected && userData !== null) {
@@ -46,10 +50,44 @@ export const SocketProvider = () => {
     // The reconnection logic is now handled by the useWebSocket hook inside NotificationProvider
   }, [isSocketConnected, userData?.email, sendSocketMessage]);
 
-  const handleCloseNotification = (id: string) => {
-    setNotifications((prev) =>
-      prev.filter((notification) => notification.id !== id)
+  const handleCloseNotification = (id: string, decision: boolean) => {
+    const notification = notifications.find(
+      (notification) => notification.id === id
     );
+    console.log("Notification to close:", notification);
+    if (notification) {
+      if (
+        notification.title.includes("Puedes ver el dron sobre ti?") ||
+        notification.title.includes("La carga esta lista ?") ||
+        notification.title.includes("La entrega esta lista ?")
+      ) {
+        if (decision) {
+          setNotifications((prev) =>
+            prev.filter((notification) => notification.id !== id)
+          );
+          if (isSocketConnected) {
+            console.log("Sending confirmation message", notification);
+            sendSocketMessage({
+              action: notification.title.includes(
+                "Puedes ver el dron sobre ti?"
+              )
+                ? "confirm_arrived_st1"
+                : "confirm_arrived_st2",
+              data: {
+                deliveryId: null,
+                user: userData?.email || "",
+                sessionId: localStorage.getItem("idToken"),
+                instanceId: notification.instanceId,
+              },
+            });
+          }
+        }
+      } else {
+        setNotifications((prev) =>
+          prev.filter((notification) => notification.id !== id)
+        );
+      }
+    }
   };
 
   return (
@@ -66,7 +104,18 @@ export const SocketProvider = () => {
                 <InteractiveNotification
                   type={notification.type}
                   message={notification.title}
-                  onClose={() => handleCloseNotification(notification.id)}
+                  id={notification.id}
+                  setConfirmDecision={setConfirmDecision}
+                  onClose={handleCloseNotification}
+                  showForm={
+                    notification.title
+                      ? notification.title.includes(
+                          "Puedes ver el dron sobre ti?"
+                        ) ||
+                        notification.title.includes("La carga esta lista ?") ||
+                        notification.title.includes("La entrega esta lista ?")
+                      : false
+                  }
                   chatContent={
                     <div className="p-2 space-y-1">
                       {notification.instructions && (
@@ -88,6 +137,11 @@ export const SocketProvider = () => {
                         >
                           {notification.linkValue}
                         </a>
+                      )}
+                      {notification.title && (
+                        <p className="text-sm text-gray-700 mb-1">
+                          {notification.title}
+                        </p>
                       )}
                     </div>
                   }

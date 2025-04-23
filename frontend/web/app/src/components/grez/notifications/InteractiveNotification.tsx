@@ -3,8 +3,13 @@ import React, { useState } from "react";
 interface NotificationProps {
   type?: "success" | "error" | "warning" | "info";
   message: string;
-  onClose?: () => void;
-  chatContent?: React.ReactNode; // Contenido del chat
+  id: string;
+  onClose: (id: string, decision: boolean) => void;
+  chatContent?: React.ReactNode;
+  showForm?: boolean;
+  setConfirmDecision:
+    | React.Dispatch<React.SetStateAction<boolean>>
+    | ((prev: boolean) => boolean);
 }
 
 export const InteractiveNotification: React.FC<NotificationProps> = ({
@@ -12,8 +17,12 @@ export const InteractiveNotification: React.FC<NotificationProps> = ({
   message,
   onClose,
   chatContent,
+  showForm = false,
+  setConfirmDecision,
+  id,
 }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [decision, setDecision] = useState<boolean>(false);
 
   // Estilos base
   const baseStyles =
@@ -82,7 +91,7 @@ export const InteractiveNotification: React.FC<NotificationProps> = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onClose();
+              onClose(id, false);
             }}
             className="ml-2 text-gray-500 hover:text-gray-700 focus:outline-none"
             aria-label="Cerrar notificación"
@@ -136,16 +145,23 @@ export const InteractiveNotification: React.FC<NotificationProps> = ({
 
           {/* Input para mensajes */}
           <div className="p-3 border-t border-gray-200">
-            <div className="flex">
-              <input
-                type="text"
-                placeholder="Escribe tu mensaje..."
-                className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600">
-                Enviar
-              </button>
-            </div>
+            {showForm && (
+              <div className="flex justify-around">
+                <button
+                  className="bg-green-500 text-white px-4 mr-2 py-2 rounded-lg hover:bg-green-600"
+                  onClick={() => {
+                    setConfirmDecision(true);
+                    setIsChatOpen(false);
+                    onClose(id, true);
+                  }}
+                >
+                  SI
+                </button>
+                <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                  NO
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -189,10 +189,12 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
 
     try {
       const { coordinates, mfstate, content } = currentNotification;
+      console.log("Coordinates:", coordinates);
       const lat = parseFloat(coordinates.lat);
       const lng = parseFloat(coordinates.lng);
 
       setContent(content);
+      const finalMfState = mfstate ? mfstate : data.tracking.mfstate;
 
       // Update tracking state if changed
       if (mfstate !== data.tracking.mfstate) {
@@ -200,7 +202,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
           ...prev,
           tracking: {
             ...prev.tracking,
-            mfstate: mfstate,
+            mfstate: finalMfState,
           },
         }));
       }
@@ -220,6 +222,10 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       console.error("Error processing notification:", error);
     }
   }, [currentNotification]);
+
+  useEffect(() => {
+    console.log("Delivery state changed:", dataPacket);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -326,7 +332,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                           width:
                             data.tracking.mfstate === "ZA"
                               ? "30%"
-                              : data.delivery.dstate === "AB"
+                              : data.tracking.mfstate === "AB"
                               ? "60%"
                               : "100%",
                         }}

@@ -52,8 +52,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const cleanup = addMessageHandler((data: Notification) => {
       console.log("Received message:", data);
-      // Add new notification to the list
-      setNotifications((prev) => [...prev, data]);
+      if (data.cd !== "E")
+        // Add new notification to the list
+        setNotifications((prev) => [data, ...prev]);
       // Set as current notification
       setCurrentNotification(data);
     });
