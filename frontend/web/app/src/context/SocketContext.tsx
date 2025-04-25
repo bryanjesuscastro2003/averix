@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { Notification } from "../socket/SocketProvider";
 import { useWebSocket } from "../socket/WebSocketConn";
+import { useNavigate } from "react-router-dom";
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -37,7 +38,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [currentNotification, setCurrentNotification] =
     useState<Notification | null>(null);
-
   // Initialize WebSocket connection
   const {
     isConnected: isSocketConnected,
@@ -51,11 +51,23 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   // Handle incoming WebSocket messages
   useEffect(() => {
     const cleanup = addMessageHandler((data: Notification) => {
+      console.log("WebSocket message received:", data);
+      //alert("New notification received");
+
       console.log("Received message:", data);
-      if (data.cd !== "E")
+      if (data.cd === "B" || data.cd === "C") {
+        setNotifications((prev) => [data, ...prev]);
+        setCurrentNotification(data);
+      } else if (data.cd !== "E" && data.cd !== "M") {
         // Add new notification to the list
         setNotifications((prev) => [data, ...prev]);
+      }
       // Set as current notification
+      else if (data.cd === "M")
+        // time out 3 seconds then reload the page with window.location.reload()
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       else setCurrentNotification(data);
     });
 

@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Header.css";
 import { useWebSocket } from "../../socket/WebSocketConn";
+import { useNotifications } from "../../context/SocketContext";
 
 const Header = () => {
   const { isAuthenticated, logout, userData } = useAuth();
@@ -11,6 +12,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentSection, setCurrentSection] = useState("");
+  const { currentNotification } = useNotifications();
   const { sendMessage, isConnected } = useWebSocket(
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );
@@ -60,6 +62,24 @@ const Header = () => {
       }
     }
   }, [location, currentSection]);
+
+  useEffect(() => {
+    if (currentNotification) {
+      if (currentNotification.cd === "B" || currentNotification.cd === "C") {
+        const currentPath = `/dashboard/deliveries/details/${currentNotification.deliveryId}`;
+        const isDeliveryPath = location.pathname.startsWith(
+          "/dashboard/deliveries/details"
+        );
+        if (isDeliveryPath) {
+          setTimeout(() => {
+            window.location.reload();
+          }, 4000);
+        } else {
+          navigate(currentPath);
+        }
+      }
+    }
+  }, [currentNotification]);
 
   const handleLogout = () => {
     logout();

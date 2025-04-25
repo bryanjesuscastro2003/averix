@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { InteractiveNotification } from "../components/grez/notifications/InteractiveNotification";
 import { useNotifications } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export interface Notification {
   id: string;
@@ -19,6 +20,7 @@ export interface Notification {
   };
   mfstate: string;
   instanceId: string;
+  deliveryId: string;
 }
 
 export const SocketProvider = () => {
@@ -83,6 +85,7 @@ export const SocketProvider = () => {
       }
     }
   };
+
   return (
     <div className="fixed bottom-4 right-4 z-[1000] w-full max-w-xs">
       {isAuthenticated && (

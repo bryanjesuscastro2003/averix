@@ -147,10 +147,12 @@ const DeliveriesPage: React.FC = () => {
           mode: "cors",
         }
       );
-      const data: IResponse<{
-        deliveryId: string;
-        primaryUser: string;
-      }> = await response.json();
+      const data:
+        | IResponse<{
+            deliveryId: string;
+            primaryUser: string;
+          }>
+        | any = await response.json();
       console.log("Response from fetchStartDelivery:", data);
       if (!data.ok) {
         !isConfirmationCodeLoaded
@@ -176,11 +178,17 @@ const DeliveriesPage: React.FC = () => {
                 targetUserId: data.data.primaryUser,
                 user: userData?.email || "",
                 message: "Hello from the client!",
+                sessionId: localStorage.getItem("idToken"),
+                deliveryId: confirmationCode,
               },
             });
           }
           setIsConfirmationCodeValid(false);
           fetchDeliveries();
+          setTimeout(() => {
+            // -> go to /dashboard/deliveries with window
+            window.location.href = "/dashboard/deliveries";
+          }, 2000);
         }
       }
     } catch (error) {

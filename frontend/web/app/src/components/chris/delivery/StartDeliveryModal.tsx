@@ -3,6 +3,7 @@ import Mapa from "./Mapa";
 import Louder from "../louder";
 import { ResponseDeliveryModal } from "../../bryan/delivery/ResponseDeliveryModal";
 import "./DeliveryTable.css";
+import { LoadingModal } from "../../bryan/LoaderModal";
 
 interface TrackingPoints {
   locationA: { lat: number; lng: number; name: string } | null;
@@ -89,7 +90,6 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
           </h2>
           <h3 className="text-sm text-blue-500 font-bold">{headingTo}</h3>
         </div>
-
         <div className="p-4">
           {userLocation ? (
             <div className="mb-4">
@@ -131,7 +131,6 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             </div>
           )}
         </div>
-
         {/*Instance category "small, micro, large" small => 0 - 3kg , micro => 3kg - 6kg, large => 6kg - 10kg*/}
         {showCategory && (
           <div className="block mb-6 p-4">
@@ -173,7 +172,6 @@ export const StartDeliveryModal: React.FC<StartDeliveryModalProps> = ({
             </div>
           </div>
         )}
-
         <div className="p-4 border-t flex justify-end gap-3">
           <button
             onClick={() => {

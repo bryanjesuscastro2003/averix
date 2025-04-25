@@ -196,6 +196,7 @@ def lambda_handler(event, context):
             "type": "success",
             "instructions": "Ubicación del cliente verificada",
             "content": "Por favor acepta el viaje para iniciar el proceso de entrega.\n\n• Revisa los detalles de la ubicación\n• Confirma que el área es accesible para drones",
+            "deliveryId": data["deliveryId"],
             "link": "https://meet.google.com/landing",
             "coordinates":{
                 "lat": "0",
@@ -206,13 +207,34 @@ def lambda_handler(event, context):
         }
 
     elif action == "acceptTrip":
-        roomClients = get_user(data["targetUserId"])
+        roomClientsA = get_user(data["targetUserId"]) #+ get_user(data["user"])
+        roomClientsB = get_user(data["user"])
+        roomClients = roomClientsA + roomClientsB
+        print("To confirm trip", data["user"], data["targetUserId"], roomClients)
         message = {
             "cd": "C",
             "title": "🔄 Viaje aceptado",
             "type": "success",
-            "instructions": "Preparando tu entrega",
-            "content": "El conductor ha aceptado tu solicitud.\n\n• El dron será preparado para el envío\n• Recibirás una notificación cuando esté en camino",
+            "instructions": "Preparando tu entrega.",
+            "content": "El sistema ha aceptado tu solicitud.\n\n• El dron será preparado para el envío\n• Recibirás una notificación cuando esté en camino",
+            "link": "https://meet.google.com/landing",
+            "deliveryId": data["deliveryId"],
+            "coordinates":{
+                "lat": "0",
+                "lng": "0", 
+            },
+            "mfstate": None,
+            "instanceId": ""
+        }
+
+    elif action == "cancelTrip":
+        roomClients = get_user(data["targetUserId"])
+        message = {
+            "cd": "X",
+            "title": "🔄 Viaje cancelado",
+            "type": "info",
+            "instructions": "Viaje cancelado",
+            "content": "El sistema ha cancelado tu solicitud.",
             "link": "https://meet.google.com/landing",
             "coordinates":{
                 "lat": "0",
@@ -431,7 +453,7 @@ def lambda_handler(event, context):
         if mfstate == "ZA":
             message = {
                 "cd": "I",
-                "title": "ZA",
+                "title": "ESTAMOS EN CAMINO !!!",
                 "type": "info",
                 "instructions": "Recogiendo el producto",
                 "content": f"El dron llegará a la ubicación de recogida en: {leftTime} minutos.",
@@ -446,7 +468,7 @@ def lambda_handler(event, context):
         elif mfstate == "AB":
             message = {
                 "cd": "I",
-                "title": "AB",
+                "title": "ESTAMOS EN CAMINO !!!",
                 "type": "info",
                 "instructions": "Entregando el producto",
                 "content": f"El dron llegará a la ubicación de entrega en: {leftTime} minutos",

@@ -92,6 +92,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
 
   const acceptService = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(
         DashboardEndpoints.acceptDeliveryTripEndpoint,
         {
@@ -115,14 +116,16 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
             targetUserId: data.delivery.secondaryUser,
             user: userData?.email || "",
             deliveryId: data.delivery.id,
+            sessionId: localStorage.getItem("idToken"),
           },
         });
-        navigate("/dashboard/deliveries");
+        //navigate("/dashboard/deliveries");
       }
     } catch (e) {
       console.error("Error:", e);
     } finally {
       setIsAcceptModalOpen(false);
+      setIsLoading(false);
     }
   };
 
@@ -147,6 +150,15 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
       console.log("Response:", dataResponse);
       if (!response.ok) {
         setMessage(dataResponse.message);
+        sendSocketMessage({
+          action: "cancelTrip",
+          data: {
+            targetUserId: data.delivery.secondaryUser,
+            user: userData?.email || "",
+            deliveryId: data.delivery.id,
+            sessionId: localStorage.getItem("idToken"),
+          },
+        });
       } else {
         navigate("/dashboard/deliveries");
       }
@@ -420,6 +432,7 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
                   onConfirm={acceptService}
                   price={parseFloat(data.delivery.totalCost)}
                   distance={parseFloat(data.delivery.totalDistance)}
+                  isLoading={isLoading}
                 />
                 <ShareKeysModal
                   isOpen={isShareModalOpen}

@@ -170,8 +170,6 @@ def lambda_handler(event, context):
             if lambda_response['STATE'] != "OK":
                 raise Exception(f"Error loading mqtt message . {lambda_response["VALUE"]["ERROR"]}")
             
-    
-
         elif nameAction == 'TAKEOFF':
             print("PREPARE TO GO TO POINT")
             if stateAction == "FALSE":
