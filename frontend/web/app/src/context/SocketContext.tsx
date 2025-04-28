@@ -55,7 +55,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
       //alert("New notification received");
 
       console.log("Received message:", data);
-      if (data.cd === "B" || data.cd === "C") {
+      if (
+        data.cd === "B" ||
+        data.cd === "C" ||
+        data.cd === "G" ||
+        data.cd === "H"
+      ) {
         setNotifications((prev) => [data, ...prev]);
         setCurrentNotification(data);
       } else if (data.cd !== "E" && data.cd !== "M") {

@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  ubuntu:
+    image: amazonlinux
+    volumes:
+      - ./instance:/app
+    command: tail -f /dev/null
+    tty: true
+    stdin_open: true
+    mem_limit: 512m # Sets hard memory limit
+    # or
+    mem_reservation: 256m # Sets soft memory limit

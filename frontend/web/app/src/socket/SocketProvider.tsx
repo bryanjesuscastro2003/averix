@@ -76,6 +76,7 @@ export const SocketProvider = () => {
                 instanceId: notificationToClose.instanceId,
               },
             });
+            if (notificationToClose.cd === "H") window.location.reload();
           }
         }
       } else {

@@ -65,12 +65,21 @@ const Header = () => {
 
   useEffect(() => {
     if (currentNotification) {
-      if (currentNotification.cd === "B" || currentNotification.cd === "C") {
+      if (
+        currentNotification.cd === "B" ||
+        currentNotification.cd === "C" ||
+        currentNotification.cd === "G" ||
+        currentNotification.cd === "H"
+      ) {
         const currentPath = `/dashboard/deliveries/details/${currentNotification.deliveryId}`;
         const isDeliveryPath = location.pathname.startsWith(
           "/dashboard/deliveries/details"
         );
-        if (isDeliveryPath) {
+        if (
+          isDeliveryPath &&
+          currentNotification.cd !== "G" &&
+          currentNotification.cd !== "H"
+        ) {
           setTimeout(() => {
             window.location.reload();
           }, 4000);
