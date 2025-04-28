@@ -7,6 +7,6 @@ backend/serverless/lambda/notifications/myenv
 /home/bryan/averix/simulation/instance/temp
 /home/bryan/averix/simulation/instance/temp2
 
-/home/bryan/averix/simulation/instance/temp2/DroneC1_small.cert.pem
-/home/bryan/averix/simulation/instance/temp2/DroneC1_small.private.key
-/home/bryan/averix/simulation/instance/temp2/DroneC1_small.public.key
+simulation/instance/temp2/DroneC1_small.cert.pem
+simulation/instance/temp2/DroneC1_small.private.key
+simulation/instance/temp2/DroneC1_small.public.key
