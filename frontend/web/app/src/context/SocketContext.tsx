@@ -8,6 +8,7 @@ import React, {
 import { Notification } from "../socket/SocketProvider";
 import { useWebSocket } from "../socket/WebSocketConn";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -18,6 +19,7 @@ interface NotificationContextType {
   setCurrentNotification: React.Dispatch<
     React.SetStateAction<Notification | null>
   >;
+  handleCloseNotification: (cd: string, decision: boolean) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | null>(null);
@@ -38,6 +40,37 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [currentNotification, setCurrentNotification] =
     useState<Notification | null>(null);
+  const { userData } = useAuth();
+  const [notificationsRegister, setNotificationsRegister] = useState<{
+    A: boolean;
+    B: boolean;
+    C: boolean;
+    X: boolean;
+    D: boolean;
+    F: boolean;
+    G: boolean;
+    H: boolean;
+    K: boolean;
+    L: boolean;
+    E: boolean;
+    M: boolean;
+    I: boolean;
+  }>({
+    A: false,
+    B: false,
+    C: false,
+    X: false,
+    D: false,
+    F: false,
+    G: false,
+    H: false,
+    K: false,
+    L: false,
+    E: false,
+    M: false,
+    I: false,
+  });
+
   // Initialize WebSocket connection
   const {
     isConnected: isSocketConnected,
@@ -48,32 +81,91 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );
 
+  useEffect(() => {
+    console.log("dnddjdkd -", notificationsRegister);
+  }, [notificationsRegister]);
+
+  const handleCloseNotification = (cd: string, decision: boolean) => {
+    const notificationToClose = notifications.find((n) => n.cd === cd);
+    console.log("Notification to close:", notifications);
+    if (cd === "G" || cd === "H") {
+      if (decision) {
+        setNotifications((prev) => prev.filter((n) => n.cd !== cd));
+        setNotificationsRegister((prev) => ({
+          ...prev,
+          [cd]: false,
+        }));
+        if (isSocketConnected) {
+          console.log("Sending confirmation message", notificationToClose);
+          sendSocketMessage({
+            action: cd === "G" ? "confirm_arrived_st1" : "confirm_arrived_st2",
+            data: {
+              deliveryId: null,
+              user: userData?.email || "",
+              sessionId: localStorage.getItem("idToken"),
+              instanceId: notificationToClose!.instanceId,
+            },
+          });
+          if (cd === "H") window.location.reload();
+        }
+      }
+    } else {
+      setNotifications((prev) => prev.filter((n) => n.cd !== cd));
+      setNotificationsRegister((prev) => ({
+        ...prev,
+        [cd]: false,
+      }));
+    }
+  };
   // Handle incoming WebSocket messages
   useEffect(() => {
     const cleanup = addMessageHandler((data: Notification) => {
       console.log("WebSocket message received:", data);
-      //alert("New notification received");
 
-      console.log("Received message:", data);
       if (
+        data.cd === "A" ||
         data.cd === "B" ||
         data.cd === "C" ||
+        data.cd === "X" ||
+        data.cd === "D" ||
+        data.cd === "F" ||
         data.cd === "G" ||
-        data.cd === "H"
+        data.cd === "H" ||
+        data.cd === "K" ||
+        data.cd === "L"
       ) {
+        // Check if the notification has already been registered
+        if (
+          data.cd === "B" ||
+          data.cd === "C" ||
+          data.cd === "G" ||
+          data.cd === "H"
+        ) {
+          setCurrentNotification(data);
+        }
+        if (notificationsRegister[data.cd] === true) {
+          console.log("Notification already registered:", data);
+          return; // Ignore if already registered
+        }
+        notificationsRegister[data.cd] = true; // Mark as registered
         setNotifications((prev) => [data, ...prev]);
+
+        if (data.cd === "G" || data.cd === "H") {
+          ["A", "B", "C", "X", "D", "F", "K", "L", "E", "M", "I"].forEach(
+            (cd) => handleCloseNotification(cd, true)
+          );
+        }
+      } else if (data.cd === "E") {
         setCurrentNotification(data);
-      } else if (data.cd !== "E" && data.cd !== "M") {
-        // Add new notification to the list
-        setNotifications((prev) => [data, ...prev]);
-      }
-      // Set as current notification
-      else if (data.cd === "M")
-        // time out 3 seconds then reload the page with window.location.reload()
+      } else if (data.cd === "M") {
+        setCurrentNotification(data);
         setTimeout(() => {
           window.location.reload();
         }, 3000);
-      else setCurrentNotification(data);
+      } else {
+        if (data.cd === "I") handleCloseNotification(data.cd, true);
+        setNotifications((prev) => [data, ...prev]);
+      }
     });
 
     return cleanup;
@@ -95,6 +187,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         sendSocketMessage,
         setNotifications,
         setCurrentNotification,
+        handleCloseNotification,
       }}
     >
       {children}

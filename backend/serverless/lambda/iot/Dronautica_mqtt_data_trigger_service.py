@@ -143,7 +143,34 @@ def lambda_handler(event, context):
             Instance Actions
         """
         print("prepare to takeoff bryan ", instanceId, nameAction, stateAction)
-        if nameAction in ["AVAILABLE", 'BUSY_ST_2']:
+  
+        if nameAction in ["AVAILABLE", "BUSY_ST_2"]:
+            if stateAction == "FALSE":
+                pass 
+            """
+                Prepare to Start
+            """
+            payload = {
+                "ACTION": "STARTUP",
+                "VALUE": 0
+            }
+            args = {
+                "DATA": {
+                    "INSTANCEID": instanceId,
+                    "PAYLOAD": json.dumps(payload)
+                } 
+            }
+            lambda_response = lambda_client.invoke(
+                FunctionName='Dronautica_mqtt_publisher_actions',  # Name of the Lambda function to invoke
+                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                Payload=json.dumps(args)
+            )
+            lambda_response = json.load(lambda_response['Payload'])
+            print(lambda_response)
+            if lambda_response['STATE'] != "OK":
+                raise Exception(f"Error loading mqtt message . {lambda_response["VALUE"]["ERROR"]}")
+
+        elif nameAction in ["STARTUP", "GETMFST"]:
             print("PREPARE TO TAKE OFF")
             if stateAction == "FALSE":
                 pass 
@@ -169,6 +196,85 @@ def lambda_handler(event, context):
             print(lambda_response)
             if lambda_response['STATE'] != "OK":
                 raise Exception(f"Error loading mqtt message . {lambda_response["VALUE"]["ERROR"]}")
+        
+        elif nameAction == "GETDAT":
+            if stateAction == "FALSE":
+                pass 
+            """
+                Prepare to send location A
+            """
+            payload = {
+                "ACTION": "GETDAT1",
+                "VALUE": deliveryItem["locationA"]
+            }
+            args = {
+                "DATA": {
+                    "INSTANCEID": instanceId,
+                    "PAYLOAD": json.dumps(payload)
+                } 
+            }
+            lambda_response = lambda_client.invoke(
+                FunctionName='Dronautica_mqtt_publisher_actions',  # Name of the Lambda function to invoke
+                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                Payload=json.dumps(args)
+            )
+            lambda_response = json.load(lambda_response['Payload'])
+            print(lambda_response)
+            if lambda_response['STATE'] != "OK":
+                raise Exception("Error loading mqtt message .")
+
+        elif nameAction == "GETDAT1":
+            if stateAction == "FALSE":
+                pass 
+            """
+                Prepare to send location A
+            """
+            payload = {
+                "ACTION": "GETDAT2",
+                "VALUE": deliveryItem["locationB"]
+            }
+            args = {
+                "DATA": {
+                    "INSTANCEID": instanceId,
+                    "PAYLOAD": json.dumps(payload)
+                } 
+            }
+            lambda_response = lambda_client.invoke(
+                FunctionName='Dronautica_mqtt_publisher_actions',  # Name of the Lambda function to invoke
+                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                Payload=json.dumps(args)
+            )
+            lambda_response = json.load(lambda_response['Payload'])
+            print(lambda_response)
+            if lambda_response['STATE'] != "OK":
+                raise Exception("Error loading mqtt message .")
+
+        elif nameAction == "GETDAT2":
+            if stateAction == "FALSE":
+                pass 
+            """
+                Prepare to send location A
+            """
+            payload = {
+                "ACTION": "GETMFST",
+                "VALUE": trackingItem["mfstate"]
+            }
+            args = {
+                "DATA": {
+                    "INSTANCEID": instanceId,
+                    "PAYLOAD": json.dumps(payload)
+                } 
+            }
+            lambda_response = lambda_client.invoke(
+                FunctionName='Dronautica_mqtt_publisher_actions',  # Name of the Lambda function to invoke
+                InvocationType='RequestResponse',  # Use 'Event' for async invocation
+                Payload=json.dumps(args)
+            )
+            lambda_response = json.load(lambda_response['Payload'])
+            print(lambda_response)
+            if lambda_response['STATE'] != "OK":
+                raise Exception("Error loading mqtt message .")
+
             
         elif nameAction == 'TAKEOFF':
             print("PREPARE TO GO TO POINT")

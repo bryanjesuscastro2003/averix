@@ -31,6 +31,7 @@ export const SocketProvider = () => {
     isSocketConnected,
     sendSocketMessage,
     currentNotification,
+    handleCloseNotification,
   } = useNotifications();
 
   const { userData, isAuthenticated } = useAuth();
@@ -52,15 +53,16 @@ export const SocketProvider = () => {
     // The reconnection logic is now handled by the useWebSocket hook inside NotificationProvider
   }, [isSocketConnected, userData?.email, sendSocketMessage]);
 
-  const handleCloseNotification = (id: string, decision: boolean) => {
-    const notificationToClose = notifications.find((n) => n.id === id); // Renamed to avoid shadowing
-    console.log("Notification to close:", notificationToClose);
+  /*
+  const handleCloseNotification = (cd: string, decision: boolean) => {
+    const notificationToClose = notifications.find((n) => n.cd === cd); // Renamed to avoid shadowing
+    console.log("Notification to close:", notifications);
 
     if (notificationToClose) {
       if (notificationToClose.cd === "G" || notificationToClose.cd === "H") {
         if (decision) {
           setNotifications(
-            (prev) => prev.filter((n) => n.id !== id) // Use consistent parameter name
+            (prev) => prev.filter((n) => n.cd !== cd) // Use consistent parameter name
           );
           if (isSocketConnected) {
             console.log("Sending confirmation message", notificationToClose);
@@ -81,67 +83,66 @@ export const SocketProvider = () => {
         }
       } else {
         setNotifications(
-          (prev) => prev.filter((n) => n.id !== id) // Use consistent parameter name
+          (prev) => prev.filter((n) => n.cd !== cd) // Use consistent parameter name
         );
+        console.log("Notification closed:", notifications);
       }
     }
-  };
+  };*/
+
+  useEffect(() => {
+    console.log(" notttt", notifications);
+  }, [notifications]);
 
   return (
-    <div className="fixed bottom-4 right-4 z-[1000] w-full max-w-xs">
+    <div className="fixed bottom-4 left-4 flex flex-col gap-2 z-50">
       {isAuthenticated && (
         <>
           {/* Notification stack container */}
-          <div className="flex flex-col items-end space-y-3">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className="w-full animate-fade-in-up animate-duration-300 animate-ease-out"
-              >
-                <InteractiveNotification
-                  type={notification.type}
-                  message={notification.title}
-                  id={notification.id}
-                  setConfirmDecision={setConfirmDecision}
-                  onClose={handleCloseNotification}
-                  showForm={
-                    notification.title
-                      ? notification.cd === "G" || notification.cd === "H"
-                      : false
-                  }
-                  chatContent={
-                    <div className="p-2 space-y-1">
-                      {notification.instructions && (
-                        <p className="text-sm text-gray-700 mb-1">
-                          {notification.instructions}
-                        </p>
-                      )}
-                      {notification.content && (
-                        <p className="text-sm text-gray-800">
-                          {notification.content}
-                        </p>
-                      )}
-                      {notification.isLink && (
-                        <a
-                          href={notification.linkValue}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline break-all"
-                        >
-                          {notification.linkValue}
-                        </a>
-                      )}
-                      {notification.title && (
-                        <p className="text-sm text-gray-700 mb-1">
-                          {notification.title}
-                        </p>
-                      )}
-                    </div>
-                  }
-                />
-              </div>
-            ))}
-          </div>
+          {notifications.map((notification) => (
+            <InteractiveNotification
+              key={notification.id}
+              type={notification.type}
+              message={notification.title}
+              id={notification.cd}
+              setConfirmDecision={setConfirmDecision}
+              onClose={handleCloseNotification}
+              showForm={
+                notification.title
+                  ? notification.cd === "G" || notification.cd === "H"
+                  : false
+              }
+              chatContent={
+                <div className="p-2 space-y-1">
+                  {notification.instructions && (
+                    <p className="text-sm text-gray-700 mb-1">
+                      {notification.instructions}
+                    </p>
+                  )}
+                  {notification.content && (
+                    <p className="text-sm text-gray-800">
+                      {notification.content}
+                    </p>
+                  )}
+                  {notification.isLink && (
+                    <a
+                      href={notification.linkValue}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline break-all"
+                    >
+                      {notification.linkValue}
+                    </a>
+                  )}
+                  {notification.title && (
+                    <p className="text-sm text-gray-700 mb-1">
+                      {notification.title}
+                    </p>
+                  )}
+                </div>
+              }
+            />
+          ))}
 
           {/* Online status indicator */}
           <div className="fixed right-2 bottom-4 z-[1000] max-w-xs">

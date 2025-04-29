@@ -299,7 +299,7 @@ def lambda_handler(event, context):
     
     elif action == "NOTIFICATION_DELIVERY_ARRIVED_ST1":
         roomClients = get_user(data["targetUserId"])
-        update_instanceId_by_username(data["targetUserId"], data["instanceId"])
+        #update_instanceId_by_username(data["targetUserId"], data["instanceId"])
         message = {
             "cd": "G",
             "title": "Puedes ver el dron sobre ti?",
@@ -312,13 +312,14 @@ def lambda_handler(event, context):
                 "lat": data["lat"],
                 "lng": data["lng"], 
             },
+            "deliveryId": data["deliveryId"],
             "mfstate": data["mfstate"],
             "instanceId": data["instanceId"]
         }
     
     elif action == "NOTIFICATION_DELIVERY_ARRIVED_ST2":
         roomClients = get_user(data["targetUserId"])
-        update_instanceId_by_username(data["targetUserId"], data["instanceId"])
+        #update_instanceId_by_username(data["targetUserId"], data["instanceId"])
         mfstate = data["mfstate"]
         isData = True
 
@@ -347,7 +348,8 @@ def lambda_handler(event, context):
                     "lng": data["lng"],
                 },
                 "mfstate": mfstate,
-                "instanceId": data["instanceId"]
+                "instanceId": data["instanceId"],
+                "deliveryId": data["deliveryId"]
             }
         else:
             message = None
@@ -416,7 +418,7 @@ def lambda_handler(event, context):
             "cLN": None
         }
         lambda_response = lambda_client.invoke(
-            FunctionName='Dronautica_mqtt_data_trigger_service',  
+            FunctionName='Dronautica_temp',  
             InvocationType='RequestResponse',  
             Payload=json.dumps(args)
         )
@@ -436,7 +438,7 @@ def lambda_handler(event, context):
             "cLN": None
         }
         lambda_response = lambda_client.invoke(
-            FunctionName='Dronautica_mqtt_data_trigger_service',  
+            FunctionName='Dronautica_temp',  
             InvocationType='RequestResponse',  
             Payload=json.dumps(args)
         )

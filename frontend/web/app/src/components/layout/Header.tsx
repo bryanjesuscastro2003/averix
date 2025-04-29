@@ -12,7 +12,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentSection, setCurrentSection] = useState("");
-  const { currentNotification } = useNotifications();
+  const { currentNotification, notifications } = useNotifications();
   const { sendMessage, isConnected } = useWebSocket(
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );
