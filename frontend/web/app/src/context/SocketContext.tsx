@@ -4,11 +4,14 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
 } from "react";
 import { Notification } from "../socket/SocketProvider";
 import { useWebSocket } from "../socket/WebSocketConn";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import useSound from 'use-sound';
+
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -41,21 +44,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentNotification, setCurrentNotification] =
     useState<Notification | null>(null);
   const { userData } = useAuth();
-  const [notificationsRegister, setNotificationsRegister] = useState<{
-    A: boolean;
-    B: boolean;
-    C: boolean;
-    X: boolean;
-    D: boolean;
-    F: boolean;
-    G: boolean;
-    H: boolean;
-    K: boolean;
-    L: boolean;
-    E: boolean;
-    M: boolean;
-    I: boolean;
-  }>({
+  const [notificationsRegister, setNotificationsRegister] = useState({
     A: false,
     B: false,
     C: false,
@@ -70,8 +59,45 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     M: false,
     I: false,
   });
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Inicializamos el audio
+  useEffect(() => {
+    audioRef.current = new Audio('/sounds/tone.mp3');
+    audioRef.current.volume = 0.7; // Volumen al 70%
+    
+    // Manejo de errores
+    audioRef.current.addEventListener('error', (e) => {
+      console.error('Error de audio:', e);
+    });
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.removeEventListener('error', () => {});
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
-  // Initialize WebSocket connection
+  const playSound = () => {
+    if (!audioRef.current) return;
+    
+    try {
+      audioRef.current.currentTime = 0; // Reinicia si ya está reproduciendo
+      audioRef.current.play().catch(error => {
+        console.error('Error al reproducir:', error);
+        // Solución para navegadores que bloquean autoplay
+        document.body.addEventListener('click', () => {
+          audioRef.current?.play();
+        }, { once: true });
+      });
+    } catch (error) {
+      console.error('Error general de audio:', error);
+    }
+  };
+
+  
+
   const {
     isConnected: isSocketConnected,
     sendMessage: sendSocketMessage,
@@ -117,10 +143,22 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
     }
   };
+
   // Handle incoming WebSocket messages
   useEffect(() => {
     const cleanup = addMessageHandler((data: Notification) => {
       console.log("WebSocket message received:", data);
+
+      // NOTIFICATIONS SOUND
+      const playNotificationSound = () => {
+        const audio = new Audio("/sounds/livechat-129007.mp3");
+        audio.play().catch((e) => {
+          console.warn("Error playing notification sound:", e);
+        });
+      };
+
+      playSound();
+      
 
       if (
         data.cd === "A" ||
@@ -134,7 +172,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         data.cd === "K" ||
         data.cd === "L"
       ) {
-        // Check if the notification has already been registered
         if (
           data.cd === "B" ||
           data.cd === "C" ||
@@ -145,9 +182,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         }
         if (notificationsRegister[data.cd] === true) {
           console.log("Notification already registered:", data);
-          return; // Ignore if already registered
+          return;
         }
-        notificationsRegister[data.cd] = true; // Mark as registered
+        notificationsRegister[data.cd] = true;
         setNotifications((prev) => [data, ...prev]);
 
         if (data.cd === "G" || data.cd === "H") {
@@ -171,7 +208,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     return cleanup;
   }, [addMessageHandler]);
 
-  // Reconnect WebSocket if not connected
   useEffect(() => {
     if (!isSocketConnected) {
       connect();
