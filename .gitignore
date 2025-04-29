@@ -10,3 +10,7 @@ backend/serverless/lambda/notifications/myenv
 simulation/instance/temp2/DroneC1_small.cert.pem
 simulation/instance/temp2/DroneC1_small.private.key
 simulation/instance/temp2/DroneC1_small.public.key
+
+simulation/instance/DroneC1_small.cert.pem
+simulation/instance/DroneC1_small.private.key
+simulation/instance/DroneC1_small.public.key
