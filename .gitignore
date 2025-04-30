@@ -3,16 +3,10 @@ backend/serverless/lambda/authentication/.env
 backend/serverless/lambda/notifications/venv
 backend/serverless/lambda/notifications/.env
 backend/serverless/lambda/notifications/myenv
-/home/bryan/averix/simulation/instance/aws-iot-device-sdk-python-v2
-/home/bryan/averix/simulation/instance/temp
-/home/bryan/averix/simulation/instance/temp2
 
-simulation/instance/temp2/DroneC1_small.cert.pem
-simulation/instance/temp2/DroneC1_small.private.key
-simulation/instance/temp2/DroneC1_small.public.key
 
-simulation/instance/DroneC1_small.cert.pem
-simulation/instance/DroneC1_small.private.key
-simulation/instance/DroneC1_small.public.key
+/home/bryan/averix/simulation/instance/aws-iot-device-sdk-python-v2/*
+simulation/instance/certificate.pem
+simulation/instance/private.key
+simulation/instance/.env
 
-simulation/instance/temp  
