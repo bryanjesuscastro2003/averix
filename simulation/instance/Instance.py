@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from Gps import GPSPathGenerator
 
 class Drone:
-    def __init__(self, name, id):
+    def __init__(self, name, id, baseLocationLat, baseLocationLng):
         self.id = id
         self.name = name
         self.batteryLevel = 100
@@ -20,7 +20,7 @@ class Drone:
         self.landing2 = False
         
         # GPS Setup
-        self.baseLocation = (18.489543074164384, -97.39278599921742)
+        self.baseLocation = (baseLocationLat, baseLocationLng)
         self.pointALocation = None
         self.pointBLocation = None
         self.currentLocation = self.baseLocation

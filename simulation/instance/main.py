@@ -19,6 +19,8 @@ topicPub = os.getenv("TOPIC_PUB")
 topicAct = os.getenv("TOPIC_ACT")
 droneName = os.getenv("DRONE_NAME")
 droneId = os.getenv("DRONE_ID")
+baseLocationLat = os.getenv("BASE_LOCATION_LAT")
+baseLocationLng = os.getenv("BASE_LOCATION_LNG")
 
 
 def clear_screen():
@@ -47,11 +49,18 @@ def welcome_message():
 
 def initialize_mqtt_client():
     """Initialize and return the MQTT client with error handling"""
+    global baseLocationLat, baseLocationLng
     try:
         
-        env_vars = [endpoint, certFilepath, priKeyFilepath, caFilepath, clientId, topicSub, topicPub, topicAct, droneName, droneId]
+        env_vars = [endpoint, certFilepath, priKeyFilepath, caFilepath, clientId, topicSub, topicPub, topicAct, droneName, droneId, baseLocationLat, baseLocationLng]
         if any(var is None for var in env_vars):
             raise ValueError("One or more environment variables are missing. Please check your .env file.")
+
+        print(baseLocationLat)
+        print(baseLocationLng)
+
+        baseLocationLat = float(baseLocationLat)
+        baseLocationLng = float(baseLocationLng)
 
         return AWSIoTMQTTClient(
             endpoint=endpoint,
@@ -62,7 +71,7 @@ def initialize_mqtt_client():
             topicSub=topicSub,
             topicPub=topicPub,
             topicAct=topicAct,
-            drone=Drone(droneName, droneId),
+            drone=Drone(droneName, droneId, baseLocationLat, baseLocationLng),
         )
     except Exception as e:
         print(f"Failed to initialize MQTT client: {str(e)}")
