@@ -4,6 +4,23 @@ from datetime import datetime
 from Instance import Drone
 from Mqtt import AWSIoTMQTTClient
 import time
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
+
+endpoint = os.getenv("AWS_IOT_ENDPOINT") 
+certFilepath = os.getenv("CERT_FILEPATH")
+priKeyFilepath = os.getenv("PRI_KEY_FILEPATH")
+caFilepath = os.getenv("CA_FILEPATH")
+clientId = os.getenv("CLIENT_ID")
+topicSub = os.getenv("TOPIC_SUB")
+topicPub = os.getenv("TOPIC_PUB")
+topicAct = os.getenv("TOPIC_ACT")
+droneName = os.getenv("DRONE_NAME")
+droneId = os.getenv("DRONE_ID")
+
+
 def clear_screen():
     """Clear the console screen in a cross-platform way"""
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -31,16 +48,21 @@ def welcome_message():
 def initialize_mqtt_client():
     """Initialize and return the MQTT client with error handling"""
     try:
+        
+        env_vars = [endpoint, certFilepath, priKeyFilepath, caFilepath, clientId, topicSub, topicPub, topicAct, droneName, droneId]
+        if any(var is None for var in env_vars):
+            raise ValueError("One or more environment variables are missing. Please check your .env file.")
+
         return AWSIoTMQTTClient(
-            endpoint="a2racyjm6zpt4f-ats.iot.us-east-1.amazonaws.com",
-            cert_filepath="DroneC1_small.cert.pem",
-            pri_key_filepath="DroneC1_small.private.key",
-            ca_filepath="root-CA.crt",
-            client_id="drone-client-1",
-            topicSub="dronautica/dataX/3808",
-            topicPub="dronautica/dataY/5815",
-            topicAct="dronautica/data/Dronautica",
-            drone=Drone("DroneC1_small", "f4c7"),
+            endpoint=endpoint,
+            cert_filepath=certFilepath,
+            pri_key_filepath=priKeyFilepath,
+            ca_filepath=caFilepath,
+            client_id=clientId,
+            topicSub=topicSub,
+            topicPub=topicPub,
+            topicAct=topicAct,
+            drone=Drone(droneName, droneId),
         )
     except Exception as e:
         print(f"Failed to initialize MQTT client: {str(e)}")
@@ -49,6 +71,7 @@ def initialize_mqtt_client():
 def main():
     try:
         welcome_message()
+        
         
         # Initialize client
         mqtt_client = initialize_mqtt_client()
