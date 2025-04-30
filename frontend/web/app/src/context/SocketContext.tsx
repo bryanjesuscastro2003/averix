@@ -156,8 +156,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           console.warn("Error playing notification sound:", e);
         });
       };
-
+      if (data.cd !== "A" && data.cd !== "E"){
       playSound();
+      }
       
 
       if (
