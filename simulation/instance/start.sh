@@ -2,22 +2,15 @@
 # stop script on error
 set -e
 
-# Check for python 3
-if ! python3 --version &> /dev/null; then
-  printf "\nERROR: python3 must be installed.\n"
-  exit 1
-fi
-
 # Check to see if root CA file exists, download if not
 if [ ! -f ./root-CA.crt ]; then
   printf "\nDownloading AWS IoT Root CA certificate from AWS...\n"
   curl https://www.amazontrust.com/repository/AmazonRootCA1.pem > root-CA.crt
 fi
 
-# Check to see if AWS Device SDK for Python exists, download if not
+# Check  if the folder for the AWS Device SDK for Python exists, create if not
 if [ ! -d ./aws-iot-device-sdk-python-v2 ]; then
-  printf "\nCloning the AWS SDK...\n"
-  git clone https://github.com/aws/aws-iot-device-sdk-python-v2.git --recursive
+  mkdir -p ./aws-iot-device-sdk-python-v2
 fi
 
 # Check to see if AWS Device SDK for Python is already installed, install if not
@@ -31,6 +24,5 @@ if ! python3 -c "import awsiot" &> /dev/null; then
   fi
 fi
 
-# run pub/sub sample app using certificates downloaded in package
-printf "\nRunning pub/sub sample application...\n"
-python3 aws-iot-device-sdk-python-v2/samples/pubsub.py --endpoint a2racyjm6zpt4f-ats.iot.us-east-1.amazonaws.com --ca_file root-CA.crt --cert DroneC1_small.cert.pem --key DroneC1_small.private.key --client_id basicPubSub --topic sdk/test/python --count 0
+printf "\nRunning application...\n"
+python3 main.py
