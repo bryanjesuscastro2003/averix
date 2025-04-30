@@ -9,3 +9,4 @@ backend/serverless/lambda/notifications/myenv
 simulation/instance/certificate.pem
 simulation/instance/private.key
 simulation/instance/.env
+
