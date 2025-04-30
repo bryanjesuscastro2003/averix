@@ -10,8 +10,7 @@ import { Notification } from "../socket/SocketProvider";
 import { useWebSocket } from "../socket/WebSocketConn";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import useSound from 'use-sound';
-
+import useSound from "use-sound";
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -60,20 +59,20 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     I: false,
   });
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+
   // Inicializamos el audio
   useEffect(() => {
-    audioRef.current = new Audio('/sounds/tone.mp3');
+    audioRef.current = new Audio("/sounds/tone.mp3");
     audioRef.current.volume = 0.7; // Volumen al 70%
-    
+
     // Manejo de errores
-    audioRef.current.addEventListener('error', (e) => {
-      console.error('Error de audio:', e);
+    audioRef.current.addEventListener("error", (e) => {
+      console.error("Error de audio:", e);
     });
-    
+
     return () => {
       if (audioRef.current) {
-        audioRef.current.removeEventListener('error', () => {});
+        audioRef.current.removeEventListener("error", () => {});
         audioRef.current = null;
       }
     };
@@ -81,22 +80,24 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const playSound = () => {
     if (!audioRef.current) return;
-    
+
     try {
       audioRef.current.currentTime = 0; // Reinicia si ya está reproduciendo
-      audioRef.current.play().catch(error => {
-        console.error('Error al reproducir:', error);
+      audioRef.current.play().catch((error) => {
+        console.error("Error al reproducir:", error);
         // Solución para navegadores que bloquean autoplay
-        document.body.addEventListener('click', () => {
-          audioRef.current?.play();
-        }, { once: true });
+        document.body.addEventListener(
+          "click",
+          () => {
+            audioRef.current?.play();
+          },
+          { once: true }
+        );
       });
     } catch (error) {
-      console.error('Error general de audio:', error);
+      console.error("Error general de audio:", error);
     }
   };
-
-  
 
   const {
     isConnected: isSocketConnected,
@@ -157,9 +158,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       };
 
-      playSound();
-      
-
+      if (data.cd !== "A" && data.cd !== "E") {
+        playSound();
+      }
       if (
         data.cd === "A" ||
         data.cd === "B" ||
@@ -224,8 +225,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         setNotifications,
         setCurrentNotification,
         handleCloseNotification,
-      }}
-    >
+      }}>
       {children}
     </NotificationContext.Provider>
   );
