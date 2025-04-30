@@ -5,7 +5,6 @@ backend/serverless/lambda/notifications/.env
 backend/serverless/lambda/notifications/myenv
 
 
-/home/bryan/averix/simulation/instance/aws-iot-device-sdk-python-v2/*
 simulation/instance/certificate.pem
 simulation/instance/private.key
 simulation/instance/.env
