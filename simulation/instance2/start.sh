@@ -39,9 +39,9 @@ aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 aws configure set region $AWS_REGION
 
-aws s3 cp s3://dronautica/certificates/Instance-9dfe/certificate.pem $CERT_FILEPATH
+aws s3 cp s3://dronautica/certificates/Instance-$DRONE_ID/certificate.pem $CERT_FILEPATH
 
-aws s3 cp s3://dronautica/certificates/Instance-9dfe/private.key $PRI_KEY_FILEPATH
+aws s3 cp s3://dronautica/certificates/Instance-$DRONE_ID/private.key $PRI_KEY_FILEPATH
 
 printf "\nRunning application...\n"
 python3 main.py
