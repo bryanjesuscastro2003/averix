@@ -152,3 +152,13 @@ class DynamodbItemRepository(ItemRepository):
         response = self.table.scan()
         items = response['Items']
         return items
+
+
+    def get_itemDstate(self, id: str) -> str:
+        item = ItemModel(id=id)
+        item = self.get_item_by_id(item)
+        if not item:
+            return None
+        return item["dstate"]
+
+    

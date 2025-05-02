@@ -46,5 +46,9 @@ class ItemRepository(ABC):
     @abstractmethod
     def get_items(self) -> list:
         pass
+
+    @abstractmethod
+    def get_itemDstate(self, id: str) -> str:
+        pass 
     
  

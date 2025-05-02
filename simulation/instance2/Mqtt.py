@@ -28,12 +28,10 @@ class AWSIoTMQTTClient:
         
         # Proxy configuration
         self.proxy_options = None
-        print("port, " , proxy_port)
         if proxy_host and proxy_port:
             self.proxy_options = http.HttpProxyOptions(
                 host_name=proxy_host,
                 port=proxy_port)
-        print("proxy_options", self.proxy_options)
     
     @property
     def reminderOn(self):

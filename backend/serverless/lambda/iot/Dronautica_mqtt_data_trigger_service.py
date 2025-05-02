@@ -5,6 +5,7 @@ import boto3
 lambda_client = boto3.client('lambda')
 
 def lambda_handler(event, context):
+    
     try:
 
         # EVENT DATA
@@ -46,6 +47,29 @@ def lambda_handler(event, context):
         """
 
         if nameAction != "AVAILABLE":
+            
+            # way to avoid repeated actions
+            sensibleActions = ["DOLANDST2"]
+            if nameAction in sensibleActions:
+                args = {
+                    "ACTION": "GETITEMDSTATE",
+                    "INSTANCE": {
+                        "INSTANCEID": instanceId
+                    }
+                } 
+                lambda_response = lambda_client.invoke(
+                    FunctionName='Dronautica_dynamodb_instance_actions', 
+                    InvocationType='RequestResponse',  
+                    Payload=json.dumps(args)
+                )
+                lambda_response = json.load(lambda_response['Payload'])
+                print("Estoy awui", lambda_response)
+                oldAction = lambda_response['VALUE']["DSTATE"]
+                
+                if oldAction != "LANDST1":
+                    raise Exception("Action already in progress")
+            #
+            
             args = {
                 "ACTION": "SETDSTATE", 
                 "INSTANCE": {
@@ -60,7 +84,7 @@ def lambda_handler(event, context):
                 Payload=json.dumps(args)
             )
             lambda_response = json.load(lambda_response['Payload'])
-            print(lambda_response)
+
             if lambda_response['STATE'] != "OK":
                 raise Exception(f"Error loading instances . {lambda_response["VALUE"]["ERROR"]}")
 

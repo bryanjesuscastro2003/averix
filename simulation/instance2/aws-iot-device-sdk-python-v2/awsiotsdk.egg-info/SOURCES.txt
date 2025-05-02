@@ -1,5 +1,4 @@
 README.md
-setup.cfg
 setup.py
 awsiot/__init__.py
 awsiot/eventstreamrpc.py
@@ -18,9 +17,3 @@ awsiotsdk.egg-info/SOURCES.txt
 awsiotsdk.egg-info/dependency_links.txt
 awsiotsdk.egg-info/requires.txt
 awsiotsdk.egg-info/top_level.txt
-test/test_ggv2.py
-test/test_mqtt.py
-test/test_mqtt5.py
-test/test_rpc.py
-test/test_samples.py
-test/test_shadow_state.py

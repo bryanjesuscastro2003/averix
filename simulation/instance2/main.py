@@ -53,7 +53,6 @@ def initialize_mqtt_client():
     try:
         
         env_vars = [endpoint, certFilepath, priKeyFilepath, caFilepath, clientId, topicSub, topicPub, topicAct, droneName, droneId, baseLocationLat, baseLocationLng]
-
         if any(var is None for var in env_vars):
             raise ValueError("One or more environment variables are missing. Please check your .env file.")
 
@@ -62,7 +61,7 @@ def initialize_mqtt_client():
 
         baseLocationLat = float(baseLocationLat)
         baseLocationLng = float(baseLocationLng)
-        print("vamos a pasar los valores")
+
         return AWSIoTMQTTClient(
             endpoint=endpoint,
             cert_filepath=certFilepath,
@@ -85,7 +84,6 @@ def main():
         
         # Initialize client
         mqtt_client = initialize_mqtt_client()
-        print("MQTT client initialized successfully.", mqtt_client)
         
         # Connect with retry logic
         max_retries = 3

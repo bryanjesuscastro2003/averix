@@ -4,7 +4,7 @@
 
 This document provides information about the AWS IoT Device SDK v2 for Python. This SDK is built on the [AWS Common Runtime](https://docs.aws.amazon.com/sdkref/latest/guide/common-runtime.html)
 
-*__Jump To:__*
+_Jump To:_
 * [Installation](#installation)
 * [Samples](samples)
 * [Mac-Only TLS Behavior](#mac-only-tls-behavior)
@@ -26,19 +26,19 @@ This document provides information about the AWS IoT Device SDK v2 for Python. T
 
 #### MacOS and Linux:
 
-```
+
 python3 -m pip install awsiotsdk
-```
+
 
 #### Windows:
 
-```
+
 python -m pip install awsiotsdk
-```
+
 
 ### Install from source
 
-```bash
+bash
 # 1. Create a workspace directory to hold all the SDK files
 mkdir sdk-workspace
 cd sdk-workspace
@@ -54,7 +54,7 @@ sed -i "s/__version__ = '1.0.0-dev'/__version__ = '<SDK_VERSION>'/" \
 
 # 4. Install using Pip (use 'python' instead of 'python3' on Windows)
 python3 -m pip install ./aws-iot-device-sdk-python-v2
-```
+
 
 ## Samples
 
@@ -64,9 +64,9 @@ python3 -m pip install ./aws-iot-device-sdk-python-v2
 
 Please note that on Mac, once a private key is used with a certificate, that certificate-key pair is imported into the Mac Keychain.  All subsequent uses of that certificate will use the stored private key and ignore anything passed in programmatically.  Beginning in v1.7.3, when a stored private key from the Keychain is used, the following will be logged at the "info" log level:
 
-```
+
 static: certificate has an existing certificate-key pair that was previously imported into the Keychain.  Using key from Keychain instead of the one provided.
-```
+
 
 ## Getting Help
 

@@ -8,6 +8,7 @@ from application.SetStationLocationUseCase import SetStationLocationUseCase
 from application.GetItemsUseCase import GetItemsUseCase
 from application.GetItemByIdUseCase import GetItemByIdUseCase
 from application.GetItemsAvailablesByCapacityUseCase import GetItemsAvailablesByCapacityUseCase
+from application.GetItemDstateByIdUseCase import GetItemDstateByIdUseCase
 from domain.model.ItemModel import ItemModel
 
 
@@ -21,12 +22,13 @@ setStationLocationUseCase = SetStationLocationUseCase(itemRepository)
 getItemsUseCase = GetItemsUseCase(itemRepository)
 getItemByIdUseCase = GetItemByIdUseCase(itemRepository)
 getItemsAvailablesByCapacityUseCase = GetItemsAvailablesByCapacityUseCase(itemRepository)
+getItemDstateByIdUseCase = GetItemDstateByIdUseCase(itemRepository)
 
 
 def lambda_handler(event, context):
     try:
         action = event['ACTION']
-        if action not in ["GETITEMSAVAILABLES", "GETITEMSAVAILABLESBYCAPACITY","GETITEMBYID" ,"GETITEMS","SETDSTATE", "GETFULLITEM", "PUTITEM", "PACKAGEITEM", "SETSTATIONLOCATION"]:
+        if action not in ["GETITEMSAVAILABLES","GETITEMDSTATE", "GETITEMSAVAILABLESBYCAPACITY","GETITEMBYID" ,"GETITEMS","SETDSTATE", "GETFULLITEM", "PUTITEM", "PACKAGEITEM", "SETSTATIONLOCATION"]:
             raise Exception("Invalid Action") 
 
         if action == "GETITEMSAVAILABLES": 
@@ -147,6 +149,18 @@ def lambda_handler(event, context):
                 "STATE": "OK",
                 "VALUE": item
             }
+        
+        elif action == "GETITEMDSTATE":
+            instanceId = event["INSTANCE"]['INSTANCEID']
+            itemDstate = getItemDstateByIdUseCase.execute(instanceId)
+
+            return {
+                "STATE": "OK",
+                "VALUE": {
+                    "DSTATE": itemDstate
+                }
+            }
+
 
 
     except Exception as e:
