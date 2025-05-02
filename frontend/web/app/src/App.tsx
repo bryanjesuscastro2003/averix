@@ -31,8 +31,7 @@ const App: React.FC = () => {
           <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-white"
-            >
+              className="block text-sm font-medium text-white">
               Username
             </label>
             <input
@@ -48,8 +47,7 @@ const App: React.FC = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-white"
-            >
+              className="block text-sm font-medium text-white">
               Password
             </label>
             <input
@@ -65,8 +63,7 @@ const App: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-            >
+              className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
               Login
             </button>
           </div>
@@ -81,8 +78,7 @@ const App: React.FC = () => {
           <p className="mt-2">
             <button
               onClick={() => setIsForgotPasswordOpen(true)}
-              className="text-purple-200 hover:text-purple-100"
-            >
+              className="text-purple-200 hover:text-purple-100">
               Forgot Password?
             </button>
           </p>
@@ -100,8 +96,7 @@ const App: React.FC = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-white"
-                >
+                  className="block text-sm font-medium text-white">
                   Email
                 </label>
                 <input
@@ -117,16 +112,14 @@ const App: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                >
+                  className="w-full py-2 px-4 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
                   Reset Password
                 </button>
               </div>
               <div className="text-center">
                 <button
                   onClick={() => setIsForgotPasswordOpen(false)}
-                  className="text-purple-200 hover:text-purple-100"
-                >
+                  className="text-purple-200 hover:text-purple-100">
                   Cancel
                 </button>
               </div>

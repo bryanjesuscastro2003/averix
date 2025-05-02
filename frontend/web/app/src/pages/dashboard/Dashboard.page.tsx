@@ -50,15 +50,21 @@ const Dashboard: React.FC = () => {
           <div className="space-y-4">
             <Link
               to="/dashboard/deliveries"
-              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
-            >
+              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors">
               Historial de Viajes
             </Link>
             <Link
               to="/nosotros"
-              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
-            >
+              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors">
               Sobre Nosotros
+            </Link>
+            <Link
+              to="/colaboradores"
+              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors relative">
+              Ver Colaboradores
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                6
+              </span>
             </Link>
           </div>
 

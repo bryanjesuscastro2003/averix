@@ -72,8 +72,7 @@ createRoot(document.getElementById("root")!).render(
           <Routes>
             <Route
               path="/"
-              element={<Navigate to="/auth/login" replace />}
-            ></Route>
+              element={<Navigate to="/auth/login" replace />}></Route>
             <Route path="/nosotros" element={<Nosotros />}></Route>
             <Route path="/colaboradores" element={<Colaboradores />}></Route>
             <Route
@@ -90,8 +89,7 @@ createRoot(document.getElementById("root")!).render(
                     <Route path="reset-password" element={<ResetPassword />} />
                   </Routes>
                 </AuthProtectedRouteRoute>
-              }
-            ></Route>
+              }></Route>
             <Route
               path="/dashboard/*"
               element={
@@ -156,8 +154,7 @@ createRoot(document.getElementById("root")!).render(
                             />
                           </Routes>
                         </AdminProtectedRoute>
-                      }
-                    ></Route>
+                      }></Route>
                   </Routes>
                 </AuthenticatedProtectedRouteRoute>
               }
