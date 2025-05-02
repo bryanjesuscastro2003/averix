@@ -27,9 +27,9 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState<boolean>(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [verificationCode, setVerificationCode] = useState(data.delivery.id);
+  const domain = import.meta.env.VITE_API_DOMAIN;
   const [verificationLinkCode, setVerificationLinkCode] = useState(
-    "https://7vlx93vd-5175.usw3.devtunnels.ms/dashboard/deliveries/" +
-      data.delivery.id
+    domain + "/dashboard/deliveries/" + data.delivery.id
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const { isSocketConnected, sendSocketMessage, currentNotification } =

@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
               Historial de Viajes
             </Link>
             <Link
-              to="/track"
+              to="/nosotros"
               className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
             >
               Sobre Nosotros

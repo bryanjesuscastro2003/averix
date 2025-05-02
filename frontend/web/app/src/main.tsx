@@ -24,6 +24,8 @@ import { DeliveryDetailsPage } from "./pages/dashboard/deliveries/tracking/detai
 import { InstanceDetailsPage } from "./pages/dashboard/instances/details/Instancedetailspage";
 import { SocketProvider } from "./socket/SocketProvider";
 import { NotificationProvider } from "./context/SocketContext";
+import { Colaboradores } from "./pages/common/Colaboradores.page";
+import { Nosotros } from "./pages/common/Nosotros.page";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -72,6 +74,8 @@ createRoot(document.getElementById("root")!).render(
               path="/"
               element={<Navigate to="/auth/login" replace />}
             ></Route>
+            <Route path="/nosotros" element={<Nosotros />}></Route>
+            <Route path="/colaboradores" element={<Colaboradores />}></Route>
             <Route
               path="/auth/*"
               element={
