@@ -48,3 +48,26 @@ services:
       - AWS_ACCESS_KEY_ID=AKIAXYKJQM764OCY4IUH
       - AWS_SECRET_ACCESS_KEY=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
       - AWS_REGION=us-east-1
+  dronebryan:
+    build:
+      context: ./instance2
+      dockerfile: Dockerfile
+    mem_limit: 512m # Sets hard memory limit
+    # or
+    mem_reservation: 256m # Sets soft memory limit
+    environment:
+      - AWS_IOT_ENDPOINT=a2racyjm6zpt4f-ats.iot.us-east-1.amazonaws.com
+      - CERT_FILEPATH=certificate.pem
+      - PRI_KEY_FILEPATH=private.key
+      - CA_FILEPATH=root-CA.crt
+      - CLIENT_ID=bryanmini
+      - TOPIC_SUB=dronautica/dataX/d790
+      - TOPIC_PUB=dronautica/dataY/e228
+      - TOPIC_ACT=dronautica/data/Dronautica
+      - DRONE_NAME=bryanmini
+      - DRONE_ID=3bda
+      - BASE_LOCATION_LAT=18.489543074164387
+      - BASE_LOCATION_LNG=-97.39278599921742
+      - AWS_ACCESS_KEY_ID=AKIAXYKJQM764OCY4IUH
+      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_REGION=us-east-1
