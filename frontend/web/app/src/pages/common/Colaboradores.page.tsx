@@ -17,29 +17,29 @@ export const Colaboradores: React.FC = () => {
   const listaColaboradores: Colaborador[] = [
     {
       id: 1,
-      nombre: "Jio",
+      nombre: "Jiovana",
       email: "ajiovana@empresa.com",
-      rol: "contador Publico",
+      rol: "Contador Publico",
       departamento: "Gestion",
 
       telefono: "+1 555-123-4567",
 
       skills: ["Administracion"],
       proyectos: 1,
-      foto: "/images/Jio.jpeg",
+      foto: "/images/conta.jpeg",
     },
     {
       id: 2,
-      nombre: "Jesus Bryan Castro ",
-      email: "carlos.rodriguez@empresa.com",
+      nombre: "Bryan Jesus Castro Coello ",
+      email: "Bryanjesuss@gmail.com.com",
       rol: " DevOps",
-      departamento: "Tecnologia ",
+      departamento: "Tecnologia",
 
       telefono: "+1 555-234-5678",
 
-      skills: ["AWS", "Docker", "Kubernetes", "CI/CD"],
+      skills: ["DEVOPS"],
       proyectos: 8,
-      foto: "https://randomuser.me/api/portraits/men/32.jpg",
+      foto: "/images/bryan3.jpeg",
     },
     {
       id: 3,
@@ -76,7 +76,7 @@ export const Colaboradores: React.FC = () => {
 
       telefono: "+1 555-567-8901",
 
-      skills: ["Mecanismos", "Redes", "Electronica"],
+      skills: ["Electronica"],
       proyectos: 6,
       foto: "/images/diego.jpeg",
     },
@@ -89,7 +89,7 @@ export const Colaboradores: React.FC = () => {
 
       telefono: "+1 555-678-9012",
 
-      skills: ["Operaciones", "AWS"],
+      skills: ["OPS"],
       proyectos: 9,
       foto: "/images/adrian.jpeg ",
     },
