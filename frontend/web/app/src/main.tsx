@@ -26,6 +26,7 @@ import { SocketProvider } from "./socket/SocketProvider";
 import { NotificationProvider } from "./context/SocketContext";
 import { Colaboradores } from "./pages/common/Colaboradores.page";
 import { Nosotros } from "./pages/common/Nosotros.page";
+import { Footer } from "./components/layout/Footer";
 
 const AuthProtectedRouteRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -169,5 +170,6 @@ createRoot(document.getElementById("root")!).render(
         <SocketProvider />
       </NotificationProvider>
     </AuthProvider>
+    <Footer />
   </StrictMode>
 );
