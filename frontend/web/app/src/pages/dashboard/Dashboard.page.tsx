@@ -43,9 +43,6 @@ const Dashboard: React.FC = () => {
           <h1 className="text-2xl font-bold text-[#00a0d2] mb-4 drop-shadow-md">
             Panel de Control
           </h1>
-          <p className="text-black text-opacity-90 mb-8 drop-shadow-md">
-            Bienvenido a su panel de entregas con drones
-          </p>
 
           <div className="space-y-4">
             <Link
@@ -60,11 +57,17 @@ const Dashboard: React.FC = () => {
             >
               Sobre Nosotros
             </Link>
+            <Link
+              to="/colaboradores"
+              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors"
+            >
+              Ver Colaboradores
+            </Link>
           </div>
 
           <div className="mt-8 pt-6 border-t border-white border-opacity-20">
             <p className="text-sm text-black text-opacity-70 drop-shadow-md">
-              SISTEMA DE GESTION DE ENTREGAS CON DRONES
+              SISTEMA DE GESTION SOBRE ENTREGAS CON DRONES
             </p>
           </div>
         </div>

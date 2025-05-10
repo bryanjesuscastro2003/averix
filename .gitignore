@@ -11,3 +11,5 @@ simulation/instance/.env
 
 simulation/instance2/private.key
 simulation/instance2/certificate.pem
+
+simulation/docker-compose.yaml
