@@ -3,7 +3,7 @@ backend/serverless/lambda/authentication/.env
 backend/serverless/lambda/notifications/venv
 backend/serverless/lambda/notifications/.env
 backend/serverless/lambda/notifications/myenv
-
+averix/frontend/web/app/node_modules
 
 simulation/instance/certificate.pem
 simulation/instance/private.key
