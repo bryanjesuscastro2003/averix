@@ -39,15 +39,12 @@ const Dashboard: React.FC = () => {
               OLI<span className="text-[#00a0d2]">VIA</span>
             </div>
           </div>
-
           <h1 className="text-2xl font-bold text-[#00a0d2] mb-4 drop-shadow-md">
             Panel de Control
           </h1>
-          <p className="text-black text-opacity-90 mb-8 drop-shadow-md">
-            Bienvenido a su panel de entregas con drones
-          </p>
-
-          <div className="space-y-4">
+          <h2 className="mb-2 text-black text-opacity-90  drop-shadow-md"></h2>
+          BIENVENIDO
+          <div className="space-y-4 mt-4">
             <Link
               to="/dashboard/deliveries"
               className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors">
@@ -60,17 +57,13 @@ const Dashboard: React.FC = () => {
             </Link>
             <Link
               to="/colaboradores"
-              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors relative">
+              className="block w-full py-3 px-4 bg-[#00a0d2] bg-opacity-90 text-white font-medium rounded-sm hover:bg-[#0088b8] transition-colors">
               Ver Colaboradores
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                6
-              </span>
             </Link>
           </div>
-
           <div className="mt-8 pt-6 border-t border-white border-opacity-20">
             <p className="text-sm text-black text-opacity-70 drop-shadow-md">
-              SISTEMA DE GESTION DE ENTREGAS CON DRONES
+              LA NUEVA ERA DE ENTREGAS
             </p>
           </div>
         </div>

@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@types/workbox-webpack-plugin": "^5.1.8",
+    "web-vitals": "^4.2.4",
+    "workbox-webpack-plugin": "^7.3.0"
+  },
+  "devDependencies": {
+    "vite-plugin-pwa": "^1.0.0"
+  }
+}

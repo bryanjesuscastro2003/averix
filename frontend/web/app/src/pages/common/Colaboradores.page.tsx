@@ -7,9 +7,7 @@ interface Colaborador {
   email: string;
   rol: string;
   departamento: string;
-  fechaIngreso: string;
   telefono: string;
-  direccion: string;
   skills: string[];
   proyectos: number;
   foto: string;
@@ -20,81 +18,81 @@ export const Colaboradores: React.FC = () => {
   const listaColaboradores: Colaborador[] = [
     {
       id: 1,
-      nombre: "jiovana de Castro Coello",
+      nombre: "Jio",
       email: "ajiovana@empresa.com",
       rol: "contador Publico",
-      departamento: "Tecnología",
-      fechaIngreso: "15/03/2020",
+      departamento: "Gestion",
+
       telefono: "+1 555-123-4567",
-      direccion: "Av. Principal 123, Ciudad",
-      skills: ["React", "TypeScript", "UI/UX"],
-      proyectos: 12,
-      foto: "https://randomuser.me/api/portraits/women/44.jpg",
+
+      skills: ["Administracion"],
+      proyectos: 1,
+      foto: "/images/Jio.jpeg",
     },
     {
       id: 2,
-      nombre: "jesus bryan grezz garcia ",
+      nombre: "Jesus Bryan Castro ",
       email: "carlos.rodriguez@empresa.com",
-      rol: "Ingeniero de DevOps",
-      departamento: "Operaciones",
-      fechaIngreso: "22/07/2019",
+      rol: " DevOps",
+      departamento: "Tecnologia ",
+
       telefono: "+1 555-234-5678",
-      direccion: "Calle Secundaria 456, Ciudad",
+
       skills: ["AWS", "Docker", "Kubernetes", "CI/CD"],
       proyectos: 8,
       foto: "https://randomuser.me/api/portraits/men/32.jpg",
     },
     {
       id: 3,
-      nombre: "christian campos cortes ",
+      nombre: "Christian Campos Cortes ",
       email: "060104.@empresa.com",
-      rol: "desarrollador frontend",
-      departamento: "Producto",
-      fechaIngreso: "10/01/2021",
+      rol: "Desarrollador Frontend",
+      departamento: "Tecnologia",
+
       telefono: "+1 555-345-6789",
-      direccion: "Boulevard Norte 789, Ciudad",
-      skills: ["Figma", "Adobe XD", "User Research", "Prototyping"],
+
+      skills: ["Desarrollador Frontend"],
       proyectos: 15,
-      foto: "https://randomuser.me/api/portraits/women/68.jpg",
+      foto: "/images/chris.jpeg",
     },
     {
       id: 4,
-      nombre: "jesus emanuel de mondragon",
+      nombre: "Jesus Emanuel Grez Garcia ",
       email: "jesusemanuel@empresa.com",
-      rol: "Project Manager",
-      departamento: "Gestión",
-      fechaIngreso: "05/11/2018",
+      rol: "Desarrollador Frontend",
+      departamento: "Tecnologia",
+
       telefono: "+1 555-456-7890",
-      direccion: "Plaza Central 101, Ciudad",
-      skills: ["Scrum", "Agile", "Jira", "Leadership"],
+
+      skills: ["Desarrollador Frontend"],
       proyectos: 22,
-      foto: "https://randomuser.me/api/portraits/men/75.jpg",
+      foto: "/images/grezz.jpeg",
     },
     {
       id: 5,
-      nombre: "Sofía González",
-      email: "sofia.gonzalez@empresa.com",
-      rol: "Desarrolladora Backend",
+      nombre: "Diego Mondragon Montes ",
+      email: "diego.lopez@empresa.com",
+      rol: "Desarrollador Backend",
       departamento: "Tecnología",
-      fechaIngreso: "30/05/2022",
+
       telefono: "+1 555-567-8901",
-      direccion: "Avenida Sur 202, Ciudad",
-      skills: ["Node.js", "Python", "SQL", "APIs"],
+
+      skills: ["Mecanismos", "Redes", "Electronica"],
       proyectos: 6,
-      foto: "https://randomuser.me/api/portraits/women/90.jpg",
+      foto: "/images/diego.jpeg",
     },
     {
       id: 6,
-      nombre: "David López",
-      email: "david.lopez@empresa.com",
-      rol: "Analista de Datos Senior",
-      departamento: "Business Intelligence",
-      fechaIngreso: "14/09/2021",
+      nombre: "Adrian Abraham Sánchez",
+      email: "Adrian.zanchez@empresa.com",
+      rol: "DevOps",
+      departamento: "Tecnologia",
+
       telefono: "+1 555-678-9012",
-      direccion: "Calle Este 303, Ciudad",
-      skills: ["SQL", "Power BI", "Machine Learning", "Big Data"],
+
+      skills: ["Operaciones", "AWS"],
       proyectos: 9,
-      foto: "https://randomuser.me/api/portraits/men/22.jpg",
+      foto: "/images/adrian.jpeg ",
     },
   ];
 
@@ -138,20 +136,6 @@ export const Colaboradores: React.FC = () => {
                   </span>
                   <p className="text-blue-600">{colaborador.email}</p>
                   <p>{colaborador.telefono}</p>
-                </div>
-
-                <div>
-                  <span className="text-sm font-semibold text-gray-500">
-                    Dirección:
-                  </span>
-                  <p>{colaborador.direccion}</p>
-                </div>
-
-                <div>
-                  <span className="text-sm font-semibold text-gray-500">
-                    Fecha de Ingreso:
-                  </span>
-                  <p>{colaborador.fechaIngreso}</p>
                 </div>
 
                 <div>
