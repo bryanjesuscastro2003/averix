@@ -1,89 +1,128 @@
-git add .
-git commit -m "update"
+📋 README - Sistema de Entrega con Drones Autónomos
+🚀 Visión General
+Sistema completo para gestión automatizada de entregas con drones, que incluye:
 
-git push origin main
+Frontend: Panel de control interactivo
 
-# reset commit
+Backend: API para gestión de flota y pedidos
 
-git reset --soft HEAD~1
-git reset --mixed HEAD~1
-git reset --hard HEAD~1
+Cloud: Infraestructura escalable en AWS
 
-# revert commit
+Simulación: Entorno virtual para pruebas de rutas
 
-git revert HEAD
-git revert HEAD~1
-git revert HEAD~2
+🛠 Arquitectura del Sistema
 
-# reset changes
+1. Frontend (React + TypeScript)
+   Tecnologías: React 18, TypeScript, Tailwind CSS, Socket.io
 
-git restore .
-git restore --staged .
+Funcionalidades:
 
-# update a branch
+Dashboard de seguimiento en tiempo real
 
-git checkout -b new-branch
-git pull origin main
+Gestión de pedidos y usuarios
 
-# merge a branch
+Visualización de métricas de flota
 
-git checkout main
-git merge new-branch
-git branch -d new-branch
+2. Backend (Node.js + Python)
+   Tecnologías:
 
-# merge with conflict
+API Principal: Node.js (Express) + TypeScript
 
-git checkout -b new-branch
-git pull origin main
-git checkout main
-git merge new-branch -X theirs  
-git merge new-branch -X ours
+Procesamiento de Rutas: Python (Algoritmos de optimización)
 
-3##
+Endpoints Clave:
 
-Since you want to completely prefer all changes from branchA and overwrite branchB (including resolving any conflicts in favor of branchA), here's how to do it:
-Method 1: Hard Reset (Fastest & Cleanest)
+/api/drones: Gestión de flota
 
-This will make branchB identical to branchA:
+/api/orders: Procesamiento de pedidos
+
+/ws/tracking: WebSockets para tracking en vivo
+
+3. Cloud (AWS)
+   Servicios Utilizados:
+
+ECS: Contenedores Docker para frontend/backend
+
+Lambda: Procesamiento de eventos
+
+RDS: PostgreSQL para base de datos
+
+S3: Almacenamiento de datos de simulación
+
+4. Simulación (Python + ROS)
+   Entorno:
+
+Gazebo para simulación física
+
+ROS (Robot Operating System)
+
+Características:
+
+Pruebas de rutas en diferentes condiciones climáticas
+
+Simulación de fallos técnicos
+
+⚙️ Configuración del Entorno
+Requisitos
+Docker 20+
+
+Node.js 18+
+
+Python 3.9+
+
+Ejecución Local
 bash
 
-# Switch to branchB
+# 1. Clonar repositorio
 
-git checkout branchB
+git clone https://github.com/tu-repo/drone-delivery-system.git
 
-# Make branchB exactly match branchA (including all files, history, etc.)
+# 2. Iniciar contenedores
 
-git reset --hard branchA
+docker-compose -f docker-compose.dev.yml up --build
+Variables de Entorno
+Crear .env en cada componente:
 
-# Force push to remote (if needed)
+env
 
-git push origin branchB --force-with-lease
+# Frontend
 
-####################3
-Method 2: Merge with "Ours" Strategy
+VITE_API_URL=http://localhost:5000
+VITE_WS_URL=ws://localhost:5001
 
-If you prefer a merge commit (keeps branchB's history):
+# Backend
+
+DB_URL=postgres://user:pass@db:5432/drones
+JWT_SECRET=your_secret_key
+📌 Roadmap
+Implementado
+✅ Sistema básico de seguimiento
+✅ API para gestión de pedidos
+✅ Simulación de rutas básicas
+
+Próximos Pasos
+🔜 Integración con sistemas de tráfico aéreo
+🔜 Machine Learning para optimización de rutas
+🔜 Versión móvil para repartidores
+
+🌐 Despliegue en Producción
 bash
-Copy
 
-git checkout branchB
-git merge -X theirs branchA # Prefer ALL changes from branchA in conflicts
+# Desplegar en AWS ECS
 
-# If any unmerged files remain (shouldn't happen with -X theirs)
+aws ecs update-service --cluster drone-cluster --service backend --force-new-deployment
+📊 Diagrama de Componentes
+[Frontend] ←WebSocket→ [Backend] ←gRPC→ [Simulador]
+↑ ↑
+(API REST) (Base de Datos)
+↓ ↓
+[Cliente Web] [AWS Cloud]
+📜 Licencia
+MIT License - Libre para uso y modificación
 
-git checkout branchA -- . # Overwrite all files with branchA versions
-git add .
-git commit -m "Merge branchA: Preferring all changes from branchA"
-git push origin branchB
+🤝 ¿Cómo Contribuir?
+Reporta bugs mediante issues
 
-##########################
-Method 3: Checkout All Files from BranchA
+Propón nuevas features
 
-Alternative if you just want the files but keep branchB's commits:
-bash
-Copy
-
-git checkout branchB
-git checkout branchA -- . # Take all files from branchA
-git commit -m "Overwrite all files with branchA version"
-git push origin branchB
+Envía Pull Requests
