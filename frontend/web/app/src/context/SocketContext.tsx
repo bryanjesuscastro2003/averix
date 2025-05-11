@@ -3,14 +3,11 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useCallback,
   useRef,
 } from "react";
 import { Notification } from "../socket/SocketProvider";
 import { useWebSocket } from "../socket/WebSocketConn";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import useSound from "use-sound";
 
 interface NotificationContextType {
   notifications: Notification[];

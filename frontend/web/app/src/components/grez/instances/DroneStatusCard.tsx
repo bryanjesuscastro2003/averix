@@ -3,7 +3,6 @@ import {
   FiBattery,
   FiThermometer,
   FiDroplet,
-  FiCpu,
   FiAlertTriangle,
 } from "react-icons/fi";
 import { IInstanceStatus } from "../../../types/data/IInstance";

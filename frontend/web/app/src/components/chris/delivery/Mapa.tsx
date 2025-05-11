@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMapEvents,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -109,94 +103,93 @@ const Mapa: React.FC<MapProps> = ({
 
   return (
     <div className="h-80 w-full rounded-md overflow-hidden">
-  <MapContainer
-    center={center}
-    zoom={zoom}
-    style={{ height: "100%", width: "100%" }}
-  >
-    <TileLayer
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> colaboradores'
-    />
-    
-    {/* Marcadores de ubicaciones */}
-    {points?.locationA && (
-      <Marker
-        position={[points.locationA.lat, points.locationA.lng]}
-        icon={houseIcon}
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        style={{ height: "100%", width: "100%" }}
       >
-        <Popup>
-          <div className="font-semibold">{points.locationA.name}</div>
-          <div>Ubicación A</div>
-          <div className="text-sm text-gray-600">
-            Latitud: {points.locationA.lat.toFixed(6)}, Longitud:{" "}
-            {points.locationA.lng.toFixed(6)}
-          </div>
-        </Popup>
-      </Marker>
-    )}
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> colaboradores'
+        />
 
-    {points?.locationB && (
-      <Marker
-        position={[points.locationB.lat, points.locationB.lng]}
-        icon={houseServiceIcon}
-      >
-        <Popup>
-          <div className="font-semibold">{points.locationB.name}</div>
-          <div>Ubicación B</div>
-          <div className="text-sm text-gray-600">
-            Latitud: {points.locationB.lat.toFixed(6)}, Longitud:{" "}
-            {points.locationB.lng.toFixed(6)}
-          </div>
-        </Popup>
-      </Marker>
-    )}
+        {/* Marcadores de ubicaciones */}
+        {points?.locationA && (
+          <Marker
+            position={[points.locationA.lat, points.locationA.lng]}
+            icon={houseIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationA.name}</div>
+              <div>Ubicación A</div>
+              <div className="text-sm text-gray-600">
+                Latitud: {points.locationA.lat.toFixed(6)}, Longitud:{" "}
+                {points.locationA.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
 
-    {points?.locationZ && (
-      <Marker
-        position={[points.locationZ.lat, points.locationZ.lng]}
-        icon={avirenIcon}
-      >
-        <Popup>
-          <div className="font-semibold">{points.locationZ.name}</div>
-          <div>Ubicación Z</div>
-          <div className="text-sm text-gray-600">
-            Latitud: {points.locationZ.lat.toFixed(6)}, Longitud:{" "}
-            {points.locationZ.lng.toFixed(6)}
-          </div>
-        </Popup>
-      </Marker>
-    )}
+        {points?.locationB && (
+          <Marker
+            position={[points.locationB.lat, points.locationB.lng]}
+            icon={houseServiceIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationB.name}</div>
+              <div>Ubicación B</div>
+              <div className="text-sm text-gray-600">
+                Latitud: {points.locationB.lat.toFixed(6)}, Longitud:{" "}
+                {points.locationB.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
 
-    {points?.locationT && (
-      <Marker
-        position={[points.locationT.lat, points.locationT.lng]}
-        icon={droneIcon}
-      >
-        <Popup>
-          <div className="font-semibold">{points.locationT.name}</div>
-          <div className="text-blue-600">Ubicación del dron</div>
-          <div className="text-sm text-gray-600">
-            Latitud: {points.locationT.lat.toFixed(6)}, Longitud:{" "}
-            {points.locationT.lng.toFixed(6)}
-          </div>
-        </Popup>
-      </Marker>
-    )}
+        {points?.locationZ && (
+          <Marker
+            position={[points.locationZ.lat, points.locationZ.lng]}
+            icon={avirenIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationZ.name}</div>
+              <div>Ubicación Z</div>
+              <div className="text-sm text-gray-600">
+                Latitud: {points.locationZ.lat.toFixed(6)}, Longitud:{" "}
+                {points.locationZ.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
 
-    {/* Marcador de ubicación actual */}
-    {points === undefined && (
-      <LocationMarker
-        initialPosition={center}
-        onPositionChange={(lat, lng) => {
-          if (onLocationChange) onLocationChange(lat, lng);
-        }}
-        draggable={draggable}
-      />
-    )}
-  </MapContainer>
-</div>
+        {points?.locationT && (
+          <Marker
+            position={[points.locationT.lat, points.locationT.lng]}
+            icon={droneIcon}
+          >
+            <Popup>
+              <div className="font-semibold">{points.locationT.name}</div>
+              <div className="text-blue-600">Ubicación del dron</div>
+              <div className="text-sm text-gray-600">
+                Latitud: {points.locationT.lat.toFixed(6)}, Longitud:{" "}
+                {points.locationT.lng.toFixed(6)}
+              </div>
+            </Popup>
+          </Marker>
+        )}
 
+        {/* Marcador de ubicación actual */}
+        {points === undefined && (
+          <LocationMarker
+            initialPosition={center}
+            onPositionChange={(lat, lng) => {
+              if (onLocationChange) onLocationChange(lat, lng);
+            }}
+            draggable={draggable}
+          />
+        )}
+      </MapContainer>
+    </div>
   );
 };
 

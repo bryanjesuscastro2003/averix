@@ -9,7 +9,6 @@ import { useAuth } from "../../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { Pagination } from "../../../components/bryan/Pagination";
 import { useWebSocket } from "../../../socket/WebSocketConn";
-import { ResponseDeliveryModal } from "../../../components/bryan/delivery/ResponseDeliveryModal";
 
 const DeliveriesPage: React.FC = () => {
   const [allDeliveries, setAllDeliveries] = useState<Delivery[]>([]);

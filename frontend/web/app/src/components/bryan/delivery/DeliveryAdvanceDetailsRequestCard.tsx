@@ -8,9 +8,6 @@ import { ConfirmationModal } from "../ConfirmationModal";
 import { useAuth } from "../../../context/AuthContext";
 import { DashboardEndpoints } from "../../../endpoints/dashboard";
 import { useNavigate } from "react-router-dom";
-import { useWebSocket } from "../../../socket/WebSocketConn";
-import { ResponseDeliveryModal } from "./ResponseDeliveryModal";
-import { setMinutes } from "date-fns";
 import { IResponse } from "../../../types/responses/IResponse";
 import { Loader } from "../../grez/Louder";
 import { useNotifications } from "../../../context/SocketContext";
@@ -26,9 +23,9 @@ export const DeliveryAdvanceDetailsRequestCard: React.FC<{
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState<boolean>(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [verificationCode, setVerificationCode] = useState(data.delivery.id);
+  const [verificationCode, _setVerificationCode] = useState(data.delivery.id);
   const domain = import.meta.env.VITE_API_DOMAIN;
-  const [verificationLinkCode, setVerificationLinkCode] = useState(
+  const [verificationLinkCode, _setVerificationLinkCode] = useState(
     domain + "/dashboard/deliveries/" + data.delivery.id
   );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);

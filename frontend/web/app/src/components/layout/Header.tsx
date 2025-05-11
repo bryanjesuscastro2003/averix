@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Header.css";
@@ -12,7 +12,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentSection, setCurrentSection] = useState("");
-  const { currentNotification, notifications } = useNotifications();
+  const { currentNotification } = useNotifications();
   const { sendMessage, isConnected } = useWebSocket(
     "wss://12voeaacae.execute-api.us-east-1.amazonaws.com/development"
   );

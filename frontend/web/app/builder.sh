@@ -8,4 +8,4 @@ npm install vite
 
 echo "Starting Vite development server..."
 
-npm run dev
+npm run build

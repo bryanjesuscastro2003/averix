@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Mapa from "./Mapa";
 import Louder from "../louder";
-import { ResponseDeliveryModal } from "../../bryan/delivery/ResponseDeliveryModal";
 import "./DeliveryTable.css";
-import { LoadingModal } from "../../bryan/LoaderModal";
 
 interface TrackingPoints {
   locationA: { lat: number; lng: number; name: string } | null;

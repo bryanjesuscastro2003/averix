@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { InteractiveNotification } from "../components/grez/notifications/InteractiveNotification";
 import { useNotifications } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 export interface Notification {
   id: string;
@@ -26,16 +25,13 @@ export interface Notification {
 export const SocketProvider = () => {
   const {
     notifications,
-    setNotifications,
-    setCurrentNotification,
     isSocketConnected,
     sendSocketMessage,
-    currentNotification,
     handleCloseNotification,
   } = useNotifications();
 
   const { userData, isAuthenticated } = useAuth();
-  const [confirmDecision, setConfirmDecision] = useState<boolean>(false);
+  const [_confirmDecision, setConfirmDecision] = useState<boolean>(false);
 
   useEffect(() => {
     if (isSocketConnected && userData !== null) {

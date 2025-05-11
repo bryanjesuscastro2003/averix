@@ -17,7 +17,7 @@ export const Colaboradores: React.FC = () => {
   const listaColaboradores: Colaborador[] = [
     {
       id: 1,
-      nombre: "Jiovana",
+      nombre: "Jovanna Hernandez Martinez",
       email: "ajiovana@empresa.com",
       rol: "Contador Publico",
       departamento: "Gestion",

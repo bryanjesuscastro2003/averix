@@ -13,11 +13,7 @@ interface DeliveryTableProps {
   onCancelDelivery: (id: string) => void;
 }
 
-export const DeliveryTable: React.FC<DeliveryTableProps> = ({
-  deliveries,
-  onStartDelivery,
-  onCancelDelivery,
-}) => {
+export const DeliveryTable: React.FC<DeliveryTableProps> = ({ deliveries }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [droneData, setDroneData] = useState<PartialDroneData | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);

@@ -1,12 +1,14 @@
-FROM node:18 
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy build files from builder stage
+COPY dist /usr/share/nginx/html
 
-COPY package.json .
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY . .
+# Copy SSL certificates (you'll need to generate or provide these)
+COPY ssl/ /etc/nginx/ssl/
 
-CMD ["sh", "entrypoint.sh"]
+EXPOSE 80 443
 
-
-
+CMD ["nginx", "-g", "daemon off;"]

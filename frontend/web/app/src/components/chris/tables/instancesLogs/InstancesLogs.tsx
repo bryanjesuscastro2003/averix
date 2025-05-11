@@ -1,11 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Instance } from "./types/instance.model";
-
-// Definición de tipos para los props
-interface FacebookTableProps {
-  data: Instance[];
-  capacityFilter?: "High" | "Medium" | "Low";
-}
 
 // Definición de estilos como constante
 const styles = {
@@ -95,8 +89,8 @@ const styles = {
 };
 
 export const InstancesLogs = () => {
-  const [capacityFilter, setCapacityFilter] = useState<boolean>(false);
-  const [filteredData, setFilteredData] = useState<[]>([]);
+  const [capacityFilter, _setCapacityFilter] = useState<boolean>(false);
+  const [filteredData, _setFilteredData] = useState<[]>([]);
   return (
     <div style={styles.container}>
       <div style={styles.wrapper}>
@@ -107,7 +101,8 @@ export const InstancesLogs = () => {
               fontWeight: 600,
               color: "#1d2129",
               margin: 0,
-            }}>
+            }}
+          >
             {capacityFilter
               ? `${capacityFilter} Capacity Instances`
               : "All Instances"}
@@ -116,7 +111,8 @@ export const InstancesLogs = () => {
                 color: "#65676b",
                 fontWeight: "normal",
                 marginLeft: "8px",
-              }}>
+              }}
+            >
               ({filteredData.length})
             </span>
           </h2>
@@ -139,7 +135,8 @@ export const InstancesLogs = () => {
               {filteredData.map((instance: Instance) => (
                 <tr
                   key={instance.id}
-                  style={{ borderBottom: "1px solid #eceeef" }}>
+                  style={{ borderBottom: "1px solid #eceeef" }}
+                >
                   <td style={styles.td}>#{instance.id}</td>
                   <td style={styles.td}>{instance.capacity}</td>
                   <td
@@ -148,7 +145,8 @@ export const InstancesLogs = () => {
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
-                    }}>
+                    }}
+                  >
                     {instance.description}
                   </td>
                   <td style={styles.td}>
@@ -173,13 +171,15 @@ export const InstancesLogs = () => {
                   </td>
                   <td style={styles.td}>
                     <div
-                      style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                      style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}
+                    >
                       <span
                         style={
                           instance.isWithOK
                             ? styles.statusOk
                             : styles.statusError
-                        }>
+                        }
+                      >
                         WiFi
                       </span>
                       <span
@@ -187,7 +187,8 @@ export const InstancesLogs = () => {
                           instance.isGpsOK
                             ? styles.statusOk
                             : styles.statusError
-                        }>
+                        }
+                      >
                         GPS
                       </span>
                       <span
@@ -195,7 +196,8 @@ export const InstancesLogs = () => {
                           instance.isImuOK
                             ? styles.statusOk
                             : styles.statusError
-                        }>
+                        }
+                      >
                         IMU
                       </span>
                       <span
@@ -203,7 +205,8 @@ export const InstancesLogs = () => {
                           instance.isCameraOk
                             ? styles.statusOk
                             : styles.statusError
-                        }>
+                        }
+                      >
                         Camera
                       </span>
                       <span
@@ -211,7 +214,8 @@ export const InstancesLogs = () => {
                           instance.isChargerOk
                             ? styles.statusOk
                             : styles.statusError
-                        }>
+                        }
+                      >
                         Charger
                       </span>
                     </div>

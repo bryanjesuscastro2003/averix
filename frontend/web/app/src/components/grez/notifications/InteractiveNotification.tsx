@@ -22,8 +22,6 @@ export const InteractiveNotification: React.FC<NotificationProps> = ({
   id,
 }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [decision, setDecision] = useState<boolean>(false);
-
   // Estilos base
   const baseStyles =
     "fixed bottom-4 left-4 flex items-center p-4 rounded-lg shadow-md max-w-xs z-50 border-l-4 cursor-pointer";

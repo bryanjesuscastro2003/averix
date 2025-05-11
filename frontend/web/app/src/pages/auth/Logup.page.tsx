@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 import Louder from "../../components/chris/louder";
 import { IResponse } from "../../types/responses/IResponse";
 import { DashboardEndpoints } from "../../endpoints/dashboard";
-import { set } from "date-fns";
 import { BackButton } from "../../components/grez/comun/BackButton";
 
 const LogupPage: React.FC = () => {
@@ -18,7 +17,7 @@ const LogupPage: React.FC = () => {
   const [role, setRole] = useState<string | number>("admin"); // ADMIN, USER
 
   ////
-  const { isAuthenticated, userData } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [confirmationCode, setConfirmationCode] = useState<string>("");
   const [isSignUpSubmitted, setIsSignUpSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AuthEndpoints } from "../../endpoints/auth";
 import { IResponse } from "../../types/responses/IResponse";
 import { ILoginData } from "../../types/responses/auth/ILoginData";
@@ -11,8 +11,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState<string>("Bryan2003@");
   const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para mostrar el loader
   const [message, setMessage] = useState<string>("");
-  const { login, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

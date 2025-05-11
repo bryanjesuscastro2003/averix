@@ -13,7 +13,7 @@ export const DeliveryDetailsPage = () => {
   const [deliveryData, setDeliveryData] = React.useState<DeliveryData | null>(
     null
   );
-  const [trackingLogsId, setTrackingLogsId] = React.useState<String>("");
+  const [_trackingLogsId, setTrackingLogsId] = React.useState<String>("");
 
   // path variable
   const { instanceId } = useParams();
